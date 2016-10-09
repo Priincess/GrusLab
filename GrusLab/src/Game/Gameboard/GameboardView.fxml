@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.text.*?>
+<?import java.lang.*?>
+<?import javafx.scene.control.*?>
+<?import javafx.scene.layout.*?>
+<?import javafx.scene.layout.Pane?>
+<?import javafx.scene.text.Font?>
+
+<Pane fx:id="pane_GameboardView" maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Game.Gameboard.GameboardViewController">
+   <children>
+      <MenuBar fx:id="menubar">
+        <menus>
+            <Menu mnemonicParsing="false" text="Game">
+              <items>
+                <MenuItem mnemonicParsing="false" text="Time in Seconds">
+                     <graphic>
+                        <TextField fx:id="textField_Timer" prefWidth="50.0" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#startGameCountdown" text="Start" />
+                  <MenuItem mnemonicParsing="false" onAction="#stopGameCountdown" text="Stop" />
+              </items>
+            </Menu>
+          <Menu mnemonicParsing="false" text="Gameboard">
+            <items>
+              <MenuItem mnemonicParsing="false" text="Board-X">
+                     <graphic>
+                        <TextField fx:id="textField_GameboardX" prefWidth="75.0" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" text="Board-Y">
+                     <graphic>
+                        <TextField fx:id="textField_GameboardY" prefWidth="75.0" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" text="Board-Width">
+                     <graphic>
+                        <TextField fx:id="textField_GameboardWidth" prefWidth="75.0" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" text="Board-Height">
+                     <graphic>
+                        <TextField fx:id="textField_GameboardHeight" prefWidth="75.0" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" text="Redzone-Width">
+                     <graphic>
+                        <TextField fx:id="textField_RedzoneWidth" prefWidth="75.0" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#toggleCollisionBox" text="Toggle Collisionbox" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="GameObjects">
+              <items>
+                    <MenuItem mnemonicParsing="false" text="Minion-Size">
+                     <graphic>
+                        <TextField fx:id="textField_MinionSize" prefWidth="75.0" />
+                     </graphic>
+                  </MenuItem>
+                    <MenuItem mnemonicParsing="false" text="Item-Size">
+                     <graphic>
+                        <TextField fx:id="textField_ItemSize" prefWidth="75.0" />
+                     </graphic>
+                  </MenuItem>
+                    <MenuItem mnemonicParsing="false" text="Distance">
+                     <graphic>
+                        <TextField fx:id="textField_GameObjectDistance" prefWidth="75.0" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#generateBanana" text="Generate Banana" />
+                  <MenuItem mnemonicParsing="false" onAction="#generateBeedo" text="Generate Beedo" />
+                  <MenuItem mnemonicParsing="false" onAction="#generateGoggles" text="Generate Goggles" />
+              </items>
+            </Menu>
+        </menus>
+      </MenuBar>
+
+       <Label fx:id="label_Timer" alignment="CENTER" prefHeight="35.0" prefWidth="100.0" text="01 : 49">
+           <font>
+               <Font size="24.0" />
+           </font>
+       </Label>
+       <Pane fx:id="pane_Player1" prefHeight="35.0" prefWidth="170.0">
+           <children>
+               <Label fx:id="label_Player1" prefHeight="35.0" prefWidth="100.0" text="Player 1:" textFill="#f5e050">
+                   <font>
+                       <Font size="24.0" />
+                   </font>
+               </Label>
+               <Label fx:id="label_Player1Points" layoutX="100.0" prefHeight="35.0" prefWidth="60.0" text="0" textFill="#f5e050">
+                   <font>
+                       <Font size="24.0" />
+                   </font>
+               </Label>
+           </children>
+       </Pane>
+       <Pane fx:id="pane_Player2" prefHeight="35.0" prefWidth="160.0">
+           <children>
+               <Label fx:id="label_Player2" prefHeight="35.0" prefWidth="100.0" text="Player 2:" textFill="#743980">
+                   <font>
+                       <Font size="24.0" />
+                   </font>
+               </Label>
+               <Label fx:id="label_Player2Points" layoutX="100.0" prefHeight="35.0" prefWidth="60.0" text="0" textFill="#743980">
+                   <font>
+                       <Font size="24.0" />
+                   </font>
+               </Label>
+           </children>
+       </Pane>
+   </children>
+</Pane>
