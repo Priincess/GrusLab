@@ -5,16 +5,11 @@ import javafx.beans.binding.NumberBinding;
 import javafx.collections.ListChangeListener;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.geometry.Pos;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
-import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
-import javafx.scene.text.Font;
 import javafx.util.converter.NumberStringConverter;
 
 /**
@@ -62,24 +57,14 @@ public class GameboardViewController {
     @FXML
     private Label label_Player2Points;
 
-
-
-    public void initialize(){
-        gameboard = new Gameboard();
+    public void initGameboardViewController(Gameboard gameboard){
+        this.gameboard = gameboard;
         pane_GameboardView.getChildren().add(gameboard.getRect_Gameboard());
         pane_GameboardView.getChildren().add(gameboard.getRect_GameboardCollisionBox());
 
         addGameObjectsListener();
         addMouseListenerToPane();
         //addKeyboardListenerToPane();
-
-        gameboard.createGameObject(GameObjectType.MINION, 90, 140);    // Must be before GameTextBindings but after Listener
-        gameboard.createGameObject(GameObjectType.MINION, 750, 400);    // Must be before GameTextBindings but after Listener
-
-
-        gameboard.generateGoggles();// TODO: Remove
-        gameboard.generateBeedo();  // TODO: Remove
-        gameboard.generateBanana(); // TODO: Remove
 
         setGameboardBindings();
         setGameObjectBindings();
@@ -123,14 +108,17 @@ public class GameboardViewController {
         label_Timer.toFront();
 
         //Binding Gametext
-        Bindings.bindBidirectional(label_Player1Points.textProperty(), gameboard.getPointsOf(0), numStringConver);
-        Bindings.bindBidirectional(label_Player2Points.textProperty(), gameboard.getPointsOf(1), numStringConver);
         Bindings.bindBidirectional(textField_Timer.textProperty(), gameboard.getGameTime(), numStringConver);
         Bindings.bindBidirectional(label_Timer.textProperty(), gameboard.getGameTime(), numStringConver);
     }
 
 
     private void addGameObjectsListener(){
+        // Load and add GameObjects already in List
+        for (GameObject gameObject : gameboard.getGameObjects()){
+            pane_GameboardView.getChildren().add(gameObject.imageView);
+        }
+
         gameboard.getGameObjects().addListener(new ListChangeListener(){
             @Override
             public void onChanged(ListChangeListener.Change change){
@@ -235,6 +223,12 @@ public class GameboardViewController {
 
     public void generateGoggles(){
         gameboard.generateGoggles();
+    }
+
+    public void loadGameSetup(){
+        gameboard.gameStartSetup();
+        Bindings.bindBidirectional(label_Player1Points.textProperty(), gameboard.getPointsOf(0), numStringConver);  // TODO: Make it in a better Way
+        Bindings.bindBidirectional(label_Player2Points.textProperty(), gameboard.getPointsOf(1), numStringConver);  // TODO: Make it in a better Way
     }
 
 }

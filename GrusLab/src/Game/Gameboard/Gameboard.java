@@ -117,6 +117,14 @@ public class Gameboard {
         rect_GameboardCollisionBox.heightProperty().bind(height);
     }
 
+    public void gameStartSetup(){
+        createGameObject(GameObjectType.MINION, 90, 140);
+        createGameObject(GameObjectType.MINION, 750, 400);
+        generateGoggles();
+        generateBeedo();
+        generateBanana();
+    }
+
     public void startGameCountdown(){
         if (timerTask == null){
             timerTask = new TimerTask() {
@@ -124,6 +132,7 @@ public class Gameboard {
                     Platform.runLater(new Runnable() {
                         public void run() {
                             gameTime.set(gameTime.intValue()-1);
+                            stopGameCountdown();
                             // TODO: GameOver
                         }
                     });
