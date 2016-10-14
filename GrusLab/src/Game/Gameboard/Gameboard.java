@@ -132,7 +132,6 @@ public class Gameboard {
                     Platform.runLater(new Runnable() {
                         public void run() {
                             gameTime.set(gameTime.intValue()-1);
-                            stopGameCountdown();
                             // TODO: GameOver
                         }
                     });
