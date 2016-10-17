@@ -12,9 +12,6 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.converter.NumberStringConverter;
 
-import java.awt.*;
-import java.util.LinkedList;
-
 /**
  * Created by Mark Mauerhofer on 08.10.2016.
  */
