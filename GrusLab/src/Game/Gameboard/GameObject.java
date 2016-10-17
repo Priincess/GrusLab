@@ -31,6 +31,12 @@ public class GameObject {
             case BEEDO:
                 this.imageView = new ImageView(getClass().getResource("GameObjectMedia/beedo.png").toExternalForm());
                 break;
+            case REFERENCEPOINT:
+                this.imageView = new ImageView(getClass().getResource("GameObjectMedia/referencePoint.png").toExternalForm());
+                break;
+            case CAMERAPOINT:
+                this.imageView = new ImageView(getClass().getResource("GameObjectMedia/cameraPoint.png").toExternalForm());
+                break;
             default:
                 this.imageView = new ImageView(getClass().getResource("GameObjectMedia/dummy.jpg").toExternalForm());
                 break;

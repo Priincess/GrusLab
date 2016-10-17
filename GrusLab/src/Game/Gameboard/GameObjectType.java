@@ -7,5 +7,7 @@ public enum GameObjectType {
     MINION,
     BANANA,
     BEEDO,
-    GOGGLES
+    GOGGLES,
+    REFERENCEPOINT,
+    CAMERAPOINT
 }

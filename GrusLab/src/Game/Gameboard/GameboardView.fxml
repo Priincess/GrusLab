@@ -13,6 +13,7 @@
         <menus>
             <Menu mnemonicParsing="false" text="Game">
               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#saveGameboardPreferences" text="Save Gameboard" />
                   <MenuItem mnemonicParsing="false" onAction="#loadGameSetup" text="Load Game Setup" />
                 <MenuItem mnemonicParsing="false" text="Time in Seconds">
                      <graphic>

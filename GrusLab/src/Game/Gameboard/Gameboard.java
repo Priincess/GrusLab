@@ -11,10 +11,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.scene.shape.StrokeType;
 
 import java.awt.*;
-import java.util.ArrayList;
-import java.util.Random;
-import java.util.Timer;
-import java.util.TimerTask;
+import java.util.*;
+import java.util.prefs.Preferences;
 
 
 /**
@@ -24,30 +22,29 @@ import java.util.TimerTask;
 
 public class Gameboard {
 
+    private Preferences gameboardPreferences;
     private Rectangle rect_Gameboard;
     private Rectangle rect_GameboardCollisionBox;
 
-    private IntegerProperty minionSize;
-    private IntegerProperty itemSize;
+    private IntegerProperty minionSize = new SimpleIntegerProperty(0);  // Overwritten by Preferences
+    private IntegerProperty itemSize = new SimpleIntegerProperty(0);    // Overwritten by Preferences
 
-    private IntegerProperty gameObjectDistance;
+    private IntegerProperty gameObjectDistance = new SimpleIntegerProperty(0);  // Overwritten by Preferences
 
     private ObservableList<GameObject> gameObjects;
-    private ArrayList<GameObject> minions;
+    private ArrayList<GameObject> minions ;
     private ArrayList<GameObject> items;
     private ArrayList<IntegerProperty> points;
 
-    private IntegerProperty gameTime;
+    private IntegerProperty gameTime = new SimpleIntegerProperty(0);    // Overwritten by Preferences
     private Timer timer = new Timer();
     private TimerTask timerTask;
 
     public Gameboard(){
-        minionSize = new SimpleIntegerProperty(50); // TODO: Use Preferences
-        itemSize = new SimpleIntegerProperty(50);   // TODO: Use Preferences
-        gameObjectDistance = new SimpleIntegerProperty(50);   // TODO: Use Preferences
-        gameTime = new SimpleIntegerProperty(120);            // TODO: Use Preferences
-
+        gameboardPreferences = Preferences.userNodeForPackage(this.getClass());
         initGameboardRectangle();
+        loadGameboardPreferences();
+
         initGameboardCollisionBoxRectangle();
 
         gameObjects = FXCollections.observableArrayList();
@@ -95,11 +92,10 @@ public class Gameboard {
 
 
     private void initGameboardRectangle(){
-        rect_Gameboard = new Rectangle(50, 90, 800, 400);    // TODO: Use Preferences
-        rect_Gameboard.setFill(Color.SKYBLUE);
+        rect_Gameboard = new Rectangle();
+        rect_Gameboard.setFill(Color.WHITE);
         rect_Gameboard.setStrokeType(StrokeType.OUTSIDE);
         rect_Gameboard.setStroke(Color.RED);
-        rect_Gameboard.setStrokeWidth(50);   // TODO: Use Preferences
     }
 
     private void initGameboardCollisionBoxRectangle(){
@@ -118,11 +114,39 @@ public class Gameboard {
     }
 
     public void gameStartSetup(){
-        createGameObject(GameObjectType.MINION, 90, 140);
-        createGameObject(GameObjectType.MINION, 750, 400);
-        generateGoggles();
-        generateBeedo();
-        generateBanana();
+        if (minions.size() == 0) {
+            createGameObject(GameObjectType.MINION, (int) rect_GameboardCollisionBox.getX(), (int) rect_GameboardCollisionBox.getY());
+            createGameObject(GameObjectType.MINION, rect_GameboardCollisionBox.widthProperty().intValue() + minionSize.intValue(), rect_GameboardCollisionBox.heightProperty().intValue() + 2*minionSize.intValue());
+            generateGoggles();
+            generateBeedo();
+            generateBanana();
+        }
+    }
+
+    public void saveGameboardPreferences(){
+        gameboardPreferences.putInt("GAMEBOARD_X", rect_Gameboard.xProperty().intValue());
+        gameboardPreferences.putInt("GAMEBOARD_Y", rect_Gameboard.yProperty().intValue());
+        gameboardPreferences.putInt("GAMEBOARD_WIDTH", rect_Gameboard.widthProperty().intValue());
+        gameboardPreferences.putInt("GAMEBOARD_HEIGHT", rect_Gameboard.heightProperty().intValue());
+        gameboardPreferences.putInt("GAMEBOARD_STROKE", (int) rect_Gameboard.getStrokeWidth());
+
+        gameboardPreferences.putInt("MINION_SIZE", minionSize.intValue());
+        gameboardPreferences.putInt("ITEM_SIZE", itemSize.intValue());
+        gameboardPreferences.putInt("GAMEOBJECT_DISTANCE", gameObjectDistance.intValue());
+        gameboardPreferences.putInt("GAME_TIME", gameTime.intValue());
+    }
+
+    public void loadGameboardPreferences(){
+        rect_Gameboard.setX(gameboardPreferences.getInt("GAMEBOARD_X", 50));
+        rect_Gameboard.setY(gameboardPreferences.getInt("GAMEBOARD_Y", 90));
+        rect_Gameboard.setWidth(gameboardPreferences.getInt("GAMEBOARD_WIDTH", 800));
+        rect_Gameboard.setHeight(gameboardPreferences.getInt("GAMEBOARD_HEIGHT", 400));
+        rect_Gameboard.setStrokeWidth(gameboardPreferences.getInt("GAMEBOARD_STROKE", 50));
+
+        minionSize.set(gameboardPreferences.getInt("MINION_SIZE", 50));
+        itemSize.set(gameboardPreferences.getInt("ITEM_SIZE", 50));
+        gameObjectDistance.set(gameboardPreferences.getInt("GAMEOBJECT_DISTANCE", 50));
+        gameTime.set(gameboardPreferences.getInt("GAME_TIME", 120));
     }
 
     public void startGameCountdown(){
@@ -155,6 +179,12 @@ public class Gameboard {
                 gObj.setSize(minionSize);
                 minions.add(gObj);
                 points.add(new SimpleIntegerProperty(0));
+                break;
+            case REFERENCEPOINT:
+                gObj.setSize(minionSize);
+                break;
+            case CAMERAPOINT:
+                gObj.setSize(minionSize);
                 break;
             default:
                 gObj.setSize(itemSize);
@@ -309,7 +339,6 @@ public class Gameboard {
         }
     }
 
-
     public void generateBanana(){
         Point p = generateRandomPointOnGameboard();
         if (p != null) {
@@ -328,6 +357,22 @@ public class Gameboard {
         Point p = generateRandomPointOnGameboard();
         if (p != null) {
             createGameObject(GameObjectType.GOGGLES, p.x, p.y);
+        }
+    }
+
+    public void addObjects(LinkedList<Point> points, GameObjectType type){
+        for(Point point : points){
+            createGameObject(type, (int) point.getX(), (int) point.getY());
+        }
+    }
+
+
+    public void removeObjects(GameObjectType type){
+        Iterator<GameObject> iter = gameObjects.iterator();
+        while (iter.hasNext()){
+            if(iter.next().type == type){
+                iter.remove();
+            }
         }
     }
 }

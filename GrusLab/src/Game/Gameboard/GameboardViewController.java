@@ -12,6 +12,9 @@ import javafx.scene.layout.Pane;
 import javafx.scene.shape.Rectangle;
 import javafx.util.converter.NumberStringConverter;
 
+import java.awt.*;
+import java.util.LinkedList;
+
 /**
  * Created by Mark Mauerhofer on 08.10.2016.
  */
@@ -59,12 +62,12 @@ public class GameboardViewController {
 
     public void initGameboardViewController(Gameboard gameboard){
         this.gameboard = gameboard;
+        pane_GameboardView.setStyle("-fx-background-color: black;");
         pane_GameboardView.getChildren().add(gameboard.getRect_Gameboard());
         pane_GameboardView.getChildren().add(gameboard.getRect_GameboardCollisionBox());
 
         addGameObjectsListener();
         addMouseListenerToPane();
-        //addKeyboardListenerToPane();
 
         setGameboardBindings();
         setGameObjectBindings();
@@ -161,45 +164,6 @@ public class GameboardViewController {
         });
     }
 
-//    private void addKeyboardListenerToPane(){
-//        pane_GameboardView.setOnKeyPressed(new EventHandler<KeyEvent>() {
-//            public void handle(KeyEvent event) {
-//                GameObject minion1 = gameboard.getGameObjects().get(0);
-//                int x1 = (int) minion1.imageView.getX();
-//                int y1 = (int) minion1.imageView.getY();
-//                System.out.println(x1 + " " + y1);
-//                if (event.getCode() == KeyCode.A) {
-//                    gameboard.setMinionPosition(0, x1-5, y1);
-//                }
-//                if (event.getCode() == KeyCode.S) {
-//                    gameboard.setMinionPosition(0, x1, y1+5);
-//                }
-//                if (event.getCode() == KeyCode.D) {
-//                    gameboard.setMinionPosition(0, x1+5, y1);
-//                }
-//                if (event.getCode() == KeyCode.W) {
-//                    gameboard.setMinionPosition(0, x1, y1-5);
-//                }
-//
-//                GameObject minion2 = gameboard.getGameObjects().get(0);
-//                int x2 = (int) minion2.imageView.getX();
-//                int y2 = (int) minion2.imageView.getY();
-//                if (event.getCode() == KeyCode.LEFT) {
-//                    gameboard.setMinionPosition(1, x2, y2);
-//                }
-//                if (event.getCode() == KeyCode.DOWN) {
-//                    gameboard.setMinionPosition(1, x2, y2);
-//                }
-//                if (event.getCode() == KeyCode.RIGHT) {
-//                    gameboard.setMinionPosition(1, x2, y2);
-//                }
-//                if (event.getCode() == KeyCode.UP) {
-//                    gameboard.setMinionPosition(1, x2, y2);
-//                }
-//            }
-//        });
-//    }
-
     public void toggleCollisionBox(){
         Rectangle temp = gameboard.getRect_GameboardCollisionBox();
         temp.setVisible(!temp.isVisible());
@@ -230,5 +194,12 @@ public class GameboardViewController {
         Bindings.bindBidirectional(label_Player1Points.textProperty(), gameboard.getPointsOf(0), numStringConver);  // TODO: Make it in a better Way
         Bindings.bindBidirectional(label_Player2Points.textProperty(), gameboard.getPointsOf(1), numStringConver);  // TODO: Make it in a better Way
     }
+
+    public void saveGameboardPreferences(){
+        gameboard.saveGameboardPreferences();
+    }
+
+
+
 
 }
