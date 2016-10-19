@@ -1,11 +1,11 @@
-package Game.Server;
+package game.server;
 
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Formatter;
 
-import Game.Player.Player;
+import game.player.Player;
 
 /**
  * @author lilpr

@@ -1,4 +1,4 @@
-package Game.Gameboard;
+package game.gameboard;
 
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;

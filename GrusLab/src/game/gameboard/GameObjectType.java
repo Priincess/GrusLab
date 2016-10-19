@@ -1,4 +1,4 @@
-package Game.Gameboard;
+package game.gameboard;
 
 /**
  * Created by Mark Mauerhofer on 08.10.2016.

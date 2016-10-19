@@ -1,7 +1,7 @@
-package Game;
+package game;
 
-import Game.Gameboard.Gameboard;
-import Game.Gameboard.GameboardViewController;
+import game.gameboard.Gameboard;
+import game.gameboard.GameboardViewController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;

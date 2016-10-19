@@ -1,8 +1,8 @@
-package Game;
+package game;
 
-import Game.Player.ControllerManager;
-import Game.Player.Player;
-import Game.Server.ServerService;
+import game.player.ControllerManager;
+import game.player.Player;
+import game.server.ServerService;
 
 /**
  * @author lilpr

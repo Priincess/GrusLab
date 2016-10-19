@@ -1,4 +1,4 @@
-package Game.Player;
+package game.player;
 
 /**
  * @author lilpr

@@ -1,4 +1,4 @@
-package Game.Player;
+package game.player;
 
 import org.lwjgl.input.Controller;
 
