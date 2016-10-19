@@ -1,5 +1,9 @@
 package Game.Player;
 
+/**
+ * @author lilpr
+ * This enum holds the index of the different buttons of the different controller
+ */
 public enum Gamepad {
 	
 	PS4, Xbox;
