@@ -116,7 +116,7 @@ public class GameboardViewController {
 
 
     private void addGameObjectsListener(){
-        // Load and add GameObjects already in List
+        // Load and add GameObjects already in List...
         for (GameObject gameObject : gameboard.getGameObjects()){
             pane_GameboardView.getChildren().add(gameObject.getImageView());
         }
