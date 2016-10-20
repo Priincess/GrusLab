@@ -72,13 +72,13 @@ public class ControllerManager {
 			p2.getController().poll();
 			
 			//check if player 1 pressed the button
-			if (!p1pressed && p1.getController().isButtonPressed(p1.getGamepad().getForwardIndex())) {
+			if (!p1pressed && p1.getController().isButtonPressed(p1.getGamepad().getStartIndex())) {
 				p1pressed =true;
 				System.out.println("Player1 pressed start!");
 			}
 			
 			//check if player 2 pressed the button
-			if (!p2pressed && p2.getController().isButtonPressed(p2.getGamepad().getForwardIndex())) {
+			if (!p2pressed && p2.getController().isButtonPressed(p2.getGamepad().getStartIndex())) {
 				p2pressed =true;
 				System.out.println("Player2 pressed start!");
 			}

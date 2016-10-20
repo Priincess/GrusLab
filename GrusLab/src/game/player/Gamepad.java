@@ -12,6 +12,8 @@ public enum Gamepad {
 	private static int XBOX_FORWARD = 0;
 	private static int PS4_BACKWARD = 2;
 	private static int XBOX_BACKWARD = 1;
+	private static int PS4_START = 12;
+	private static int XBOX_START = 7;
 	private static int LEFT = -1;
 	private static int RIGHT = 1;
 	
@@ -27,6 +29,13 @@ public enum Gamepad {
 			return PS4_BACKWARD;
 		else
 			return XBOX_BACKWARD;
+	}
+	
+	public int getStartIndex(){
+		if(this.equals(PS4))
+			return PS4_START;
+		else
+			return XBOX_START;
 	}
 	
 	public int getLeftValue(){
