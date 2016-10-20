@@ -20,25 +20,25 @@ public class GameObject {
 
         switch (type){
             case MINION:
-                this.imageView = new ImageView(getClass().getResource("GameObjectMedia/minion.png").toExternalForm());
+                this.imageView = new ImageView(getClass().getResource("gameObjectMedia/minion.png").toExternalForm());
                 break;
             case BANANA:
-                this.imageView = new ImageView(getClass().getResource("GameObjectMedia/banana.png").toExternalForm());
+                this.imageView = new ImageView(getClass().getResource("gameObjectMedia/banana.png").toExternalForm());
                 break;
             case GOGGLES:
-                this.imageView = new ImageView(getClass().getResource("GameObjectMedia/goggles.png").toExternalForm());
+                this.imageView = new ImageView(getClass().getResource("gameObjectMedia/goggles.png").toExternalForm());
                 break;
             case BEEDO:
-                this.imageView = new ImageView(getClass().getResource("GameObjectMedia/beedo.png").toExternalForm());
+                this.imageView = new ImageView(getClass().getResource("gameObjectMedia/beedo.png").toExternalForm());
                 break;
             case REFERENCEPOINT:
-                this.imageView = new ImageView(getClass().getResource("GameObjectMedia/referencePoint.png").toExternalForm());
+                this.imageView = new ImageView(getClass().getResource("gameObjectMedia/referencePoint.png").toExternalForm());
                 break;
             case CAMERAPOINT:
-                this.imageView = new ImageView(getClass().getResource("GameObjectMedia/cameraPoint.png").toExternalForm());
+                this.imageView = new ImageView(getClass().getResource("gameObjectMedia/cameraPoint.png").toExternalForm());
                 break;
             default:
-                this.imageView = new ImageView(getClass().getResource("GameObjectMedia/dummy.jpg").toExternalForm());
+                this.imageView = new ImageView(getClass().getResource("gameObjectMedia/dummy.jpg").toExternalForm());
                 break;
         }
         setSize(size);
@@ -60,17 +60,21 @@ public class GameObject {
     public void playSound(){
         switch (this.type){
             case BANANA:
-                player = new MediaPlayer(new Media(getClass().getResource("GameObjectMedia/bababa_banana.mp3").toExternalForm()));
+                player = new MediaPlayer(new Media(getClass().getResource("gameObjectMedia/bababa_banana.mp3").toExternalForm()));
                 break;
             case BEEDO:
-                player = new MediaPlayer(new Media(getClass().getResource("GameObjectMedia/beedo.mp3").toExternalForm()));
+                player = new MediaPlayer(new Media(getClass().getResource("gameObjectMedia/beedo.mp3").toExternalForm()));
                 break;
             case GOGGLES:
-                player = new MediaPlayer(new Media(getClass().getResource("GameObjectMedia/What.mp3").toExternalForm()));
+                player = new MediaPlayer(new Media(getClass().getResource("gameObjectMedia/What.mp3").toExternalForm()));
                 break;
         }
         if (player != null) {
             player.play();
         }
+    }
+
+    public ImageView getImageView(){
+        return imageView;
     }
 }

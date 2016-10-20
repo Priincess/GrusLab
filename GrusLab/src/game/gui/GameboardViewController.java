@@ -1,5 +1,7 @@
-package game.gameboard;
+package game.gui;
 
+import game.gameboard.GameObject;
+import game.gameboard.Gameboard;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.collections.ListChangeListener;
@@ -116,7 +118,7 @@ public class GameboardViewController {
     private void addGameObjectsListener(){
         // Load and add GameObjects already in List
         for (GameObject gameObject : gameboard.getGameObjects()){
-            pane_GameboardView.getChildren().add(gameObject.imageView);
+            pane_GameboardView.getChildren().add(gameObject.getImageView());
         }
 
         gameboard.getGameObjects().addListener(new ListChangeListener(){
@@ -126,13 +128,13 @@ public class GameboardViewController {
                     if (change.wasAdded() == true){
                         for (int i = 0; i < change.getAddedSize(); i++){
                             GameObject gameObject = (GameObject) change.getAddedSubList().get(i);
-                            pane_GameboardView.getChildren().add(gameObject.imageView);
+                            pane_GameboardView.getChildren().add(gameObject.getImageView());
                         }
                     }
                     if (change.wasRemoved()){
                         for (int i = 0; i < change.getRemovedSize(); i++){
                             GameObject gameObject = (GameObject) change.getRemoved().get(i);
-                            pane_GameboardView.getChildren().remove(gameObject.imageView);
+                            pane_GameboardView.getChildren().remove(gameObject.getImageView());
                         }
                     }
 
