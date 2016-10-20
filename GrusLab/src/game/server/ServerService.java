@@ -42,6 +42,7 @@ public class ServerService {
 			for (int i=0; i<AMOUNT_OF_MINIONS; i++) {
 				_minions[i] = _server.accept();
 				_outputs[i] = new Formatter(_minions[i].getOutputStream());
+				System.out.println("Minion"+i+" connected!");
 			}
 		} catch (IOException e) {
 			e.printStackTrace();

@@ -58,7 +58,7 @@ public class CentralControl {
 		
 		GameState.getInstance().setGameState(GameStateValue.WAIT);
 		
-		System.out.println("Wait for Players to press X/A!");
+		System.out.println("Wait for Players to press start!");
 		_controllerWaitForStart.start();
 		
 		while(!_controllerWaitForStart.getState().equals(Thread.State.TERMINATED)){}
