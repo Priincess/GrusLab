@@ -1,5 +1,6 @@
 package game;
 
+import game.gameboard.Gameboard;
 import game.player.ControllerManager;
 import game.player.Player;
 import game.server.ServerService;
@@ -13,10 +14,14 @@ public class CentralControl {
 	private static CentralControl _instance = new CentralControl();
 	
 	//components
-	private ServerService _server;
-	private ControllerManager _controllerManager;
-	private Player _player1=null;
-	private Player _player2=null;
+	private GameState _gameState = null;
+	private ServerService _server = null;
+	private ControllerManager _controllerManager = null;
+	private Player _player1 = null;
+	private Player _player2 = null;
+	private Gameboard _gameBoard = null;
+	
+	private boolean _playing = true;
 	
 	//threads
 	//controllers
@@ -29,6 +34,7 @@ public class CentralControl {
 	
 	private CentralControl(){
 		//initialize components
+		_gameState = GameState.getInstance();
 		_server = new ServerService();
 		_controllerManager = new ControllerManager();
 	}
@@ -46,7 +52,7 @@ public class CentralControl {
 	 * This method starts the game
 	 */
 	public void startGame(){
-		GameState.getInstance().setGameState(GameStateValue.INIT);
+		_gameState.setGameState(GameStateValue.INIT);
 		
 		//init threads
 		initThreads();
@@ -56,27 +62,34 @@ public class CentralControl {
 		
 		while(!_controllerInit.getState().equals(Thread.State.TERMINATED) || !_serverInit.getState().equals(Thread.State.TERMINATED)){}
 		
-		GameState.getInstance().setGameState(GameStateValue.WAIT);
 		
-		System.out.println("Wait for Players to press start!");
-		_controllerWaitForStart.start();
+		while(_playing){
 		
-		while(!_controllerWaitForStart.getState().equals(Thread.State.TERMINATED)){}
+			_gameState.setGameState(GameStateValue.WAIT);
+			
+			System.out.println("Wait for Players to press start!");
+			_controllerWaitForStart.start();
+			
+			while(!_controllerWaitForStart.getState().equals(Thread.State.TERMINATED)){}
+			
+			_gameState.setGameState(GameStateValue.READY);
+			
+			while(_gameState.getGameState() != GameStateValue.PLAY){}
+			
+			_controllerStart.start();
+			_serverStart.start();
+			
+			//TODO: wait for game to finish
+	//		_server.stopMinionControl();
+	//		_controllerManager.stopManage();
+			
+			while(!_controllerStart.getState().equals(Thread.State.TERMINATED) || !_serverStart.getState().equals(Thread.State.TERMINATED)){}
 		
-		GameState.getInstance().setGameState(GameStateValue.PLAY);
+		}
 		
-		_controllerStart.start();
-		_serverStart.start();
-		
-		//TODO: wait for game to finish
-//		_server.stopMinionControl();
-//		_controllerManager.stopManage();
-		
-		while(!_controllerStart.getState().equals(Thread.State.TERMINATED) || !_serverStart.getState().equals(Thread.State.TERMINATED)){}
-		
-		System.out.println("Finished");		
-		//reset after game finish
-		resetGame();
+		System.out.println("Shuting down...");		
+		//quit after game exit
+		quitGame();
 	}
 	
 	//**********PRIVATE METHODS**********
@@ -129,9 +142,11 @@ public class CentralControl {
 	}
 
 	/**
-	 * This method sets everything back to the beginning
+	 * This method sets quits everything 
 	 */
-	private void resetGame(){
+	private void quitGame(){
+		_server.deinitServerService();
+		
 		_player1 = null;
 		_player2 = null;
 		_server = null;

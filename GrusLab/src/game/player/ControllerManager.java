@@ -102,6 +102,10 @@ public class ControllerManager {
 			checkControllerState(p1);
 			checkControllerState(p2);
 		}
+		
+		//reset player
+		p1.reset();
+		p2.reset();
 	}
 	
 	/**

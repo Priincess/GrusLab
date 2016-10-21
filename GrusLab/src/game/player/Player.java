@@ -135,4 +135,10 @@ public class Player {
 	public void resetControllerChanged(){
 		_controllerChanged=false;
 	}
+	
+	public void reset(){
+		resetControllerChanged();
+		_playerState = PlayerState.Normal;
+		_controllerState = ControllerState.None;
+	}
 }

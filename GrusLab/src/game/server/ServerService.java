@@ -5,7 +5,9 @@ import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.Formatter;
 
+import game.player.ControllerState;
 import game.player.Player;
+import game.player.PlayerState;
 
 /**
  * @author lilpr
@@ -103,13 +105,9 @@ public class ServerService {
 			}
 		}
 		
+		//stop both minions
 		for (int i = 0; i< AMOUNT_OF_MINIONS; i++) {
-			try {
-				_outputs[i].close();
-				_minions[i].close();
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
+			bundle = PlayerState.Normal.getStateValue()+""+ControllerState.None.getControllerValue()+"\n";
 		}
 	}
 	
@@ -118,5 +116,28 @@ public class ServerService {
 	 */
 	public void stopMinionControl(){
 		_controlMinions = false;
+	}
+	
+	/**
+	 * This method closes the connection to the minions
+	 */
+	public void deinitServerService(){
+		
+		//disconnect minions
+		for (int i = 0; i< AMOUNT_OF_MINIONS; i++) {
+			try {
+				_outputs[i].close();
+				_minions[i].close();
+			} catch (IOException e) {
+				e.printStackTrace();
+			}
+		}
+		
+		//close server
+		try {
+			_server.close();
+		} catch (IOException e) {
+			e.printStackTrace();
+		}
 	}
 }
