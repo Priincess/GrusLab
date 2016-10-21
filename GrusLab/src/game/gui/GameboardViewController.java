@@ -109,9 +109,6 @@ public class GameboardViewController {
         label_Timer.layoutYProperty().bind(labelGameTextPositionY);
         label_Timer.toFront();
 
-        //Binding Gametext
-        Bindings.bindBidirectional(textField_Timer.textProperty(), gameboard.getGameTime(), numStringConver);
-        Bindings.bindBidirectional(label_Timer.textProperty(), gameboard.getGameTime(), numStringConver);
     }
 
 
@@ -168,13 +165,6 @@ public class GameboardViewController {
         temp.setVisible(!temp.isVisible());
     }
 
-    public void startGameCountdown(){
-        gameboard.startGameCountdown();
-    }
-
-    public void stopGameCountdown(){
-        gameboard.stopGameCountdown();;
-    }
 
     public void generateBanana(){
         gameboard.generateBanana();
