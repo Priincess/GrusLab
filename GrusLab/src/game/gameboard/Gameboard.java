@@ -36,10 +36,6 @@ public class Gameboard {
     private ArrayList<GameObject> items;
     private ArrayList<IntegerProperty> points;
 
-    private IntegerProperty gameTime = new SimpleIntegerProperty(0);    // Overwritten by Preferences
-    private Timer timer = new Timer();
-    private TimerTask timerTask;
-
     public Gameboard(){
         gameboardPreferences = Preferences.userNodeForPackage(this.getClass());
         initGameboardRectangle();
@@ -52,7 +48,6 @@ public class Gameboard {
         items = new ArrayList<GameObject>();
         points = new ArrayList<IntegerProperty>();
     }
-
 
 
     public Rectangle getRect_Gameboard(){
@@ -77,10 +72,6 @@ public class Gameboard {
 
     public ObservableList<GameObject> getGameObjects(){
         return gameObjects;
-    }
-
-    public IntegerProperty getGameTime(){
-        return gameTime;
     }
 
     public IntegerProperty getPointsOf(int minion){
@@ -133,7 +124,7 @@ public class Gameboard {
         gameboardPreferences.putInt("MINION_SIZE", minionSize.intValue());
         gameboardPreferences.putInt("ITEM_SIZE", itemSize.intValue());
         gameboardPreferences.putInt("GAMEOBJECT_DISTANCE", gameObjectDistance.intValue());
-        gameboardPreferences.putInt("GAME_TIME", gameTime.intValue());
+
     }
 
     public void loadGameboardPreferences(){
@@ -146,29 +137,8 @@ public class Gameboard {
         minionSize.set(gameboardPreferences.getInt("MINION_SIZE", 50));
         itemSize.set(gameboardPreferences.getInt("ITEM_SIZE", 50));
         gameObjectDistance.set(gameboardPreferences.getInt("GAMEOBJECT_DISTANCE", 50));
-        gameTime.set(gameboardPreferences.getInt("GAME_TIME", 120));
     }
 
-    public void startGameCountdown(){
-        if (timerTask == null){
-            timerTask = new TimerTask() {
-                public void run() {
-                    Platform.runLater(new Runnable() {
-                        public void run() {
-                            gameTime.set(gameTime.intValue()-1);
-                            // TODO: GameOver
-                        }
-                    });
-                }
-            };
-            timer.scheduleAtFixedRate(timerTask, 0, 1000);
-        }
-    }
-
-    public void stopGameCountdown(){
-        timerTask.cancel();
-        timerTask = null;
-    }
 
 
     public GameObject createGameObject(GameObjectType type, int x, int y){
