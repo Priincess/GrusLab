@@ -68,7 +68,6 @@ public class GameStartViewController {
         transition.getChildren().add(fadeIn);
         transition.setCycleCount(SequentialTransition.INDEFINITE);
         transition.play();
-
     }
 
 }

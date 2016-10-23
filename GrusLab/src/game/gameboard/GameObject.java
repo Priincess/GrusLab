@@ -77,4 +77,8 @@ public class GameObject {
     public ImageView getImageView(){
         return imageView;
     }
+
+    public GameObjectType getType(){
+        return this.type;
+    }
 }

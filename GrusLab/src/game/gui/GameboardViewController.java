@@ -1,17 +1,28 @@
 package game.gui;
 
+import game.Game;
+import game.GameState;
+import game.GameStateValue;
 import game.gameboard.GameObject;
 import game.gameboard.Gameboard;
+import javafx.animation.FadeTransition;
+import javafx.animation.SequentialTransition;
+import javafx.animation.Transition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.ListChangeListener;
+import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Rectangle;
+import javafx.util.Duration;
 import javafx.util.converter.NumberStringConverter;
 
 /**
@@ -19,15 +30,14 @@ import javafx.util.converter.NumberStringConverter;
  */
 public class GameboardViewController {
 
+    private Game game;
     private Gameboard gameboard;
+    private GameState gameState;
 
-    NumberStringConverter numStringConver = new NumberStringConverter();
+    private NumberStringConverter numStringConver = new NumberStringConverter();
 
     @FXML
     private Pane pane_GameboardView;
-
-    @FXML
-    private TextField textField_Timer;
 
     @FXML
     private TextField textField_GameboardX;
@@ -40,7 +50,6 @@ public class GameboardViewController {
     @FXML
     private TextField textField_RedzoneWidth;
 
-
     @FXML
     private TextField textField_MinionSize;
     @FXML
@@ -51,26 +60,45 @@ public class GameboardViewController {
     @FXML
     private Label label_Timer;
     @FXML
-    private Pane pane_Player1;
+    private Pane pane_YellowMinion;
     @FXML
-    private Label label_Player1Points;
+    private Label label_YellowMinionPoints;
     @FXML
-    private Pane pane_Player2;
+    private Pane pane_EvilMinion;
     @FXML
-    private Label label_Player2Points;
+    private Label label_EvilMinionPoints;
+    @FXML
+    private Label label_InfoText;
 
-    public void initGameboardViewController(Gameboard gameboard){
-        this.gameboard = gameboard;
+    private SequentialTransition gameInfoTextReadyTransition;
+    private boolean isGameInfoTextReadyTransitionRunning = false;
+
+    private SequentialTransition gameInfoTextCountdownTransition;
+    private boolean isGameInfoTextCountdownTransitionRunning = false;
+
+
+    public void initGameboardViewController(Game game){
+        this.game = game;
+        this.gameboard = game.getGameboard();
+        gameState = GameState.getInstance();
+
         pane_GameboardView.setStyle("-fx-background-color: black;");
         pane_GameboardView.getChildren().add(gameboard.getRect_Gameboard());
         pane_GameboardView.getChildren().add(gameboard.getRect_GameboardCollisionBox());
 
         addGameObjectsListener();
+        addGameTimeListener();
         addMouseListenerToPane();
 
         setGameboardBindings();
         setGameObjectBindings();
         setGameTextBindings();
+
+        initGameInfoTextReady();
+        initGameInfoTextCountdown();
+        initGameInfoTextGameOver();
+
+        startGameInfoTextReady();
     }
 
     private void setGameboardBindings(){
@@ -90,18 +118,18 @@ public class GameboardViewController {
 
     private void setGameTextBindings(){
         //Binding Gametext Position
-        pane_Player1.layoutXProperty().bind(gameboard.getRect_Gameboard().xProperty().add(10));
+        pane_YellowMinion.layoutXProperty().bind(gameboard.getRect_Gameboard().xProperty().add(10));
         NumberBinding labelGameTextPositionY = gameboard.getRect_Gameboard().yProperty().
                 add(gameboard.getRect_Gameboard().heightProperty()).
-                subtract(pane_Player1.prefHeightProperty());
-        pane_Player1.layoutYProperty().bind(labelGameTextPositionY);
-        pane_Player1.toFront();
+                subtract(pane_YellowMinion.prefHeightProperty());
+        pane_YellowMinion.layoutYProperty().bind(labelGameTextPositionY);
+        pane_YellowMinion.toFront();
 
-        pane_Player2.layoutXProperty().bind(gameboard.getRect_Gameboard().xProperty().
+        pane_EvilMinion.layoutXProperty().bind(gameboard.getRect_Gameboard().xProperty().
                 add(gameboard.getRect_Gameboard().widthProperty()).
-                subtract(pane_Player2.getPrefWidth()-20));
-        pane_Player2.layoutYProperty().bind(labelGameTextPositionY);
-        pane_Player2.toFront();
+                subtract(pane_EvilMinion.getPrefWidth()-30));
+        pane_EvilMinion.layoutYProperty().bind(labelGameTextPositionY);
+        pane_EvilMinion.toFront();
 
         label_Timer.layoutXProperty().bind(gameboard.getRect_Gameboard().xProperty().
                 add(gameboard.getRect_Gameboard().widthProperty().divide(2)).
@@ -109,8 +137,22 @@ public class GameboardViewController {
         label_Timer.layoutYProperty().bind(labelGameTextPositionY);
         label_Timer.toFront();
 
-    }
+        // Gametimer
+        Bindings.bindBidirectional(label_Timer.textProperty(), game.getGameTime(), numStringConver);
 
+        // InfoText
+        label_InfoText.layoutXProperty().bind(gameboard.getRect_Gameboard().xProperty().
+                add(gameboard.getRect_Gameboard().widthProperty().divide(2)).
+                subtract(label_InfoText.widthProperty().divide(2)));
+        label_InfoText.layoutYProperty().bind(gameboard.getRect_Gameboard().yProperty().
+                add(gameboard.getRect_Gameboard().heightProperty().divide(2)).
+                subtract(label_InfoText.heightProperty().divide(2)));
+        label_InfoText.toFront();
+
+        // Points
+        Bindings.bindBidirectional(label_YellowMinionPoints.textProperty(), game.getPoints(0), numStringConver);
+        Bindings.bindBidirectional(label_EvilMinionPoints.textProperty(), game.getPoints(1), numStringConver);
+    }
 
     private void addGameObjectsListener(){
         // Load and add GameObjects already in List...
@@ -140,25 +182,202 @@ public class GameboardViewController {
         });
     }
 
+    private void addGameTimeListener(){
+        game.getGameTime().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal,
+                                          Object newVal){
+                if ((int) newVal == 0 && (int) oldVal != 0){
+                    gameInfoTextGameOverStatus = 0;
+                    startGameInfoTextGameOver();
+                }
+            }
+        });
+    }
+
     private void addMouseListenerToPane(){
         pane_GameboardView.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                int x = (int) mouseEvent.getX() - gameboard.getMinionSize().intValue()/2;
-                int y = (int) mouseEvent.getY() - gameboard.getMinionSize().intValue()/2;
-                if (y > 70) {
-                    if (mouseEvent.isPrimaryButtonDown() == true) {
-                        gameboard.setMinionPosition(0, x, y);
-                        gameboard.updateGameRoutine();
-                    }
-                    if (mouseEvent.isSecondaryButtonDown()) {
-                        gameboard.setMinionPosition(1, x, y);
-                        gameboard.updateGameRoutine();
+                if (mouseEvent.isPrimaryButtonDown() == true && gameState.getGameState() == GameStateValue.READY){
+                    stopGameInfoTextReady();
+                    startGameInfoTextCountdown();
+                }
+                if (mouseEvent.isPrimaryButtonDown() == true && gameState.getGameState() == GameStateValue.FINISHED){
+                    gameState.setGameState(GameStateValue.READY);
+                    stopGameInfoTextGameOver();
+                    startGameInfoTextReady();
+                }
+                if (gameState.getGameState() == GameStateValue.PLAY) {
+                    int x = (int) mouseEvent.getX() - gameboard.getMinionSize().intValue() / 2;
+                    int y = (int) mouseEvent.getY() - gameboard.getMinionSize().intValue() / 2;
+                    if (y > 70 && gameState.getGameState() == GameStateValue.PLAY) {
+                        if (mouseEvent.isPrimaryButtonDown() == true) {
+                            gameboard.setMinionPosition(0, x, y);
+                        }
+                        if (mouseEvent.isSecondaryButtonDown()) {
+                            gameboard.setMinionPosition(1, x, y);
+                        }
                     }
                 }
             }
         });
     }
+
+
+    private void initGameInfoTextReady(){
+        gameInfoTextReadyTransition = new SequentialTransition();
+        FadeTransition fadeOut = new FadeTransition(Duration.seconds(2), label_InfoText);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.1);
+        gameInfoTextReadyTransition.getChildren().add(fadeOut);
+
+        FadeTransition fadeIn = new FadeTransition(Duration.seconds(2), label_InfoText);
+        fadeIn.setFromValue(0.1);
+        fadeIn.setToValue(1.0);
+
+        gameInfoTextReadyTransition.getChildren().add(fadeIn);
+        gameInfoTextReadyTransition.setCycleCount(SequentialTransition.INDEFINITE);
+    }
+
+    private void startGameInfoTextReady(){
+        if ( isGameInfoTextReadyTransitionRunning == false) {
+            resetGameInfoTextReady();
+            isGameInfoTextReadyTransitionRunning = true;
+            gameInfoTextReadyTransition.play();
+        }
+    }
+
+    private void stopGameInfoTextReady(){
+        if (gameInfoTextReadyTransition != null) {
+            isGameInfoTextReadyTransitionRunning = false;
+            gameInfoTextReadyTransition.stop();
+        }
+    }
+
+    private void resetGameInfoTextReady(){
+        label_InfoText.setText("Players Press Start!");
+        label_InfoText.setTextFill(Color.WHITE);
+        label_InfoText.setVisible(true);
+    }
+
+
+    private void initGameInfoTextCountdown(){
+        gameInfoTextCountdownTransition = new SequentialTransition();
+        FadeTransition fadeOut = new FadeTransition(Duration.seconds(2), label_InfoText);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                switch (label_InfoText.getText()) {
+                    case "READY":
+                        label_InfoText.setText("SET");
+                        label_InfoText.setTextFill(Color.YELLOW);
+                        break;
+                    case "SET":
+                        label_InfoText.setText("GO!");
+                        label_InfoText.setTextFill(Color.GREEN);
+                        game.startGame();
+                        break;
+                    case "GO!":
+                        stopGameInfoTextCountdown();
+                        break;
+                }
+            }
+        });
+        gameInfoTextCountdownTransition.getChildren().add(fadeOut);
+        gameInfoTextCountdownTransition.setCycleCount(SequentialTransition.INDEFINITE);
+    }
+
+    private void startGameInfoTextCountdown(){
+        if (isGameInfoTextCountdownTransitionRunning == false) {
+            resetGameInfoTextCountdown();
+            isGameInfoTextCountdownTransitionRunning = true;
+            gameInfoTextCountdownTransition.play();
+        }
+    }
+
+    private void stopGameInfoTextCountdown(){
+        if (gameInfoTextCountdownTransition != null) {
+            label_InfoText.setVisible(true);
+            isGameInfoTextCountdownTransitionRunning = false;
+            gameInfoTextCountdownTransition.stop();
+        }
+    }
+
+    private void resetGameInfoTextCountdown(){
+        label_InfoText.setText("READY");
+        label_InfoText.setTextFill(Color.RED);
+        label_InfoText.setVisible(true);
+    }
+
+
+    private SequentialTransition gameInfoTextGameOverTransition;
+    private boolean isGameInfoTextGameOverTransitionRunning = false;
+    private int gameInfoTextGameOverStatus = 0;
+
+    private void initGameInfoTextGameOver(){
+        gameInfoTextGameOverTransition = new SequentialTransition();
+        FadeTransition fadeOut = new FadeTransition(Duration.seconds(3), label_InfoText);
+        fadeOut.setFromValue(1.0);
+        fadeOut.setToValue(0.0);
+        fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                switch (gameInfoTextGameOverStatus) {
+                    case 0:
+                        int x = game.whichMinionWon();
+                        if ( x == 0 ) {
+                            label_InfoText.setText("Minion Won!");
+                            label_InfoText.setTextFill(Color.YELLOW);
+                        } else if (x == 1) {
+                            label_InfoText.setText("Evil Minion Won!");
+                            label_InfoText.setTextFill(Color.PURPLE);
+                        } else {
+                            label_InfoText.setText("DRAW!");
+                        }
+                        gameInfoTextGameOverStatus++;
+                        break;
+                    case 1:
+                        label_InfoText.setText("Press X or A to Restart");
+                        label_InfoText.setTextFill(Color.WHITE);
+                        break;
+                }
+            }
+        });
+        gameInfoTextGameOverTransition.getChildren().add(fadeOut);
+
+        FadeTransition fadeIn = new FadeTransition(Duration.seconds(3), label_InfoText);
+        fadeIn.setFromValue(0.1);
+        fadeIn.setToValue(1.0);
+
+        gameInfoTextGameOverTransition.getChildren().add(fadeIn);
+        gameInfoTextGameOverTransition.setCycleCount(SequentialTransition.INDEFINITE);
+    }
+
+    private void startGameInfoTextGameOver(){
+        if (isGameInfoTextGameOverTransitionRunning == false) {
+            resetGameInfoTextGameOver();
+            isGameInfoTextGameOverTransitionRunning = true;
+            gameInfoTextGameOverTransition.play();
+        }
+    }
+
+    private void stopGameInfoTextGameOver(){
+        if (gameInfoTextGameOverTransition != null) {
+            label_InfoText.setVisible(true);
+            isGameInfoTextGameOverTransitionRunning = false;
+            gameInfoTextGameOverTransition.stop();
+        }
+    }
+
+    private void resetGameInfoTextGameOver(){
+        label_InfoText.setText("GAME OVER");
+        label_InfoText.setTextFill(Color.WHITE);
+        label_InfoText.setVisible(true);
+        gameInfoTextGameOverStatus = 0;
+    }
+
 
     public void toggleCollisionBox(){
         Rectangle temp = gameboard.getRect_GameboardCollisionBox();
@@ -178,11 +397,6 @@ public class GameboardViewController {
         gameboard.generateGoggles();
     }
 
-    public void loadGameSetup(){
-        gameboard.gameStartSetup();
-        Bindings.bindBidirectional(label_Player1Points.textProperty(), gameboard.getPointsOf(0), numStringConver);  // TODO: Make it in a better Way
-        Bindings.bindBidirectional(label_Player2Points.textProperty(), gameboard.getPointsOf(1), numStringConver);  // TODO: Make it in a better Way
-    }
 
     public void saveGameboardPreferences(){
         gameboard.saveGameboardPreferences();

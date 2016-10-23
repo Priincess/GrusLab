@@ -32,9 +32,9 @@ public class Gameboard {
     private IntegerProperty gameObjectDistance = new SimpleIntegerProperty(0);  // Overwritten by Preferences
 
     private ObservableList<GameObject> gameObjects;
-    private ArrayList<GameObject> minions ;
+    private ArrayList<GameObject> minions;
     private ArrayList<GameObject> items;
-    private ArrayList<IntegerProperty> points;
+
 
     public Gameboard(){
         gameboardPreferences = Preferences.userNodeForPackage(this.getClass());
@@ -46,7 +46,6 @@ public class Gameboard {
         gameObjects = FXCollections.observableArrayList();
         minions = new ArrayList<GameObject>();
         items = new ArrayList<GameObject>();
-        points = new ArrayList<IntegerProperty>();
     }
 
 
@@ -74,17 +73,12 @@ public class Gameboard {
         return gameObjects;
     }
 
-    public IntegerProperty getPointsOf(int minion){
-        if (minion >= 0 && minion < minions.size()) {
-            return points.get(minion);
-        }
-        return new SimpleIntegerProperty(-1);
-    }
+    public ArrayList<GameObject> getMinions() { return minions; }
 
 
     private void initGameboardRectangle(){
         rect_Gameboard = new Rectangle();
-        rect_Gameboard.setFill(Color.WHITE);
+        rect_Gameboard.setFill(Color.BLACK);
         rect_Gameboard.setStrokeType(StrokeType.OUTSIDE);
         rect_Gameboard.setStroke(Color.RED);
     }
@@ -104,14 +98,16 @@ public class Gameboard {
         rect_GameboardCollisionBox.heightProperty().bind(height);
     }
 
-    public void gameStartSetup(){
+    public boolean gameboardStartSetup(){
         if (minions.size() == 0) {
             createGameObject(GameObjectType.MINION, (int) rect_GameboardCollisionBox.getX(), (int) rect_GameboardCollisionBox.getY());
             createGameObject(GameObjectType.MINION, rect_GameboardCollisionBox.widthProperty().intValue() + minionSize.intValue(), rect_GameboardCollisionBox.heightProperty().intValue() + 2*minionSize.intValue());
             generateGoggles();
             generateBeedo();
             generateBanana();
+            return true;
         }
+        return false;
     }
 
     public void saveGameboardPreferences(){
@@ -127,7 +123,7 @@ public class Gameboard {
 
     }
 
-    public void loadGameboardPreferences(){
+    private void loadGameboardPreferences(){
         rect_Gameboard.setX(gameboardPreferences.getInt("GAMEBOARD_X", 50));
         rect_Gameboard.setY(gameboardPreferences.getInt("GAMEBOARD_Y", 90));
         rect_Gameboard.setWidth(gameboardPreferences.getInt("GAMEBOARD_WIDTH", 800));
@@ -140,7 +136,6 @@ public class Gameboard {
     }
 
 
-
     public GameObject createGameObject(GameObjectType type, int x, int y){
         GameObject gObj = new GameObject(type, null);
         gObj.setPosition(x, y);
@@ -148,7 +143,6 @@ public class Gameboard {
             case MINION:
                 gObj.setSize(minionSize);
                 minions.add(gObj);
-                points.add(new SimpleIntegerProperty(0));
                 break;
             case REFERENCEPOINT:
                 gObj.setSize(minionSize);
@@ -217,24 +211,7 @@ public class Gameboard {
         }
     }
 
-    public void updateGameRoutine(){
-        for (GameObject minion : minions){
-            if (isCollidingWithRedzone(minion) == true){
-                // TODO: doSomething;
-            } else {
-                GameObject minion2 = isCollidingWithMinion(minion);
-                if (minion2 != null){
-                    // TODO: doSomething();
-                }
-                GameObject item = isCollidingWithItem(minion);
-                if (item != null){
-                    itemCollisionHandler(minion, item);
-                }
-            }
-        }
-    }
-
-    private boolean isCollidingWithRedzone(GameObject minion){
+    public boolean isOutsideOfGameboard(GameObject minion){
         if (!rect_GameboardCollisionBox.getBoundsInParent().intersects(minion.imageView.getBoundsInParent())){
             return true;
         }
@@ -242,7 +219,7 @@ public class Gameboard {
     }
 
     // TODO: Rewrite: Get called twice 0,1  && 1,0
-    private GameObject isCollidingWithMinion(GameObject minion){
+    public GameObject isCollidingWithMinion(GameObject minion){
         for (GameObject temp : minions){
             if (temp.equals(minion) == false) {
                 if (minion.imageView.getBoundsInLocal().intersects(temp.imageView.getBoundsInLocal())) {
@@ -253,7 +230,7 @@ public class Gameboard {
         return null;
     }
 
-    private GameObject isCollidingWithItem(GameObject minion){
+    public GameObject isCollidingWithItem(GameObject minion){
         for (GameObject temp : items){
             if (minion.imageView.getBoundsInLocal().intersects(temp.imageView.getBoundsInLocal())) {
                 return temp;
@@ -262,45 +239,12 @@ public class Gameboard {
         return null;
     }
 
-    private void itemCollisionHandler(GameObject minion, GameObject item){
-        switch(item.type){
-            case BANANA:
-                bananaCollisionHandler(minion,item);
-                break;
-            case BEEDO:
-                beedoCollisionHandler(minion,item);
-                break;
-            case GOGGLES:
-                gogglesCollisionHandler(minion,item);
-                break;
-        }
-    }
-
-    private void bananaCollisionHandler(GameObject minion, GameObject item){
-        int index = minions.indexOf(minion);
-        points.get(index).set(points.get(index).intValue()+1);
-        item.playSound();
-        Point p = generateRandomPointOnGameboard();
-        item.setPosition(p.x, p.y);
-    }
-
-    private void beedoCollisionHandler(GameObject minion, GameObject item){
-        item.playSound();
-        removeGameObject(item);
-    }
-
-    private void gogglesCollisionHandler(GameObject minion, GameObject item){
-        item.playSound();
-        removeGameObject(item);
-    }
-
-    private void removeGameObject(GameObject gObj){
+    public void removeGameObject(GameObject gObj){
         switch(gObj.type){
             case MINION:
                 gameObjects.remove(gObj);
                 int index = minions.indexOf(gObj);
                 minions.remove(index);
-                points.remove(index);
                 break;
             default:
                 gameObjects.remove(gObj);
@@ -330,17 +274,21 @@ public class Gameboard {
         }
     }
 
+
     public void addObjects(LinkedList<Point> points, GameObjectType type){
         for(Point point : points){
             createGameObject(type, (int) point.getX(), (int) point.getY());
         }
     }
 
-
     public void removeObjects(GameObjectType type){
         Iterator<GameObject> iter = gameObjects.iterator();
         while (iter.hasNext()){
-            if(iter.next().type == type){
+            GameObject gObj = iter.next();
+            if(gObj.type == type){
+                if (gObj.type == GameObjectType.MINION){
+                    minions.remove(gObj);
+                }
                 iter.remove();
             }
         }

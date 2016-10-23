@@ -1,24 +1,21 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
+<?import java.lang.*?>
 <?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
 <Pane fx:id="pane_GameboardView" maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="game.gui.GameboardViewController">
    <children>
+      <Label fx:id="label_InfoText" text="Some Info Text" textAlignment="CENTER" textFill="WHITE">
+         <font>
+            <Font size="64.0" />
+         </font></Label>
       <MenuBar fx:id="menubar">
         <menus>
             <Menu mnemonicParsing="false" text="Game">
               <items>
                   <MenuItem mnemonicParsing="false" onAction="#saveGameboardPreferences" text="Save Gameboard" />
-                  <MenuItem mnemonicParsing="false" onAction="#loadGameSetup" text="Load game Setup" />
-                <MenuItem mnemonicParsing="false" text="Time in Seconds">
-                     <graphic>
-                        <TextField fx:id="textField_Timer" prefWidth="50.0" />
-                     </graphic>
-                  </MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction="#startGameCountdown" text="Start" />
-                  <MenuItem mnemonicParsing="false" onAction="#stopGameCountdown" text="Stop" />
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Gameboard">
@@ -76,33 +73,33 @@
         </menus>
       </MenuBar>
 
-       <Label fx:id="label_Timer" alignment="CENTER" prefHeight="35.0" prefWidth="100.0" text="01 : 49">
+       <Label fx:id="label_Timer" alignment="CENTER" prefHeight="35.0" prefWidth="100.0" text="120" textFill="WHITE">
            <font>
                <Font size="24.0" />
            </font>
        </Label>
-       <Pane fx:id="pane_Player1" prefHeight="35.0" prefWidth="170.0">
+       <Pane fx:id="pane_YellowMinion" prefHeight="35.0" prefWidth="170.0">
            <children>
-               <Label fx:id="label_Player1" prefHeight="35.0" prefWidth="100.0" text="Player 1:" textFill="#f5e050">
+               <Label fx:id="label_YellowMinion" prefHeight="35.0" prefWidth="100.0" text="Minion:" textFill="#f5e050">
                    <font>
                        <Font size="24.0" />
                    </font>
                </Label>
-               <Label fx:id="label_Player1Points" layoutX="100.0" prefHeight="35.0" prefWidth="60.0" text="0" textFill="#f5e050">
+               <Label fx:id="label_YellowMinionPoints" layoutX="100.0" prefHeight="35.0" prefWidth="60.0" text="0" textFill="#f5e050">
                    <font>
                        <Font size="24.0" />
                    </font>
                </Label>
            </children>
        </Pane>
-       <Pane fx:id="pane_Player2" prefHeight="35.0" prefWidth="160.0">
+       <Pane fx:id="pane_EvilMinion" prefHeight="35.0" prefWidth="200.0">
            <children>
-               <Label fx:id="label_Player2" prefHeight="35.0" prefWidth="100.0" text="Player 2:" textFill="#743980">
+               <Label fx:id="label_EvilMinion" prefHeight="35.0" prefWidth="130.0" text="Evil Minion:" textFill="#743980">
                    <font>
                        <Font size="24.0" />
                    </font>
                </Label>
-               <Label fx:id="label_Player2Points" layoutX="100.0" prefHeight="35.0" prefWidth="60.0" text="0" textFill="#743980">
+               <Label fx:id="label_EvilMinionPoints" layoutX="140.0" prefHeight="35.0" prefWidth="60.0" text="0" textFill="#743980">
                    <font>
                        <Font size="24.0" />
                    </font>
