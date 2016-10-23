@@ -33,6 +33,7 @@ public class GameboardViewController {
     private Game game;
     private Gameboard gameboard;
     private GameState gameState;
+    private GuiManager guiManager;
 
     private NumberStringConverter numStringConver = new NumberStringConverter();
 
@@ -81,6 +82,7 @@ public class GameboardViewController {
         this.game = game;
         this.gameboard = game.getGameboard();
         gameState = GameState.getInstance();
+        guiManager = new GuiManager();
 
         pane_GameboardView.setStyle("-fx-background-color: black;");
         pane_GameboardView.getChildren().add(gameboard.getRect_Gameboard());

@@ -13,7 +13,7 @@
             <MediaView fx:id="mediaView_Background" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
          </children>
       </AnchorPane>
-      <Label fx:id="label_WaitingFor" layoutX="241.0" layoutY="30.0" text="Waiting for Players">
+      <Label fx:id="label_GameInfoText" text="Some Info Text">
          <font>
             <Font size="96.0" />
          </font>

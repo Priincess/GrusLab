@@ -1,15 +1,23 @@
 package game.gui;
 
+import game.GameState;
+import game.GameStateValue;
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
+import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Parent;
 import javafx.scene.control.Label;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
 import javafx.scene.media.Media;
 import javafx.scene.media.MediaPlayer;
 import javafx.scene.media.MediaView;
+import javafx.scene.paint.Color;
 import javafx.util.Duration;
 
 /**
@@ -17,27 +25,38 @@ import javafx.util.Duration;
  */
 public class GameStartViewController {
 
+    private GameState gameState;
+    private GuiManager guiManager;
+
     @FXML
     Pane pane_GameStartView;
     @FXML
     MediaView mediaView_Background;
     @FXML
-    Label label_WaitingFor;
+    Label label_GameInfoText;
+
+    private SequentialTransition gameInfoTextLoadingTransition;
+    private boolean isGameInfoTextLoadingTransitionRunning = false;
 
     @FXML
     public void initialize(){
+        guiManager = new GuiManager();
+        gameState = GameState.getInstance();
         initPane();
         initBackgroundVideo();
-        initLoadingText();
+        initGameInfoTextLoadingTransition();
         initBindings();
+
+        addMouseListenerToPane();
+        startGameInfoTextLoadingTransition();
     }
 
-    public void initPane(){
+    private void initPane(){
         pane_GameStartView.setStyle("-fx-background-color: black;");
     }
 
 
-    public void initBackgroundVideo(){
+    private void initBackgroundVideo(){
         Media video = new Media(getClass().getResource("media/minionsWantsBanana.mp4").toExternalForm());
         MediaPlayer mediaPlayer = new MediaPlayer(video);
         mediaPlayer.setAutoPlay(true);
@@ -46,28 +65,83 @@ public class GameStartViewController {
         mediaView_Background.setSmooth(true);
     }
 
-    public void initBindings(){
+    private void initBindings(){
         DoubleProperty width = mediaView_Background.fitWidthProperty();
         DoubleProperty height = mediaView_Background.fitHeightProperty();
 
         width.bind(Bindings.selectDouble(mediaView_Background.sceneProperty(), "width"));
         height.bind(Bindings.selectDouble(mediaView_Background.sceneProperty(), "height"));
+
+        label_GameInfoText.layoutXProperty().bind(mediaView_Background.fitWidthProperty().divide(2).
+                subtract(label_GameInfoText.widthProperty().divide(2)));
     }
 
-    public void initLoadingText(){
-        SequentialTransition transition = new SequentialTransition();
-        FadeTransition fadeOut = new FadeTransition(Duration.seconds(2), label_WaitingFor);
+    private void initGameInfoTextLoadingTransition(){
+        gameInfoTextLoadingTransition = new SequentialTransition();
+        FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.5), label_GameInfoText);
         fadeOut.setFromValue(1.0);
         fadeOut.setToValue(0.0);
-        transition.getChildren().add(fadeOut);
+        fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
+            @Override
+            public void handle(ActionEvent event) {
+                switch (label_GameInfoText.getText()) {
+                    case "Loading":
+                        label_GameInfoText.setText("Loading.");
+                        break;
+                    case "Loading.":
+                        label_GameInfoText.setText("Loading..");
+                        break;
+                    case "Loading..":
+                        label_GameInfoText.setText("Loading...");
+                        break;
+                    case "Loading...":
+                        label_GameInfoText.setText("Loading");
+                        break;
+                }
+            }
+        });
+        gameInfoTextLoadingTransition.getChildren().add(fadeOut);
 
-        FadeTransition fadeIn = new FadeTransition(Duration.seconds(2), label_WaitingFor);
+        FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), label_GameInfoText);
         fadeIn.setFromValue(0.0);
         fadeIn.setToValue(1.0);
 
-        transition.getChildren().add(fadeIn);
-        transition.setCycleCount(SequentialTransition.INDEFINITE);
-        transition.play();
+        gameInfoTextLoadingTransition.getChildren().add(fadeIn);
+        gameInfoTextLoadingTransition.setCycleCount(SequentialTransition.INDEFINITE);
+    }
+
+    private void startGameInfoTextLoadingTransition(){
+        if ( isGameInfoTextLoadingTransitionRunning == false) {
+            resetGameInfoTextLoadingTransition();
+            isGameInfoTextLoadingTransitionRunning = true;
+            gameInfoTextLoadingTransition.play();
+        }
+    }
+
+    private void stopGameInfoTextLoadingTransition(){
+        if (gameInfoTextLoadingTransition != null) {
+            isGameInfoTextLoadingTransitionRunning = false;
+            gameInfoTextLoadingTransition.stop();
+        }
+    }
+
+    private void resetGameInfoTextLoadingTransition(){
+        label_GameInfoText.setText("Loading");
+        label_GameInfoText.setTextFill(Color.WHITE);
+        label_GameInfoText.setVisible(true);
+    }
+
+    private void addMouseListenerToPane(){
+        pane_GameStartView.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent mouseEvent) {
+                if (mouseEvent.isPrimaryButtonDown() == true){
+                    gameState.setGameState(GameStateValue.READY);
+                    stopGameInfoTextLoadingTransition();
+                    guiManager.gotoGameboardView();
+                }
+            }
+        });
     }
 
 }
