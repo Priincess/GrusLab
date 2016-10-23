@@ -41,6 +41,8 @@ public class GameboardViewController {
     private Pane pane_GameboardView;
 
     @FXML
+    private TextField textField_GameTimer;
+    @FXML
     private TextField textField_GameboardX;
     @FXML
     private TextField textField_GameboardY;
@@ -92,6 +94,7 @@ public class GameboardViewController {
         addGameTimeListener();
         addMouseListenerToPane();
 
+        setGameBindings();
         setGameboardBindings();
         setGameObjectBindings();
         setGameTextBindings();
@@ -101,6 +104,10 @@ public class GameboardViewController {
         initGameInfoTextGameOver();
 
         startGameInfoTextReady();
+    }
+
+    private void setGameBindings(){
+        Bindings.bindBidirectional(textField_GameTimer.textProperty(), game.getGameTime(), numStringConver);
     }
 
     private void setGameboardBindings(){
@@ -200,24 +207,28 @@ public class GameboardViewController {
         pane_GameboardView.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                if (mouseEvent.isPrimaryButtonDown() == true && gameState.getGameState() == GameStateValue.READY){
-                    stopGameInfoTextReady();
-                    startGameInfoTextCountdown();
-                }
-                if (mouseEvent.isPrimaryButtonDown() == true && gameState.getGameState() == GameStateValue.FINISHED){
-                    gameState.setGameState(GameStateValue.READY);
-                    stopGameInfoTextGameOver();
-                    startGameInfoTextReady();
-                }
-                if (gameState.getGameState() == GameStateValue.PLAY) {
-                    int x = (int) mouseEvent.getX() - gameboard.getMinionSize().intValue() / 2;
-                    int y = (int) mouseEvent.getY() - gameboard.getMinionSize().intValue() / 2;
-                    if (y > 70 && gameState.getGameState() == GameStateValue.PLAY) {
-                        if (mouseEvent.isPrimaryButtonDown() == true) {
-                            gameboard.setMinionPosition(0, x, y);
-                        }
-                        if (mouseEvent.isSecondaryButtonDown()) {
-                            gameboard.setMinionPosition(1, x, y);
+                int x = (int) mouseEvent.getX() - gameboard.getMinionSize().intValue() / 2;
+                int y = (int) mouseEvent.getY() - gameboard.getMinionSize().intValue() / 2;
+
+                if (y > 100) {
+
+                    if (mouseEvent.isPrimaryButtonDown() == true && gameState.getGameState() == GameStateValue.READY) {
+                        stopGameInfoTextReady();
+                        startGameInfoTextCountdown();
+                    }
+                    if (mouseEvent.isPrimaryButtonDown() == true && gameState.getGameState() == GameStateValue.FINISHED) {
+                        gameState.setGameState(GameStateValue.READY);
+                        stopGameInfoTextGameOver();
+                        startGameInfoTextReady();
+                    }
+                    if (gameState.getGameState() == GameStateValue.PLAY) {
+                        if (gameState.getGameState() == GameStateValue.PLAY) {
+                            if (mouseEvent.isPrimaryButtonDown() == true) {
+                                gameboard.setMinionPosition(0, x, y);
+                            }
+                            if (mouseEvent.isSecondaryButtonDown()) {
+                                gameboard.setMinionPosition(1, x, y);
+                            }
                         }
                     }
                 }
@@ -403,8 +414,5 @@ public class GameboardViewController {
     public void saveGameboardPreferences(){
         gameboard.saveGameboardPreferences();
     }
-
-
-
 
 }

@@ -38,7 +38,6 @@ public class Game {
         points.add(new SimpleIntegerProperty(0));
         points.add(new SimpleIntegerProperty(0));
 
-        gameTime.set(10);   // TODO: Remove
         gameState.setGameState(GameStateValue.READY);   // TODO: Remove
     }
 
@@ -123,7 +122,7 @@ public class Game {
     private void stopGameRunningTask(){
         gameRunningTimerTask.cancel();
         gameRunningTimerTask = null;
-        gameTime.set(gamePreferences.getInt("GAME_TIME", 10));  // TODO: Set 120
+        gameTime.set(gamePreferences.getInt("GAME_TIME", 120));
     }
 
     private void cleanGameboard(){

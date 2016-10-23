@@ -28,6 +28,8 @@ public class GameStartViewController {
     private GameState gameState;
     private GuiManager guiManager;
 
+    private MediaPlayer mediaPlayer;
+
     @FXML
     Pane pane_GameStartView;
     @FXML
@@ -58,7 +60,7 @@ public class GameStartViewController {
 
     private void initBackgroundVideo(){
         Media video = new Media(getClass().getResource("media/minionsWantsBanana.mp4").toExternalForm());
-        MediaPlayer mediaPlayer = new MediaPlayer(video);
+        mediaPlayer = new MediaPlayer(video);
         mediaPlayer.setAutoPlay(true);
         mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
         mediaView_Background.setMediaPlayer(mediaPlayer);
@@ -138,6 +140,7 @@ public class GameStartViewController {
                 if (mouseEvent.isPrimaryButtonDown() == true){
                     gameState.setGameState(GameStateValue.READY);
                     stopGameInfoTextLoadingTransition();
+                    mediaPlayer.stop();
                     guiManager.gotoGameboardView();
                 }
             }
