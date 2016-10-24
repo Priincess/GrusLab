@@ -5,5 +5,5 @@ package game;
  * This enum holds the states which the game itself can have.
  */
 public enum GameStateValue {
-	INIT, WAIT, READY, PLAY, FINISHED
+	INIT, WAIT, READY, PLAY, PAUSE, FINISHED
 }

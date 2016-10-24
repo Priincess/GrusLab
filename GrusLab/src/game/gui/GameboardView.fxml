@@ -15,7 +15,10 @@
         <menus>
             <Menu mnemonicParsing="false" text="Game">
               <items>
+                  <MenuItem mnemonicParsing="false" onAction="#hideMenu" text="Hide Menubar" />
                   <MenuItem mnemonicParsing="false" onAction="#saveGameboardPreferences" text="Save Gameboard" />
+                  <MenuItem mnemonicParsing="false" onAction="#pauseGame" text="Pause Game" />
+                  <MenuItem mnemonicParsing="false" onAction="#continueGame" text="Continue Game" />
                   <MenuItem mnemonicParsing="false" text="Game-Timer">
                      <graphic>
                         <TextField fx:id="textField_GameTimer" prefWidth="75.0" />

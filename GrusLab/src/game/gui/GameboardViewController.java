@@ -7,7 +7,6 @@ import game.gameboard.GameObject;
 import game.gameboard.Gameboard;
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
-import javafx.animation.Transition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.value.ChangeListener;
@@ -17,6 +16,7 @@ import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.control.Label;
+import javafx.scene.control.MenuBar;
 import javafx.scene.control.TextField;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -39,6 +39,8 @@ public class GameboardViewController {
 
     @FXML
     private Pane pane_GameboardView;
+    @FXML
+    private MenuBar menubar;
 
     @FXML
     private TextField textField_GameTimer;
@@ -210,7 +212,7 @@ public class GameboardViewController {
                 int x = (int) mouseEvent.getX() - gameboard.getMinionSize().intValue() / 2;
                 int y = (int) mouseEvent.getY() - gameboard.getMinionSize().intValue() / 2;
 
-                if (y > 100) {
+                if (y > 70) {
 
                     if (mouseEvent.isPrimaryButtonDown() == true && gameState.getGameState() == GameStateValue.READY) {
                         stopGameInfoTextReady();
@@ -413,6 +415,18 @@ public class GameboardViewController {
 
     public void saveGameboardPreferences(){
         gameboard.saveGameboardPreferences();
+    }
+
+    public void hideMenu(){
+        pane_GameboardView.getChildren().remove(menubar);
+    }
+
+    public void pauseGame(){
+        game.stopGameTimer();
+    }
+
+    public void continueGame(){
+        game.startGameTimer();
     }
 
 }
