@@ -6,6 +6,8 @@ import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -50,6 +52,7 @@ public class GameStartViewController {
         initBindings();
 
         addMouseListenerToPane();
+        addGameStateListener();
         startGameInfoTextLoadingTransition();
     }
 
@@ -133,15 +136,28 @@ public class GameStartViewController {
         label_GameInfoText.setVisible(true);
     }
 
+    // TODO: Remove
     private void addMouseListenerToPane(){
         pane_GameStartView.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.isPrimaryButtonDown() == true){
                     gameState.setGameState(GameStateValue.READY);
-                    stopGameInfoTextLoadingTransition();
-                    mediaPlayer.stop();
-                    guiManager.gotoGameboardView();
+                }
+            }
+        });
+    }
+
+    private void addGameStateListener(){
+        gameState.getGameStateNumber().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal,
+                                          Object newVal){
+                switch (gameState.getGameState()){
+                    case READY:
+                        //stopGameInfoTextLoadingTransition();
+                        mediaPlayer.stop();
+                        guiManager.gotoGameboardView();
+                        break;
                 }
             }
         });
