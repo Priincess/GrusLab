@@ -16,9 +16,11 @@ import javafx.stage.WindowEvent;
 public class GuiManager extends Application{
 
     private StageManager stageManager;
+    private Game _game;
 
-    public GuiManager(){
+    public GuiManager(Game game){
         stageManager = StageManager.getInstance();
+        _game = game;
     }
 
     public void launchGUI(){
@@ -38,7 +40,8 @@ public class GuiManager extends Application{
                 System.exit(0);
             }
         });
-        gotoGameStartView();
+        //gotoGameStartView();
+        gotoGameboardView();
     }
 
     public void gotoGameStartView(){
@@ -57,7 +60,7 @@ public class GuiManager extends Application{
             FXMLLoader loader = new FXMLLoader();
             Parent root = (Parent) loader.load(getClass().getResource("GameboardView.fxml").openStream());
             GameboardViewController controller = loader.getController();
-            controller.initGameboardViewController(new Game());
+            controller.initGameboardViewController(_game);
             sceneChange(root);
         } catch (Exception ex){
             ex.printStackTrace();

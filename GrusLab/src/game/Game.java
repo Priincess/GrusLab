@@ -1,5 +1,6 @@
 package game;
 
+import game.camera.ObjTracker;
 import game.gameboard.GameObject;
 import game.gameboard.GameObjectType;
 import game.gameboard.Gameboard;
@@ -26,6 +27,7 @@ public class Game {
     private Preferences gamePreferences;
     private Gameboard gameboard;
     private GameState gameState;
+    private ObjTracker tracker;
 
     private ArrayList<IntegerProperty> points;
 
@@ -34,7 +36,8 @@ public class Game {
     private TimerTask gameTimerTask;
     private TimerTask gameRunningTimerTask;
 
-    public Game(){
+    public Game(ObjTracker tracker){
+        this.tracker = tracker;
         gameState = GameState.getInstance();
         gamePreferences = Preferences.userNodeForPackage(this.getClass());
         loadGameSettings();

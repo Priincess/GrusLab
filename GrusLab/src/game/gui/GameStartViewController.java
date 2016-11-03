@@ -11,8 +11,6 @@ import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -28,7 +26,6 @@ import javafx.util.Duration;
 public class GameStartViewController {
 
     private GameState gameState;
-    private GuiManager guiManager;
 
     private MediaPlayer mediaPlayer;
 
@@ -44,7 +41,6 @@ public class GameStartViewController {
 
     @FXML
     public void initialize(){
-        guiManager = new GuiManager();
         gameState = GameState.getInstance();
         initPane();
         initBackgroundVideo();
@@ -52,7 +48,7 @@ public class GameStartViewController {
         initBindings();
 
         addMouseListenerToPane();
-        addGameStateListener();
+        //addGameStateListener();
         startGameInfoTextLoadingTransition();
     }
 
@@ -147,20 +143,20 @@ public class GameStartViewController {
             }
         });
     }
-
-    private void addGameStateListener(){
-        gameState.getGameStateNumber().addListener(new ChangeListener(){
-            @Override public void changed(ObservableValue o, Object oldVal,
-                                          Object newVal){
-                switch (gameState.getGameState()){
-                    case READY:
-                        //stopGameInfoTextLoadingTransition();
-                        mediaPlayer.stop();
-                        guiManager.gotoGameboardView();
-                        break;
-                }
-            }
-        });
-    }
+//
+//    private void addGameStateListener(){
+//        gameState.getGameStateNumber().addListener(new ChangeListener(){
+//            @Override public void changed(ObservableValue o, Object oldVal,
+//                                          Object newVal){
+//                switch (gameState.getGameState()){
+//                    case READY:
+//                        //stopGameInfoTextLoadingTransition();
+//                        mediaPlayer.stop();
+//                        guiManager.gotoGameboardView();
+//                        break;
+//                }
+//            }
+//        });
+//    }
 
 }

@@ -225,7 +225,7 @@ public class GameboardViewController {
                         break;
                     case CALIBRATION:
                         stopGameInfoTextReady();
-                        label_InfoText.setText("Calibration");
+                        label_InfoText.setVisible(false);
                         startCalibration();
                         break;
 

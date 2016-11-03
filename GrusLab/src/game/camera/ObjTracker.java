@@ -19,7 +19,7 @@ public class ObjTracker {
 	private static final int NUM_OF_SCALEPOINTS = 4;
 	
 	private static final Point NOT_VALID = new Point(-1,-1);
-	
+
     private VideoCapture _capture;
 	private Mat _actualFrame;
 	
