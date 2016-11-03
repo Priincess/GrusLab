@@ -135,7 +135,8 @@ public class Game {
 
 
     private void cleanGameboard(){
-        gameboard.removeObjects(GameObjectType.MINION);
+        gameboard.removeObjects(GameObjectType.YELLOWMINION);
+        gameboard.removeObjects(GameObjectType.PURPLEMINION);
         gameboard.removeObjects(GameObjectType.BANANA);
         gameboard.removeObjects(GameObjectType.BEEDO);
         gameboard.removeObjects(GameObjectType.GOGGLES);

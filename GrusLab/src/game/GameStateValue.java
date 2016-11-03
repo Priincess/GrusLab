@@ -10,7 +10,8 @@ public enum GameStateValue {
 	READY(2),
 	PLAY(3),
 	PAUSE(4),
-	FINISHED(5);
+	FINISHED(5),
+	CALIBRATION(6);
 
 	private final int value;
 	GameStateValue(int value){
