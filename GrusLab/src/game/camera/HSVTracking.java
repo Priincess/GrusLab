@@ -27,6 +27,8 @@ public class HSVTracking {
 	
 	private Scalar _lowerbound;
 	
+	//NANANANANANA
+	
 	Mat _mask;
 	
 	Mat _tracked;
