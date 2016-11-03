@@ -4,6 +4,7 @@ import game.Game;
 import game.GameState;
 import game.GameStateValue;
 import game.gameboard.GameObject;
+import game.gameboard.GameObjectType;
 import game.gameboard.Gameboard;
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
@@ -26,9 +27,7 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import javafx.util.converter.NumberStringConverter;
 
-import static game.GameStateValue.PAUSE;
-import static game.GameStateValue.PLAY;
-import static game.GameStateValue.READY;
+import static game.GameStateValue.*;
 
 /**
  * Created by Mark Mauerhofer on 08.10.2016.
@@ -38,7 +37,6 @@ public class GameboardViewController {
     private Game game;
     private Gameboard gameboard;
     private GameState gameState;
-    private GuiManager guiManager;
 
     private NumberStringConverter numStringConver = new NumberStringConverter();
 
@@ -98,7 +96,6 @@ public class GameboardViewController {
         this.game = game;
         this.gameboard = game.getGameboard();
         gameState = GameState.getInstance();
-        guiManager = new GuiManager();
 
         pane_GameboardView.setStyle("-fx-background-color: black;");
         pane_GameboardView.getChildren().add(gameboard.getRect_Gameboard());
@@ -224,13 +221,19 @@ public class GameboardViewController {
                         startGameInfoTextPause();
                         break;
                     case FINISHED:
-                        gameInfoTextGameOverStatus = 0;
                         startGameInfoTextGameOver();
                         break;
+                    case CALIBRATION:
+                        stopGameInfoTextReady();
+                        label_InfoText.setText("Calibration");
+                        startCalibration();
+                        break;
+
                 }
             }
         });
     }
+
 
     private void addMouseListenerToPane(){
         pane_GameboardView.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
@@ -481,6 +484,22 @@ public class GameboardViewController {
 
     public void continueGame(){
         gameState.setGameState(PLAY);
+    }
+
+    public void startCalibration(){
+        if (GameState.getGameState() == READY) {
+            gameState.setGameState(CALIBRATION);
+            gameboard.minionStartSetup();
+        }
+    }
+
+    public void endCalibration(){
+        if (GameState.getGameState() == CALIBRATION) {
+            // TODO: save etc
+            gameboard.removeObjects(GameObjectType.YELLOWMINION);
+            gameboard.removeObjects(GameObjectType.PURPLEMINION);
+            gameState.setGameState(READY);
+        }
     }
 
 }
