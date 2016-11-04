@@ -16,6 +16,7 @@ public class ObjTracker {
 	private static final Scalar EVIL_UPPER = new Scalar(160, 127, 65);
 	private static final Scalar EVIL_LOWER = new Scalar(120,77,10);
 	
+	//HI
 	
 	//ID for webcam to be used
 	private static final int CAM_ID = 1;
