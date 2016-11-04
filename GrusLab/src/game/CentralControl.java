@@ -118,9 +118,7 @@ public class CentralControl {
 		_controllerInit = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				Player[] players = _controllerManager.initController();
-				_player1 = players[0];
-				_player2 = players[1];
+				_controllerManager.initController(new Player[]{_player1, _player2});
 			}
 		});
 		
@@ -144,7 +142,7 @@ public class CentralControl {
 		_serverInit = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				_server.connectWithMinions();
+				_server.connectWithMinions(new Player[]{_player1, _player2});
 			}
 		});
 		

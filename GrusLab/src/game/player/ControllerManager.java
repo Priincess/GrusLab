@@ -3,6 +3,10 @@ package game.player;
 import org.lwjgl.LWJGLException;
 import org.lwjgl.input.Controllers;
 
+import game.Components;
+import game.GameState;
+import game.GameStateValue;
+
 /**
  * @author lilpr
  * This class is responsible for the registered controllers. Among other things it polls the pressed buttons.
@@ -11,6 +15,8 @@ public class ControllerManager {
 
 	private static String PS4_NAME = "Wireless Controller";
 	private static String XBOX_NAME = "Controller (Xbox 360 Wireless Receiver for Windows)";
+	private static int INDEX_CONTROLLER1 = 0;
+	private static int INDEX_CONTROLLER2 = 1;
 	
 	private boolean _manage = false;
 	
@@ -20,8 +26,7 @@ public class ControllerManager {
 	 * This method waits until two controller are registered
 	 * @return list of players
 	 */
-	public Player[] initController(){
-		Player[] players = new Player[2];
+	public void initController(Player[] players){
 		int amountOfPlayer=0;
 		
 		do{
@@ -38,12 +43,14 @@ public class ControllerManager {
 				if(amountOfPlayer < 2){
 					if(Controllers.getController(i).getName().equals(PS4_NAME)){
 						if(amountOfPlayer ==0 || !players[amountOfPlayer-1].getController().equals(Controllers.getController(i))){
-							players[amountOfPlayer] = new Player(Controllers.getController(i), Gamepad.PS4);
+							players[amountOfPlayer].setController(Controllers.getController(i));
+							players[amountOfPlayer].setGamepad(Gamepad.PS4);
 							amountOfPlayer++;
 						}
 					}else if(Controllers.getController(i).getName().equals(XBOX_NAME)){
 						if(amountOfPlayer ==0 || !players[amountOfPlayer-1].getController().equals(Controllers.getController(i))){
-							players[amountOfPlayer] = new Player(Controllers.getController(i), Gamepad.Xbox);
+							players[amountOfPlayer].setController(Controllers.getController(i));
+							players[amountOfPlayer].setGamepad(Gamepad.Xbox);
 							amountOfPlayer++;
 						}
 					}
@@ -52,8 +59,6 @@ public class ControllerManager {
 			
 			Controllers.destroy();
 		}while(amountOfPlayer < 2);
-		
-		return players;
 	}
 	
 	/**
@@ -95,8 +100,14 @@ public class ControllerManager {
 		//manage the state the controller until stop signal is set
 		while (_manage) {
 			//poll from controllers
-			p1.getController().poll();
-			p2.getController().poll();
+			if(!p1.getController().poll()){
+				GameState.getInstance().setGameState(GameStateValue.PAUSE);
+				Components.setControllerConnected(INDEX_CONTROLLER1, false);
+			}
+			if(!p2.getController().poll()){
+				GameState.getInstance().setGameState(GameStateValue.PAUSE);
+				Components.setControllerConnected(INDEX_CONTROLLER2, false);
+			}
 			
 			//check state of controllers
 			checkControllerState(p1);

@@ -13,18 +13,10 @@ public class Player {
 	private PlayerState _playerState = PlayerState.Normal;
 	private ControllerState _controllerState = ControllerState.None;	
 	private boolean _controllerChanged=false;
+	private Minion _minion;
 	
 	//**********PUBLIC METHODS**********
-	
-	/**
-	 * @param controller instance of controller
-	 * @param gamepad which controller is used (Xbox, PS4)
-	 */
-	public Player(Controller controller, Gamepad gamepad){
-		_controller = controller;
-		_gamepad = gamepad;
-	}
-	
+
 	/**
 	 * This method sets the state of the pressed controller buttons
 	 * 
@@ -99,10 +91,24 @@ public class Player {
 	}
 	
 	/**
+	 * @param controller instance of controller
+	 */
+	public void setController(Controller controller){
+		_controller = controller;
+	}
+	
+	/**
 	 * @return used gamepad (Xbox or PS4)
 	 */
 	public Gamepad getGamepad(){
 		return _gamepad;
+	}
+	
+	/**
+	 * @param gamepad which gamepad is used (PS4 or Xbox)
+	 */
+	public void setGamepad(Gamepad gamepad){
+		_gamepad = gamepad;
 	}
 	
 	/**
@@ -136,6 +142,23 @@ public class Player {
 		_controllerChanged=false;
 	}
 	
+	/**
+	 * @return the minion of the player (yellow or purple)
+	 */
+	public Minion getMinion(){
+		return _minion;
+	}
+	
+	/**
+	 * @param minion set the minion of the player (yellow or purple)
+	 */
+	public void setMinion(Minion minion){
+		_minion = minion;
+	}
+	
+	/**
+	 * Reset player for new game
+	 */
 	public void reset(){
 		resetControllerChanged();
 		_playerState = PlayerState.Normal;
