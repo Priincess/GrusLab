@@ -6,11 +6,11 @@ import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
 import javafx.beans.binding.Bindings;
 import javafx.beans.property.DoubleProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
-import javafx.scene.Parent;
 import javafx.scene.control.Label;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.Pane;
@@ -42,14 +42,15 @@ public class GameStartViewController {
 
     @FXML
     public void initialize(){
-        guiManager = new GuiManager();
         gameState = GameState.getInstance();
+        guiManager = new GuiManager();
         initPane();
         initBackgroundVideo();
         initGameInfoTextLoadingTransition();
         initBindings();
 
         addMouseListenerToPane();
+        addGameStateListener();
         startGameInfoTextLoadingTransition();
     }
 
@@ -133,15 +134,28 @@ public class GameStartViewController {
         label_GameInfoText.setVisible(true);
     }
 
+    // TODO: Remove
     private void addMouseListenerToPane(){
         pane_GameStartView.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.isPrimaryButtonDown() == true){
                     gameState.setGameState(GameStateValue.READY);
-                    stopGameInfoTextLoadingTransition();
-                    mediaPlayer.stop();
-                    guiManager.gotoGameboardView();
+                }
+            }
+        });
+    }
+
+    private void addGameStateListener(){
+        gameState.getGameStateNumber().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal,
+                                          Object newVal){
+                switch (gameState.getGameState()){
+                    case READY:
+                        //stopGameInfoTextLoadingTransition();
+                        mediaPlayer.stop();
+                        guiManager.gotoGameboardView();
+                        break;
                 }
             }
         });

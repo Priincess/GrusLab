@@ -19,8 +19,11 @@ public class GameObject {
         this.type = type;
 
         switch (type){
-            case MINION:
-                this.imageView = new ImageView(getClass().getResource("gameObjectMedia/minion.png").toExternalForm());
+            case YELLOWMINION:
+                this.imageView = new ImageView(getClass().getResource("gameObjectMedia/minion1.png").toExternalForm());
+                break;
+            case PURPLEMINION:
+                this.imageView = new ImageView(getClass().getResource("gameObjectMedia/minion2.png").toExternalForm());
                 break;
             case BANANA:
                 this.imageView = new ImageView(getClass().getResource("gameObjectMedia/banana.png").toExternalForm());

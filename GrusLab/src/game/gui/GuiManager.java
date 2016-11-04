@@ -15,23 +15,27 @@ import javafx.stage.WindowEvent;
  */
 public class GuiManager extends Application{
 
-    private StageManager stageManager;
-
-    public GuiManager(){
-        stageManager = StageManager.getInstance();
-    }
+    private static Stage _stage;
+    private static Game _game;
 
     public void launchGUI(){
         launch(null);
     }
 
+    public void setGame(Game game){
+        _game = game;
+    }
+
+    public Game getGame(){
+        return _game;
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        stageManager.setPrimaryStage(primaryStage);
-        stageManager.getPrimaryStage().setFullScreen(true);
-        stageManager.getPrimaryStage().setTitle("Gru´s Lab - Immer Der Banana Nach");
-        stageManager.getPrimaryStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+        _stage = primaryStage;
+        _stage.setFullScreen(true);
+        _stage.setTitle("Gru´s Lab - Immer Der Banana Nach");
+        _stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent t) {
                 Platform.exit();
@@ -57,7 +61,7 @@ public class GuiManager extends Application{
             FXMLLoader loader = new FXMLLoader();
             Parent root = (Parent) loader.load(getClass().getResource("GameboardView.fxml").openStream());
             GameboardViewController controller = loader.getController();
-            controller.initGameboardViewController(new Game());
+            controller.initGameboardViewController(_game);
             sceneChange(root);
         } catch (Exception ex){
             ex.printStackTrace();
@@ -65,12 +69,12 @@ public class GuiManager extends Application{
     }
 
     private void sceneChange(Parent root){
-        if (stageManager.getPrimaryStage().getScene() == null){
-            stageManager.getPrimaryStage().setScene(new Scene(root));
-            stageManager.getPrimaryStage().setFullScreen(true);
-            stageManager.getPrimaryStage().show();
+        if (_stage.getScene() == null){
+            _stage.setScene(new Scene(root));
+            _stage.setFullScreen(true);
+            _stage.show();
         } else {
-            stageManager.getPrimaryStage().getScene().setRoot(root);
+            _stage.getScene().setRoot(root);
         }
     }
 

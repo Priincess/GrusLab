@@ -1,6 +1,5 @@
 package game.gameboard;
 
-import javafx.application.Platform;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
@@ -100,14 +99,18 @@ public class Gameboard {
 
     public boolean gameboardStartSetup(){
         if (minions.size() == 0) {
-            createGameObject(GameObjectType.MINION, (int) rect_GameboardCollisionBox.getX(), (int) rect_GameboardCollisionBox.getY());
-            createGameObject(GameObjectType.MINION, rect_GameboardCollisionBox.widthProperty().intValue() + minionSize.intValue(), rect_GameboardCollisionBox.heightProperty().intValue() + 2*minionSize.intValue());
+            minionStartSetup();
             generateGoggles();
             generateBeedo();
             generateBanana();
             return true;
         }
         return false;
+    }
+
+    public void minionStartSetup(){
+        createGameObject(GameObjectType.YELLOWMINION, (int) rect_Gameboard.getX(), (int) rect_Gameboard.getY());
+        createGameObject(GameObjectType.PURPLEMINION, (int) rect_Gameboard.getX() + rect_Gameboard.widthProperty().intValue() - minionSize.intValue(), (int) rect_Gameboard.getY() + rect_Gameboard.heightProperty().intValue() - minionSize.intValue());
     }
 
     public void saveGameboardPreferences(){
@@ -140,7 +143,11 @@ public class Gameboard {
         GameObject gObj = new GameObject(type, null);
         gObj.setPosition(x, y);
         switch (type){
-            case MINION:
+            case YELLOWMINION:
+                gObj.setSize(minionSize);
+                minions.add(gObj);
+                break;
+            case PURPLEMINION:
                 gObj.setSize(minionSize);
                 minions.add(gObj);
                 break;
@@ -241,10 +248,15 @@ public class Gameboard {
 
     public void removeGameObject(GameObject gObj){
         switch(gObj.type){
-            case MINION:
+            case YELLOWMINION:
                 gameObjects.remove(gObj);
-                int index = minions.indexOf(gObj);
-                minions.remove(index);
+                int index1 = minions.indexOf(gObj);
+                minions.remove(index1);
+                break;
+            case PURPLEMINION:
+                gameObjects.remove(gObj);
+                int index2 = minions.indexOf(gObj);
+                minions.remove(index2);
                 break;
             default:
                 gameObjects.remove(gObj);
@@ -286,7 +298,7 @@ public class Gameboard {
         while (iter.hasNext()){
             GameObject gObj = iter.next();
             if(gObj.type == type){
-                if (gObj.type == GameObjectType.MINION){
+                if (gObj.type == GameObjectType.YELLOWMINION || gObj.type == GameObjectType.PURPLEMINION){
                     minions.remove(gObj);
                 }
                 iter.remove();

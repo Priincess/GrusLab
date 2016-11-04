@@ -1,9 +1,11 @@
 package game;
 
-import game.gameboard.Gameboard;
+import game.camera.ObjTracker;
+import game.gui.GuiManager;
 import game.player.ControllerManager;
 import game.player.Player;
 import game.server.ServerService;
+import org.opencv.highgui.VideoCapture;
 
 /**
  * @author lilpr
@@ -19,7 +21,9 @@ public class CentralControl {
 	private ControllerManager _controllerManager = null;
 	private Player _player1 = null;
 	private Player _player2 = null;
-	private Gameboard _gameBoard = null;
+	private ObjTracker _tracker = null;
+	private GuiManager _guiManager = null;
+	private Game _game = null;
 	
 	private boolean _playing = true;
 	
@@ -31,12 +35,20 @@ public class CentralControl {
 	//server
 	Thread _serverInit;
 	Thread _serverStart;
+	//gui
+	Thread _guiRuntime;
+	//minion tracker
+	Thread _objectTracker;
 	
 	private CentralControl(){
 		//initialize components
 		_gameState = GameState.getInstance();
 		_server = new ServerService();
 		_controllerManager = new ControllerManager();
+		_tracker = new ObjTracker();
+		_game = new Game(_tracker);
+		_guiManager = new GuiManager();
+		_guiManager.setGame(_game);
 	}
 	
 	//**********PUBLIC METHODS**********
@@ -56,34 +68,38 @@ public class CentralControl {
 		
 		//init threads
 		initThreads();
-		
-		_controllerInit.start();
-		_serverInit.start();
-		
-		while(!_controllerInit.getState().equals(Thread.State.TERMINATED) || !_serverInit.getState().equals(Thread.State.TERMINATED)){}
-		
-		
+
+		_guiRuntime.start();
+//
+//		_controllerInit.start();
+//		_serverInit.start();
+//
+//		while(!_controllerInit.getState().equals(Thread.State.TERMINATED) || !_serverInit.getState().equals(Thread.State.TERMINATED)){}
+//
+
 		while(_playing){
-		
-			_gameState.setGameState(GameStateValue.WAIT);
-			
-			System.out.println("Wait for Players to press start!");
-			_controllerWaitForStart.start();
-			
-			while(!_controllerWaitForStart.getState().equals(Thread.State.TERMINATED)){}
-			
-			_gameState.setGameState(GameStateValue.READY);
-			
+
+//			_gameState.setGameState(GameStateValue.WAIT);
+//
+//			System.out.println("Wait for Players to press start!");
+//			_controllerWaitForStart.start();
+//
+//			while(!_controllerWaitForStart.getState().equals(Thread.State.TERMINATED)){}
+//
+//			_gameState.setGameState(GameStateValue.READY);
+
 			while(_gameState.getGameState() != GameStateValue.PLAY){}
-			
-			_controllerStart.start();
-			_serverStart.start();
+
+//			_controllerStart.start();
+//			_serverStart.start();
+			_objectTracker.start();
 			
 			//TODO: wait for game to finish
-	//		_server.stopMinionControl();
-	//		_controllerManager.stopManage();
+//			_server.stopMinionControl();
+//			_controllerManager.stopManage();
+//			_tracker.stopTracking();
 			
-			while(!_controllerStart.getState().equals(Thread.State.TERMINATED) || !_serverStart.getState().equals(Thread.State.TERMINATED)){}
+//			while(!_controllerStart.getState().equals(Thread.State.TERMINATED) || !_serverStart.getState().equals(Thread.State.TERMINATED)){}
 		
 		}
 		
@@ -137,6 +153,22 @@ public class CentralControl {
 			@Override
 			public void run() {
 				_server.startMinionControl(new Player[]{_player1, _player2});
+			}
+		});
+
+		//starts gui and object-tracker
+		_guiRuntime = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				_guiManager.launchGUI();
+			}
+		});
+
+		//start object-tracker
+		_objectTracker = new Thread(new Runnable() {
+			@Override
+			public void run() {
+				_tracker.startTracking();
 			}
 		});
 	}

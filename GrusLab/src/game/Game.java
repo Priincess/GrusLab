@@ -1,16 +1,22 @@
 package game;
 
+import game.camera.ObjTracker;
 import game.gameboard.GameObject;
 import game.gameboard.GameObjectType;
 import game.gameboard.Gameboard;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 
 import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
+
+import static game.GameStateValue.FINISHED;
+import static game.GameStateValue.PAUSE;
 
 
 /**
@@ -21,48 +27,31 @@ public class Game {
     private Preferences gamePreferences;
     private Gameboard gameboard;
     private GameState gameState;
+    private ObjTracker tracker;
 
     private ArrayList<IntegerProperty> points;
 
     private IntegerProperty gameTime = new SimpleIntegerProperty(0);    // Overwritten by Preferences
-    private Timer gameTimer = new Timer();
+    private Timer gameTimer;
     private TimerTask gameTimerTask;
     private TimerTask gameRunningTimerTask;
 
-    public Game(){
+    public Game(ObjTracker tracker){
+        this.tracker = tracker;
         gameState = GameState.getInstance();
         gamePreferences = Preferences.userNodeForPackage(this.getClass());
         loadGameSettings();
+
         gameboard = new Gameboard();
         points = new ArrayList<IntegerProperty>();
         points.add(new SimpleIntegerProperty(0));
         points.add(new SimpleIntegerProperty(0));
-
+        addGameStateListener();
         gameState.setGameState(GameStateValue.READY);   // TODO: Remove
     }
 
     public IntegerProperty getPoints(int minion){
         return points.get(minion);
-    }
-
-    public void startGame(){
-        resetPoints();
-        startGameCountdown();
-        startGameRunningTask();
-        gameboard.gameboardStartSetup();
-        gameState.setGameState(GameStateValue.PLAY);
-    }
-
-    public void runGame(){
-        // TODO: Poll Position of Minions
-        checkForCollisions();
-    }
-
-    public void gameOver(){
-        stopGameRunningTask();
-        stopGameCountdown();
-        cleanGameboard();
-        gameState.setGameState(GameStateValue.FINISHED);
     }
 
     public Gameboard getGameboard(){
@@ -73,60 +62,84 @@ public class Game {
         gamePreferences.putInt("GAME_TIME", gameTime.intValue());
     }
 
-    private void loadGameSettings(){
-        gameTime.set(gamePreferences.getInt("GAME_TIME", 30));
+    public void loadGameSettings(){
+        gameTime.set(gamePreferences.getInt("GAME_TIME", 10));
     }
 
     public IntegerProperty getGameTime(){
         return gameTime;
     }
 
-    private void startGameCountdown(){
-        if (gameTimerTask == null){
-            gameTimerTask = new TimerTask() {
-                public void run() {
-                    Platform.runLater(new Runnable() {
-                        public void run() {
-                            gameTime.set(gameTime.intValue()-1);
-                            if (gameTime.intValue() == 0){
-                                gameOver();
-                            }
-                        }
-                    });
-                }
-            };
+    private void startGame(){
+        startGameTimer();
+        gameboard.gameboardStartSetup();
+    }
+
+    private void runGame(){
+        // TODO: Poll Position of Minions
+        checkForCollisions();
+    }
+
+    private void startGameTimer(){
+        if (gameTimer == null) {
+            gameTimer = new Timer();
+            initGameCountdown();
+            initGameRunningTask();
             gameTimer.scheduleAtFixedRate(gameTimerTask, 0, 1000);
-        }
-    }
-
-    private void stopGameCountdown(){
-        gameTimerTask.cancel();
-        gameTimerTask = null;
-    }
-
-    private void startGameRunningTask(){
-        if (gameRunningTimerTask == null){
-            gameRunningTimerTask = new TimerTask() {
-                public void run() {
-                    Platform.runLater(new Runnable() {
-                        public void run() {
-                            runGame();
-                        }
-                    });
-                }
-            };
             gameTimer.scheduleAtFixedRate(gameRunningTimerTask, 0, 1);
         }
     }
 
-    private void stopGameRunningTask(){
-        gameRunningTimerTask.cancel();
-        gameRunningTimerTask = null;
-        gameTime.set(gamePreferences.getInt("GAME_TIME", 120));
+    private void stopGameTimer(){
+        if (gameTimer != null) {
+            gameTimer.cancel();
+            gameTimer = null;
+            gameState.setGameState(PAUSE);
+        }
     }
 
+    private void gameOver(){
+        stopGameTimer();
+        cleanGameboard();
+        resetGameTime();
+        gameState.setGameState(GameStateValue.FINISHED);
+    }
+
+    private void initGameCountdown() {
+        gameTimerTask = new TimerTask() {
+            public void run() {
+                Platform.runLater(new Runnable() {
+                    public void run() {
+                        gameTime.set(gameTime.intValue() - 1);
+                        if (gameTime.intValue() == 0) {
+                            gameOver();
+                        }
+                    }
+                });
+            }
+        };
+    }
+
+    private void initGameRunningTask(){
+        gameRunningTimerTask = new TimerTask() {
+            public void run() {
+                Platform.runLater(new Runnable() {
+                        public void run() {
+                            runGame();
+                        }
+                    });
+            }
+        };
+    }
+
+    private void resetGameTime(){
+        gameTime.set(gamePreferences.getInt("GAME_TIME", 10));  // TODO: Higher Value
+    }
+
+
     private void cleanGameboard(){
-        gameboard.removeObjects(GameObjectType.MINION);
+        gameboard.removeObjects(GameObjectType.YELLOWMINION);
+        gameboard.removeObjects(GameObjectType.PURPLEMINION);
         gameboard.removeObjects(GameObjectType.BANANA);
         gameboard.removeObjects(GameObjectType.BEEDO);
         gameboard.removeObjects(GameObjectType.GOGGLES);
@@ -155,7 +168,7 @@ public class Game {
         }
     }
 
-    public void itemCollisionHandler(GameObject minion, GameObject item){
+    private void itemCollisionHandler(GameObject minion, GameObject item){
         switch(item.getType()){
             case BANANA:
                 bananaCollisionHandler(minion,item);
@@ -200,5 +213,33 @@ public class Game {
         return -1;
     }
 
+
+    private void addGameStateListener(){
+        gameState.getGameStateNumber().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal,
+                                          Object newVal){
+                int old = (int) oldVal;
+                switch (gameState.getGameState()){
+                    case READY:
+                        if (old == FINISHED.getValue()){
+                            resetPoints();
+                        }
+                        break;
+                    case PLAY:
+                        if (old == PAUSE.getValue()){
+                            startGameTimer();
+                        } else {
+                            startGame();
+                        }
+                        break;
+                    case PAUSE:
+                        stopGameTimer();
+                        break;
+                    case FINISHED:
+                        break;
+                }
+            }
+        });
+    }
 
 }

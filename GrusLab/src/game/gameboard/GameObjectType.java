@@ -4,7 +4,8 @@ package game.gameboard;
  * Created by Mark Mauerhofer on 08.10.2016.
  */
 public enum GameObjectType {
-    MINION,
+    YELLOWMINION,
+    PURPLEMINION,
     BANANA,
     BEEDO,
     GOGGLES,

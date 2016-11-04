@@ -5,5 +5,19 @@ package game;
  * This enum holds the states which the game itself can have.
  */
 public enum GameStateValue {
-	INIT, WAIT, READY, PLAY, FINISHED
+	INIT(0),
+	WAIT(1),
+	READY(2),
+	PLAY(3),
+	PAUSE(4),
+	FINISHED(5),
+	CALIBRATION(6);
+
+	private final int value;
+	GameStateValue(int value){
+		this.value = value;
+	}
+	public int getValue() {
+		return value;
+	}
 }
