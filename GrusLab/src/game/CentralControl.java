@@ -4,8 +4,7 @@ import game.camera.ObjTracker;
 import game.gui.GuiManager;
 import game.player.ControllerManager;
 import game.player.Player;
-import game.server.ServerService;
-import org.opencv.highgui.VideoCapture;
+import game.server.Server;
 
 /**
  * @author lilpr
@@ -17,7 +16,7 @@ public class CentralControl {
 	
 	//components
 	private GameState _gameState = null;
-	private ServerService _server = null;
+	private Server _server = null;
 	private ControllerManager _controllerManager = null;
 	private Player _player1 = null;
 	private Player _player2 = null;
@@ -33,7 +32,6 @@ public class CentralControl {
 	Thread _controllerWaitForStart;
 	Thread _controllerStart;
 	//server
-	Thread _serverInit;
 	Thread _serverStart;
 	//gui
 	Thread _guiRuntime;
@@ -43,7 +41,7 @@ public class CentralControl {
 	private CentralControl(){
 		//initialize components
 		_gameState = GameState.getInstance();
-		_server = new ServerService();
+		_server = new Server();
 		_controllerManager = new ControllerManager();
 		_tracker = new ObjTracker();
 		_game = new Game(_tracker);
@@ -88,7 +86,7 @@ public class CentralControl {
 //
 //			_gameState.setGameState(GameStateValue.READY);
 
-			while(_gameState.getGameState() != GameStateValue.PLAY){}
+			while(GameState.getGameState() != GameStateValue.PLAY){}
 
 //			_controllerStart.start();
 //			_serverStart.start();
@@ -138,19 +136,11 @@ public class CentralControl {
 			}
 		});
 		
-		//connect both robots to server
-		_serverInit = new Thread(new Runnable() {
-			@Override
-			public void run() {
-				_server.connectWithMinions(new Player[]{_player1, _player2});
-			}
-		});
-		
-		//start robot control
+		//start server
 		_serverStart = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				_server.startMinionControl(new Player[]{_player1, _player2});
+				_server.startServer(_player1, _player2);
 			}
 		});
 
@@ -175,7 +165,7 @@ public class CentralControl {
 	 * This method sets quits everything 
 	 */
 	private void quitGame(){
-		_server.deinitServerService();
+		_server.stopServer();
 		
 		_player1 = null;
 		_player2 = null;
