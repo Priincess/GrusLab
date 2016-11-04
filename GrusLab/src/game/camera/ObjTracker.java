@@ -11,10 +11,11 @@ public class ObjTracker {
 	static{ System.loadLibrary(Core.NATIVE_LIBRARY_NAME); }
 
 	//upper & Lower bounds for nice and evil minion
-	private static final Scalar YELLOW_UPPER = new Scalar(1,2);
-	private static final Scalar YELLOW_LOWER = new Scalar(1,2);
-	private static final Scalar EVIL_UPPER = new Scalar(1,2);
-	private static final Scalar EVIL_LOWER = new Scalar(1,2);
+	private static final Scalar YELLOW_UPPER = new Scalar(30,255,255);
+	private static final Scalar YELLOW_LOWER = new Scalar(20, 100, 100);
+	private static final Scalar EVIL_UPPER = new Scalar(160, 127, 65);
+	private static final Scalar EVIL_LOWER = new Scalar(120,77,10);
+	
 	
 	//ID for webcam to be used
 	private static final int CAM_ID = 1;
