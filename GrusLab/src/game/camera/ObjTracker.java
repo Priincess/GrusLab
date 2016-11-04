@@ -1,13 +1,15 @@
 package game.camera;
 
+import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
 import org.opencv.core.Scalar;
 import org.opencv.highgui.VideoCapture;
 
 public class ObjTracker {
-	
-	
+
+	static{ System.loadLibrary(Core.NATIVE_LIBRARY_NAME); }
+
 	//upper & Lower bounds for nice and evil minion
 	private static final Scalar YELLOW_UPPER = new Scalar(1,2);
 	private static final Scalar YELLOW_LOWER = new Scalar(1,2);

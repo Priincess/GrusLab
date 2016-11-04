@@ -15,33 +15,34 @@ import javafx.stage.WindowEvent;
  */
 public class GuiManager extends Application{
 
-    private StageManager stageManager;
-    private Game _game;
-
-    public GuiManager(Game game){
-        stageManager = StageManager.getInstance();
-        _game = game;
-    }
+    private static Stage _stage;
+    private static Game _game;
 
     public void launchGUI(){
         launch(null);
     }
 
+    public void setGame(Game game){
+        _game = game;
+    }
+
+    public Game getGame(){
+        return _game;
+    }
 
     @Override
     public void start(Stage primaryStage) throws Exception {
-        stageManager.setPrimaryStage(primaryStage);
-        stageManager.getPrimaryStage().setFullScreen(true);
-        stageManager.getPrimaryStage().setTitle("Gru´s Lab - Immer Der Banana Nach");
-        stageManager.getPrimaryStage().setOnCloseRequest(new EventHandler<WindowEvent>() {
+        _stage = primaryStage;
+        _stage.setFullScreen(true);
+        _stage.setTitle("Gru´s Lab - Immer Der Banana Nach");
+        _stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
             public void handle(WindowEvent t) {
                 Platform.exit();
                 System.exit(0);
             }
         });
-        //gotoGameStartView();
-        gotoGameboardView();
+        gotoGameStartView();
     }
 
     public void gotoGameStartView(){
@@ -68,12 +69,12 @@ public class GuiManager extends Application{
     }
 
     private void sceneChange(Parent root){
-        if (stageManager.getPrimaryStage().getScene() == null){
-            stageManager.getPrimaryStage().setScene(new Scene(root));
-            stageManager.getPrimaryStage().setFullScreen(true);
-            stageManager.getPrimaryStage().show();
+        if (_stage.getScene() == null){
+            _stage.setScene(new Scene(root));
+            _stage.setFullScreen(true);
+            _stage.show();
         } else {
-            stageManager.getPrimaryStage().getScene().setRoot(root);
+            _stage.getScene().setRoot(root);
         }
     }
 

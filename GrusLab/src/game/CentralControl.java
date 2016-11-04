@@ -1,7 +1,6 @@
 package game;
 
 import game.camera.ObjTracker;
-import game.gameboard.Gameboard;
 import game.gui.GuiManager;
 import game.player.ControllerManager;
 import game.player.Player;
@@ -48,7 +47,8 @@ public class CentralControl {
 		_controllerManager = new ControllerManager();
 		_tracker = new ObjTracker();
 		_game = new Game(_tracker);
-		_guiManager = new GuiManager(_game);
+		_guiManager = new GuiManager();
+		_guiManager.setGame(_game);
 	}
 	
 	//**********PUBLIC METHODS**********
@@ -70,36 +70,36 @@ public class CentralControl {
 		initThreads();
 
 		_guiRuntime.start();
-
-		_controllerInit.start();
-		_serverInit.start();
-
-		while(!_controllerInit.getState().equals(Thread.State.TERMINATED) || !_serverInit.getState().equals(Thread.State.TERMINATED)){}
-
+//
+//		_controllerInit.start();
+//		_serverInit.start();
+//
+//		while(!_controllerInit.getState().equals(Thread.State.TERMINATED) || !_serverInit.getState().equals(Thread.State.TERMINATED)){}
+//
 
 		while(_playing){
 
-			_gameState.setGameState(GameStateValue.WAIT);
-
-			System.out.println("Wait for Players to press start!");
-			_controllerWaitForStart.start();
-
-			while(!_controllerWaitForStart.getState().equals(Thread.State.TERMINATED)){}
-
-			_gameState.setGameState(GameStateValue.READY);
+//			_gameState.setGameState(GameStateValue.WAIT);
+//
+//			System.out.println("Wait for Players to press start!");
+//			_controllerWaitForStart.start();
+//
+//			while(!_controllerWaitForStart.getState().equals(Thread.State.TERMINATED)){}
+//
+//			_gameState.setGameState(GameStateValue.READY);
 
 			while(_gameState.getGameState() != GameStateValue.PLAY){}
 
-			_controllerStart.start();
-			_serverStart.start();
+//			_controllerStart.start();
+//			_serverStart.start();
 			_objectTracker.start();
 			
 			//TODO: wait for game to finish
-			_server.stopMinionControl();
-			_controllerManager.stopManage();
-			_tracker.stopTracking();
+//			_server.stopMinionControl();
+//			_controllerManager.stopManage();
+//			_tracker.stopTracking();
 			
-			while(!_controllerStart.getState().equals(Thread.State.TERMINATED) || !_serverStart.getState().equals(Thread.State.TERMINATED)){}
+//			while(!_controllerStart.getState().equals(Thread.State.TERMINATED) || !_serverStart.getState().equals(Thread.State.TERMINATED)){}
 		
 		}
 		
@@ -164,6 +164,7 @@ public class CentralControl {
 			}
 		});
 
+		//start object-tracker
 		_objectTracker = new Thread(new Runnable() {
 			@Override
 			public void run() {

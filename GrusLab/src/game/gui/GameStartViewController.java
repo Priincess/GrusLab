@@ -26,6 +26,7 @@ import javafx.util.Duration;
 public class GameStartViewController {
 
     private GameState gameState;
+    private GuiManager guiManager;
 
     private MediaPlayer mediaPlayer;
 
@@ -42,13 +43,14 @@ public class GameStartViewController {
     @FXML
     public void initialize(){
         gameState = GameState.getInstance();
+        guiManager = new GuiManager();
         initPane();
         initBackgroundVideo();
         initGameInfoTextLoadingTransition();
         initBindings();
 
         addMouseListenerToPane();
-        //addGameStateListener();
+        addGameStateListener();
         startGameInfoTextLoadingTransition();
     }
 
@@ -143,20 +145,20 @@ public class GameStartViewController {
             }
         });
     }
-//
-//    private void addGameStateListener(){
-//        gameState.getGameStateNumber().addListener(new ChangeListener(){
-//            @Override public void changed(ObservableValue o, Object oldVal,
-//                                          Object newVal){
-//                switch (gameState.getGameState()){
-//                    case READY:
-//                        //stopGameInfoTextLoadingTransition();
-//                        mediaPlayer.stop();
-//                        guiManager.gotoGameboardView();
-//                        break;
-//                }
-//            }
-//        });
-//    }
+
+    private void addGameStateListener(){
+        gameState.getGameStateNumber().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal,
+                                          Object newVal){
+                switch (gameState.getGameState()){
+                    case READY:
+                        //stopGameInfoTextLoadingTransition();
+                        mediaPlayer.stop();
+                        guiManager.gotoGameboardView();
+                        break;
+                }
+            }
+        });
+    }
 
 }
