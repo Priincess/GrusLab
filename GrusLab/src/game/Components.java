@@ -24,7 +24,7 @@ public class Components {
 		}
 	}
 	
-	public static boolean isController1Connected(int index){
+	public static boolean isControllerConnected(int index){
 		switch (index) {
 			case 0:
 				return _controller1;
