@@ -4,17 +4,19 @@ import game.camera.ObjTracker;
 import game.gameboard.GameObject;
 import game.gameboard.GameObjectType;
 import game.gameboard.Gameboard;
+import game.gameboard.GameboardScaler;
 import javafx.application.Platform;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
 import javafx.beans.value.ChangeListener;
 import javafx.beans.value.ObservableValue;
+import org.opencv.core.Point;
 
-import java.util.ArrayList;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.prefs.Preferences;
 
+import static game.GameStateValue.CALIBRATION;
 import static game.GameStateValue.FINISHED;
 import static game.GameStateValue.PAUSE;
 
@@ -24,34 +26,30 @@ import static game.GameStateValue.PAUSE;
  */
 public class Game {
 
+    private IntegerProperty pointsYellowMinion = new SimpleIntegerProperty(0);
+    private IntegerProperty pointsPurpleMinion = new SimpleIntegerProperty(0);
+
     private Preferences gamePreferences;
     private Gameboard gameboard;
     private GameState gameState;
-    private ObjTracker tracker;
 
-    private ArrayList<IntegerProperty> points;
+    private ObjTracker tracker;
+    private GameboardScaler scaler;
 
     private IntegerProperty gameTime = new SimpleIntegerProperty(0);    // Overwritten by Preferences
     private Timer gameTimer;
     private TimerTask gameTimerTask;
     private TimerTask gameRunningTimerTask;
 
-    public Game(ObjTracker tracker){
+    public Game(final ObjTracker tracker){
         this.tracker = tracker;
+        this.scaler = new GameboardScaler();
         gameState = GameState.getInstance();
         gamePreferences = Preferences.userNodeForPackage(this.getClass());
         loadGameSettings();
 
         gameboard = new Gameboard();
-        points = new ArrayList<IntegerProperty>();
-        points.add(new SimpleIntegerProperty(0));
-        points.add(new SimpleIntegerProperty(0));
         addGameStateListener();
-        gameState.setGameState(GameStateValue.READY);   // TODO: Remove
-    }
-
-    public IntegerProperty getPoints(int minion){
-        return points.get(minion);
     }
 
     public Gameboard getGameboard(){
@@ -63,12 +61,16 @@ public class Game {
     }
 
     public void loadGameSettings(){
-        gameTime.set(gamePreferences.getInt("GAME_TIME", 10));
+        gameTime.set(gamePreferences.getInt("GAME_TIME", 300));
     }
 
     public IntegerProperty getGameTime(){
         return gameTime;
     }
+
+    public IntegerProperty getPointsYellowMinion(){ return pointsYellowMinion; }
+
+    public IntegerProperty getPointsPurpleMinion(){ return pointsPurpleMinion; }
 
     private void startGame(){
         startGameTimer();
@@ -76,7 +78,8 @@ public class Game {
     }
 
     private void runGame(){
-        // TODO: Poll Position of Minions
+        //updateYellowMinionPosition();
+        //updateEvilMinionPosition();
         checkForCollisions();
     }
 
@@ -86,7 +89,7 @@ public class Game {
             initGameCountdown();
             initGameRunningTask();
             gameTimer.scheduleAtFixedRate(gameTimerTask, 0, 1000);
-            gameTimer.scheduleAtFixedRate(gameRunningTimerTask, 0, 1);
+            gameTimer.scheduleAtFixedRate(gameRunningTimerTask, 0, 10);
         }
     }
 
@@ -120,6 +123,26 @@ public class Game {
         };
     }
 
+    public boolean initCamPoints1(){
+        return scaler.setCamCalibrationPoints1(tracker.getYellowPos(), tracker.getEvilPos());
+    }
+
+    public boolean initCamPoints2(){
+        return scaler.setCamCalibrationPoints2(tracker.getYellowPos(), tracker.getEvilPos());
+    }
+
+    private void initScaler(){
+        scaler.initScaler(gameboard.getStartPositions());
+    }
+
+    private void updateYellowMinionPosition(){
+        gameboard.setMinionPosition(GameObjectType.YELLOWMINION, scaler.transformCameraPointToGameboardPoint(tracker.getYellowPos()));
+    }
+
+    private void updateEvilMinionPosition(){
+        gameboard.setMinionPosition(GameObjectType.PURPLEMINION, scaler.transformCameraPointToGameboardPoint(tracker.getEvilPos()));
+    }
+
     private void initGameRunningTask(){
         gameRunningTimerTask = new TimerTask() {
             public void run() {
@@ -133,11 +156,11 @@ public class Game {
     }
 
     private void resetGameTime(){
-        gameTime.set(gamePreferences.getInt("GAME_TIME", 10));  // TODO: Higher Value
+        gameTime.set(gamePreferences.getInt("GAME_TIME", 10));
     }
 
 
-    private void cleanGameboard(){
+    public void cleanGameboard(){
         gameboard.removeObjects(GameObjectType.YELLOWMINION);
         gameboard.removeObjects(GameObjectType.PURPLEMINION);
         gameboard.removeObjects(GameObjectType.BANANA);
@@ -146,30 +169,35 @@ public class Game {
     }
 
     private void resetPoints(){
-        for (IntegerProperty prop : points) {
-            prop.set(0);
-        }
+        pointsYellowMinion.set(0);
+        pointsPurpleMinion.set(0);
     }
 
     private void checkForCollisions(){
-        for (GameObject minion : gameboard.getMinions()){
-            if (gameboard.isOutsideOfGameboard(minion) == true){
-                // TODO: Stop Robot
-            } else {
-//                GameObject minion2 = gameboard.isCollidingWithMinion(minion);
-//                if (minion2 != null){
-//                    // TODO: doSomething();
-//                }
-                GameObject item = gameboard.isCollidingWithItem(minion);
-                if (item != null){
-                    itemCollisionHandler(minion, item);
-                }
-            }
+        GameObject yellowMinion = gameboard.getYellowMinion();
+        GameObject purpleMinion = gameboard.getPurpleMinion();
+
+        if(gameboard.isOutsideOfGameboard(yellowMinion)){
+            // TODO: Stop Robot or Pause Game?
+        }
+        if (gameboard.isOutsideOfGameboard(purpleMinion)){
+            // TODO: Stop Robot or Pause Game?
+        }
+
+        GameObject item = gameboard.isCollidingGameObject(yellowMinion);
+        if (item != null){
+            itemCollisionHandler(yellowMinion, item);
+        }
+        item = gameboard.isCollidingGameObject(purpleMinion);
+        if (item != null){
+            itemCollisionHandler(yellowMinion, item);
         }
     }
 
     private void itemCollisionHandler(GameObject minion, GameObject item){
         switch(item.getType()){
+            case PURPLEMINION: // TODO: doSomething;
+                break;
             case BANANA:
                 bananaCollisionHandler(minion,item);
                 break;
@@ -183,11 +211,18 @@ public class Game {
     }
 
     private void bananaCollisionHandler(GameObject minion, GameObject item){
-        int index = gameboard.getMinions().indexOf(minion);
-        points.get(index).set(points.get(index).intValue()+1);
         item.playSound();
         gameboard.removeGameObject(item);
         gameboard.generateBanana();
+
+        switch (minion.getType()){
+            case YELLOWMINION:
+                pointsYellowMinion.set(pointsYellowMinion.intValue()+1);
+                break;
+            case PURPLEMINION:
+                pointsPurpleMinion.set(pointsPurpleMinion.intValue()+1);
+                break;
+        }
     }
 
     private void beedoCollisionHandler(GameObject minion, GameObject item){
@@ -203,11 +238,9 @@ public class Game {
     }
 
     public int whichMinionWon(){
-        int m1 = points.get(0).intValue();
-        int m2 = points.get(1).intValue();
-        if (m1 > m2){
+        if (pointsYellowMinion.intValue() > pointsPurpleMinion.intValue()){
             return 0;
-        } else if (m1 < m2){
+        } else if (pointsYellowMinion.intValue() < pointsPurpleMinion.intValue()){
             return 1;
         }
         return -1;
@@ -221,6 +254,9 @@ public class Game {
                 int old = (int) oldVal;
                 switch (gameState.getGameState()){
                     case READY:
+                        if (old == CALIBRATION.getValue()){
+                            initScaler();
+                        }
                         if (old == FINISHED.getValue()){
                             resetPoints();
                         }

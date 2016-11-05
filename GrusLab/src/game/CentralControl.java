@@ -70,6 +70,7 @@ public class CentralControl {
 		initThreads();
 
 		_guiRuntime.start();
+		_objectTracker.start();
 //
 //		_controllerInit.start();
 //		_serverInit.start();
@@ -92,7 +93,6 @@ public class CentralControl {
 
 //			_controllerStart.start();
 //			_serverStart.start();
-			_objectTracker.start();
 			
 			//TODO: wait for game to finish
 //			_server.stopMinionControl();

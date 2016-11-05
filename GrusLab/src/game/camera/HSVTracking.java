@@ -43,12 +43,11 @@ public class HSVTracking {
 	}
 	
 	/*returns the found point of the minion - 
-	 * if not valid - it returns a point with -1 and -1
+	 * if not valid - it returns null
 	 */
 	public Point trackMinion(Mat frame, Minion name) {
 		getMinionBlob(frame, name);
 		return getPosition();
-
 	}
 	
 	/* 
@@ -92,7 +91,7 @@ public class HSVTracking {
 	 * blob which was in range of the boundaries
 	 * */
 	private Point getPosition(){
-		//TODO: PROGRAMMIER DAS SCHÖNER! D:
+		//TODO: PROGRAMMIER DAS SCHï¿½NER! D:
 		
 		
 		//all contours
@@ -121,12 +120,12 @@ public class HSVTracking {
 		}
 
 		//hack for getting centroids out of contours
-		 MatOfPoint2f  centroids = new MatOfPoint2f( maxPoint.toArray() );	 
+		 MatOfPoint2f  centroids = new MatOfPoint2f( maxPoint.toArray() );
 		Imgproc.minEnclosingCircle(centroids, center, new float[5]);
 	
 		
 		if (centroids.empty()){
-			return NOT_VALID;
+			return null;	// No Point found
 		}
 		else{
 			return center;

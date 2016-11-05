@@ -27,6 +27,8 @@ import javafx.scene.shape.Rectangle;
 import javafx.util.Duration;
 import javafx.util.converter.NumberStringConverter;
 
+import java.awt.*;
+
 import static game.GameStateValue.*;
 
 /**
@@ -91,6 +93,8 @@ public class GameboardViewController {
     private SequentialTransition gameInfoTextPauseTransition;
     private boolean isGameInfoTextPauseTransitionRunning = false;
 
+    private int calibrationStatus = 0;
+
 
     public void initGameboardViewController(Game game){
         this.game = game;
@@ -115,7 +119,9 @@ public class GameboardViewController {
         initGameInfoTextGameOver();
         initGameInfoTextPause();
 
-        startGameInfoTextReady();
+        label_InfoText.setText("Calibration (1)\nPut Minions on Position");
+        gameboard.createMinions();
+        //startGameInfoTextReady();
     }
 
     private void setGameBindings(){
@@ -171,8 +177,8 @@ public class GameboardViewController {
         label_InfoText.toFront();
 
         // Points
-        Bindings.bindBidirectional(label_YellowMinionPoints.textProperty(), game.getPoints(0), numStringConver);
-        Bindings.bindBidirectional(label_EvilMinionPoints.textProperty(), game.getPoints(1), numStringConver);
+        Bindings.bindBidirectional(label_YellowMinionPoints.textProperty(), game.getPointsYellowMinion(), numStringConver);
+        Bindings.bindBidirectional(label_EvilMinionPoints.textProperty(), game.getPointsPurpleMinion(), numStringConver);
     }
 
     private void addGameObjectsListener(){
@@ -207,10 +213,15 @@ public class GameboardViewController {
         gameState.getGameStateNumber().addListener(new ChangeListener(){
             @Override public void changed(ObservableValue o, Object oldVal,
                                           Object newVal){
-//                int old = (int) oldVal;
+                int old = (int) oldVal;
 //                int act = gameState.getGameStateNumber().intValue();
                 switch (gameState.getGameState()){
+//                    case CALIBRATION:
+//                        break;
                     case READY:
+                        if (old == CALIBRATION.getValue()){
+                            game.cleanGameboard();
+                        }
                         stopGameInfoTextGameOver();
                         startGameInfoTextReady();
                         break;
@@ -223,12 +234,6 @@ public class GameboardViewController {
                     case FINISHED:
                         startGameInfoTextGameOver();
                         break;
-                    case CALIBRATION:
-                        stopGameInfoTextReady();
-                        label_InfoText.setVisible(false);
-                        startCalibration();
-                        break;
-
                 }
             }
         });
@@ -239,10 +244,36 @@ public class GameboardViewController {
         pane_GameboardView.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                int x = (int) mouseEvent.getX() - gameboard.getMinionSize().intValue() / 2;
-                int y = (int) mouseEvent.getY() - gameboard.getMinionSize().intValue() / 2;
+                int x = (int) mouseEvent.getX();
+                int y = (int) mouseEvent.getY();
+                Point point = new Point(x,y);
 
                 if (y > 70) {
+                    if (mouseEvent.isPrimaryButtonDown() == true && gameState.getGameState() == CALIBRATION) {
+                        if (calibrationStatus == 1){
+                            if (game.initCamPoints2() == true){
+                                gameState.setGameState(READY);
+                            } else {
+                                label_InfoText.setText("Calibration (2) failed - Try again or Skip");
+                            }
+                        }
+
+                        if (calibrationStatus == 0){
+                            if (game.initCamPoints1() == true){
+                                calibrationStatus = 1;
+                                gameboard.setMinionStartPosition2();
+                                label_InfoText.setText("Calibration (2)\nPut Minions on Position\nCalibrate or Skip");
+                            } else {
+                                label_InfoText.setText("Calibration (1) failed - Try again");
+                            }
+                        }
+                    }
+                    if (mouseEvent.isSecondaryButtonDown() == true && gameState.getGameState() == CALIBRATION){
+                        if (calibrationStatus == 1){
+                            gameState.setGameState(READY);
+                        }
+                    }
+
                     if (mouseEvent.isPrimaryButtonDown() == true && gameState.getGameState() == READY) {
                         stopGameInfoTextReady();
                         startGameInfoTextCountdown();
@@ -252,10 +283,10 @@ public class GameboardViewController {
                     }
                     if (gameState.getGameState() == PLAY) {
                         if (mouseEvent.isPrimaryButtonDown() == true) {
-                            gameboard.setMinionPosition(0, x, y);
+                            gameboard.setMinionPosition(GameObjectType.YELLOWMINION, point);
                         }
                         if (mouseEvent.isSecondaryButtonDown()) {
-                            gameboard.setMinionPosition(1, x, y);
+                            gameboard.setMinionPosition(GameObjectType.PURPLEMINION, point);
                         }
                     }
                 }
@@ -280,7 +311,7 @@ public class GameboardViewController {
     }
 
     private void startGameInfoTextReady(){
-        if ( isGameInfoTextReadyTransitionRunning == false) {
+        if (isGameInfoTextReadyTransitionRunning == false) {
             resetGameInfoTextReady();
             isGameInfoTextReadyTransitionRunning = true;
             gameInfoTextReadyTransition.play();
@@ -417,11 +448,11 @@ public class GameboardViewController {
         gameInfoTextPauseTransition = new SequentialTransition();
         FadeTransition fadeOut = new FadeTransition(Duration.seconds(3), label_InfoText);
         fadeOut.setFromValue(1.0);
-        fadeOut.setToValue(0.5);
+        fadeOut.setToValue(0.4);
         gameInfoTextPauseTransition.getChildren().add(fadeOut);
 
         FadeTransition fadeIn = new FadeTransition(Duration.seconds(3), label_InfoText);
-        fadeIn.setFromValue(0.5);
+        fadeIn.setFromValue(0.4);
         fadeIn.setToValue(1.0);
 
         gameInfoTextPauseTransition.getChildren().add(fadeIn);
@@ -472,6 +503,7 @@ public class GameboardViewController {
 
     public void saveGameboardPreferences(){
         gameboard.saveGameboardPreferences();
+        game.saveGameSettings();    // TODO: make real save game settings button
     }
 
     public void hideMenu(){
@@ -484,22 +516,6 @@ public class GameboardViewController {
 
     public void continueGame(){
         gameState.setGameState(PLAY);
-    }
-
-    public void startCalibration(){
-        if (GameState.getGameState() == READY) {
-            gameState.setGameState(CALIBRATION);
-            gameboard.minionStartSetup();
-        }
-    }
-
-    public void endCalibration(){
-        if (GameState.getGameState() == CALIBRATION) {
-            // TODO: save etc
-            gameboard.removeObjects(GameObjectType.YELLOWMINION);
-            gameboard.removeObjects(GameObjectType.PURPLEMINION);
-            gameState.setGameState(READY);
-        }
     }
 
 }

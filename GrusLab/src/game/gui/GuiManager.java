@@ -33,7 +33,8 @@ public class GuiManager extends Application{
     @Override
     public void start(Stage primaryStage) throws Exception {
         _stage = primaryStage;
-        _stage.setFullScreen(true);
+        //_stage.setFullScreen(true);
+        _stage.setMaximized(true);
         _stage.setTitle("Gru´s Lab - Immer Der Banana Nach");
         _stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
@@ -71,7 +72,8 @@ public class GuiManager extends Application{
     private void sceneChange(Parent root){
         if (_stage.getScene() == null){
             _stage.setScene(new Scene(root));
-            _stage.setFullScreen(true);
+            //_stage.setFullScreen(true);
+            _stage.setMaximized(true);
             _stage.show();
         } else {
             _stage.getScene().setRoot(root);

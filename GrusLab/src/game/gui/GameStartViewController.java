@@ -140,7 +140,7 @@ public class GameStartViewController {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.isPrimaryButtonDown() == true){
-                    gameState.setGameState(GameStateValue.READY);
+                    gameState.setGameState(GameStateValue.CALIBRATION); // TODO: Remove, change state to Calibration after all components are loaded
                 }
             }
         });
@@ -151,8 +151,8 @@ public class GameStartViewController {
             @Override public void changed(ObservableValue o, Object oldVal,
                                           Object newVal){
                 switch (gameState.getGameState()){
-                    case READY:
-                        //stopGameInfoTextLoadingTransition();
+                    case CALIBRATION:
+                        stopGameInfoTextLoadingTransition();
                         mediaPlayer.stop();
                         guiManager.gotoGameboardView();
                         break;

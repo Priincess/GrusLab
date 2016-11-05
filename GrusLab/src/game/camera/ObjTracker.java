@@ -19,7 +19,7 @@ public class ObjTracker {
 	//HI
 	
 	//ID for webcam to be used
-	private static final int CAM_ID = 1;
+	private static final int CAM_ID = 0;
 	private static final int NUM_OF_SCALEPOINTS = 4;
 	
 	private static final Point NOT_VALID = new Point(-1,-1);
@@ -49,9 +49,9 @@ public class ObjTracker {
 		_actualFrame = new Mat();
 		
 		
-		//until now, no minions are tracked - so -1 is not valid value
-		_yellowPos = NOT_VALID;
-		_evilPos = NOT_VALID;
+		//until now, no minions are tracked
+		_yellowPos = null;
+		_evilPos = null;
 	}
 	
 	
@@ -67,27 +67,26 @@ public class ObjTracker {
 	public void startTracking(){
 		
 		_capture.open(CAM_ID);
-		
-		
-		//First time when camrea runs - the first frames are white - so trakcing won't work
-		//so i'll grab the first 1000 frames to make sure to have "clear" PIKTSCHAAA
+
+		//First time when camera runs - the first frames are white - so tracking won't work
+		//so i'll grab the first 1000 frames to make sure to have "clear" picture
 		for(int i = 0; i < 1000; i++){
 			_capture.read(_actualFrame);
+			if (i % 10 == 0)
+				System.out.println("Camera loading: " + i/10 + "%");
 		}
+		System.out.println("Camera loading: 100%\tCamera is ready!");
 
 		while(_capture.isOpened()){
-			
+
 			_capture.read(_actualFrame);
-			
+
 			_yellowPos = _yellowMinion.trackMinion(_actualFrame,  Minion.YELLOW);
-			
+
 			//to not interfere objectTracking from yellow minion, frame gets closed
-			
+
 			_evilPos = _evilMinion.trackMinion(_actualFrame.clone(),  Minion.EVIL);
-			
 		}
-		
-		
 	}
 	
 	public boolean stopTracking(){
@@ -99,36 +98,36 @@ public class ObjTracker {
 		}
 		return false;
 	}
-	
-	public Point[] getScalePoints(){
-		Point[] scalePoints = new Point[NUM_OF_SCALEPOINTS];
-		
-		
-		_capture.open(CAM_ID);
-		
-		if(_capture.isOpened()){
-			
-			for(int i = 0; i < 1000; i++){
-				_capture.read(_actualFrame);
-			}
-			
-			Point yellowPoint = _yellowMinion.trackMinion(_actualFrame, Minion.YELLOW);
-			Point evilPoint = _evilMinion.trackMinion(_actualFrame.clone(), Minion.EVIL);
-			
-			int corner = 0;
-			
-			scalePoints[corner] = yellowPoint; 
-			scalePoints[++corner] = new Point(evilPoint.x, yellowPoint.y);
-			scalePoints[++corner] = new Point(yellowPoint.x, evilPoint.y);
-			scalePoints[++corner] = evilPoint;
-			
-			_capture.release();
-			
-			return scalePoints;
-		}
-		
-		return new Point[]{NOT_VALID, NOT_VALID, NOT_VALID, NOT_VALID};
-	}
+
+	// Not needed anymore, use of getYellowPos() & getEvilPos() sufficient
+//	public Point[] getScalePoints(){
+//		Point[] scalePoints = new Point[NUM_OF_SCALEPOINTS];
+//
+//
+//		_capture.open(CAM_ID);
+//
+//		if(_capture.isOpened()){
+//
+//			for(int i = 0; i < 1000; i++){
+//				_capture.read(_actualFrame);
+//			}
+//
+//			Point yellowPoint = _yellowMinion.trackMinion(_actualFrame, Minion.YELLOW);
+//			Point evilPoint = _evilMinion.trackMinion(_actualFrame.clone(), Minion.EVIL);
+//
+//			int corner = 0;
+//
+//			scalePoints[corner] = yellowPoint;
+//			scalePoints[++corner] = new Point(evilPoint.x, yellowPoint.y);
+//			scalePoints[++corner] = evilPoint;
+//			scalePoints[++corner] = new Point(yellowPoint.x, evilPoint.y);
+//
+//			_capture.release();
+//
+//			return scalePoints;
+//		}
+//		return null;
+//	}
 	
 
 	

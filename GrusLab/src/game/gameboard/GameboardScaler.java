@@ -3,7 +3,6 @@ package game.gameboard;
 import org.opencv.calib3d.Calib3d;
 import org.opencv.core.*;
 
-import javafx.scene.shape.Rectangle;
 import org.opencv.core.Point;
 
 import java.util.LinkedList;
@@ -13,54 +12,69 @@ import java.util.LinkedList;
  */
 public class GameboardScaler {
 
-    // Compulsory
+//    // Compulsory
     static{ System.loadLibrary(Core.NATIVE_LIBRARY_NAME); }
 
-    private Point pLT;   // leftTopCorner
-    private Point pRT;   // rightTopCorner
-    private Point pRB;   // rightBottomCorner
-    private Point pLB;   // leftBottomCorner
+    private Point camLT;   // leftTopCorner
+    private Point camRT;   // rightTopCorner
+    private Point camRB;   // rightBottomCorner
+    private Point camLB;   // leftBottomCorner
 
-    private Point gLT;   // leftTopCorner
-    private Point gRT;   // rightTopCorner
-    private Point gRB;   // rightBottomCorner
-    private Point gLB;   // leftBottomCorner
+    private Point gameLT;   // leftTopCorner
+    private Point gameRT;   // rightTopCorner
+    private Point gameRB;   // rightBottomCorner
+    private Point gameLB;   // leftBottomCorner
 
     private Mat homography;
 
-    public void initScaler(Rectangle gameboard, Point pLT, Point pRT, Point pRB, Point pLB){
-        this.pLT = pLT;
-        this.pRT = pRT;
-        this.pRB = pRB;
-        this.pLB = pLB;
+    public boolean setCamCalibrationPoints1(Point camLT, Point camRB) {
+        if (camLT == null || camRB == null){
+            return false;
+        }
+        this.camLT = camLT;
+        this.camRB = camRB;
+        return true;
+    }
 
-        int x = (int) gameboard.getX();
-        int y = (int) gameboard.getY();
-        int width = (int) gameboard.getWidth();
-        int height = (int) gameboard.getHeight();
+    public boolean setCamCalibrationPoints2(Point camRT, Point camLB){
+        if (camRT == null || camLB == null){
+            return false;
+        }
+        this.camRT = camRT;
+        this.camLB = camLB;
+        return true;
+    }
 
-        this.gLT = new Point(x, y);
-        this.gRT = new Point(x+width, y);
-        this.gRB = new Point(x+width, y+height);
-        this.gLB = new Point(x, y+height);
+    public void initScaler(java.awt.Point[] gamePoints) {
+        // Only two calibration points, so mirror points
+        if (camRT == null){
+            this.camRT = new Point(camRB.x, camLT.y);
+            this.camLB = new Point(camLT.x, camRB.y);
+        }
+
+        // Cast awt.point to opencv.point
+        this.gameLT = new Point(gamePoints[0].getX(), gamePoints[0].getY());
+        this.gameRT = new Point(gamePoints[1].getX(), gamePoints[1].getY());
+        this.gameRB = new Point(gamePoints[2].getX(), gamePoints[2].getY());
+        this.gameLB = new Point(gamePoints[3].getX(), gamePoints[3].getY());
 
         getPerspective();
     }
 
     private void getPerspective(){
-        // source quadrangle
+        // source quadrangle == camera quadrangle
         LinkedList<Point> srcList = new LinkedList<Point>();
-        srcList.add(pLT);
-        srcList.add(pRT);
-        srcList.add(pRB);
-        srcList.add(pLB);
+        srcList.add(camLT);
+        srcList.add(camRT);
+        srcList.add(camRB);
+        srcList.add(camLB);
 
-        // transformed quadrangle
+        // transformed quadrangle == virtual gameboard
         LinkedList<Point> dstList = new LinkedList<Point>();
-        dstList.add(gLT);
-        dstList.add(gRT);
-        dstList.add(gRB);
-        dstList.add(gLB);
+        dstList.add(gameLT);
+        dstList.add(gameRT);
+        dstList.add(gameRB);
+        dstList.add(gameLB);
 
         MatOfPoint2f src = new MatOfPoint2f();
         src.fromList(srcList);
@@ -71,13 +85,15 @@ public class GameboardScaler {
         homography = Calib3d.findHomography(src, dst);
     }
 
-    public java.awt.Point transformCameraPointToGameboardPoint(java.awt.Point cameraPoint){
+    public java.awt.Point transformCameraPointToGameboardPoint(Point cameraPoint){
         Mat src = new Mat();
         Mat dst = new Mat();
-        src.push_back(new MatOfPoint2f(new Point(cameraPoint.getX(), cameraPoint.getY())));
+        src.push_back(new MatOfPoint2f(cameraPoint));
         Core.perspectiveTransform(src, dst, homography);
         double[] points = dst.get(0, 0);
-        return new java.awt.Point((int)points[0], (int)points[1]);
+        java.awt.Point point = new java.awt.Point((int)points[0], (int)points[1]);
+        //System.out.println("Camerapoint: " + cameraPoint + " Transformed Point: " + point); // TODO: Remove
+        return point;
     }
 }
 

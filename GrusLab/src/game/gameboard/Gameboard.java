@@ -30,9 +30,10 @@ public class Gameboard {
 
     private IntegerProperty gameObjectDistance = new SimpleIntegerProperty(0);  // Overwritten by Preferences
 
+    private GameObject yellowMinion;
+    private GameObject purpleMinion;
     private ObservableList<GameObject> gameObjects;
-    private ArrayList<GameObject> minions;
-    private ArrayList<GameObject> items;
+
 
 
     public Gameboard(){
@@ -43,8 +44,6 @@ public class Gameboard {
         initGameboardCollisionBoxRectangle();
 
         gameObjects = FXCollections.observableArrayList();
-        minions = new ArrayList<GameObject>();
-        items = new ArrayList<GameObject>();
     }
 
 
@@ -72,7 +71,13 @@ public class Gameboard {
         return gameObjects;
     }
 
-    public ArrayList<GameObject> getMinions() { return minions; }
+    public GameObject getYellowMinion(){
+        return yellowMinion;
+    }
+
+    public GameObject getPurpleMinion(){
+        return purpleMinion;
+    }
 
 
     private void initGameboardRectangle(){
@@ -98,8 +103,8 @@ public class Gameboard {
     }
 
     public boolean gameboardStartSetup(){
-        if (minions.size() == 0) {
-            minionStartSetup();
+        if (yellowMinion == null && purpleMinion == null) {
+            createMinions();
             generateGoggles();
             generateBeedo();
             generateBanana();
@@ -108,9 +113,24 @@ public class Gameboard {
         return false;
     }
 
-    public void minionStartSetup(){
-        createGameObject(GameObjectType.YELLOWMINION, (int) rect_Gameboard.getX(), (int) rect_Gameboard.getY());
-        createGameObject(GameObjectType.PURPLEMINION, (int) rect_Gameboard.getX() + rect_Gameboard.widthProperty().intValue() - minionSize.intValue(), (int) rect_Gameboard.getY() + rect_Gameboard.heightProperty().intValue() - minionSize.intValue());
+    public void createMinions() {
+        if (yellowMinion == null && purpleMinion == null) {
+            createGameObject(GameObjectType.YELLOWMINION, 0, 0);
+            createGameObject(GameObjectType.PURPLEMINION, 0, 0);
+            setMinionStartPosition1();
+        }
+    }
+
+    public void setMinionStartPosition1(){
+        Point[] points = getStartPositions();
+        setMinionPosition(GameObjectType.YELLOWMINION, points[0]);  // Left Top
+        setMinionPosition(GameObjectType.PURPLEMINION, points[2]);  // Right Bottom
+    }
+
+    public void setMinionStartPosition2(){
+        Point[] points = getStartPositions();
+        setMinionPosition(GameObjectType.YELLOWMINION, points[1]);  // Right Top
+        setMinionPosition(GameObjectType.PURPLEMINION, points[3]);  // Left Bottom
     }
 
     public void saveGameboardPreferences(){
@@ -145,11 +165,11 @@ public class Gameboard {
         switch (type){
             case YELLOWMINION:
                 gObj.setSize(minionSize);
-                minions.add(gObj);
+                yellowMinion = gObj;
                 break;
             case PURPLEMINION:
                 gObj.setSize(minionSize);
-                minions.add(gObj);
+                purpleMinion = gObj;
                 break;
             case REFERENCEPOINT:
                 gObj.setSize(minionSize);
@@ -159,7 +179,6 @@ public class Gameboard {
                 break;
             default:
                 gObj.setSize(itemSize);
-                items.add(gObj);
         }
 
         gameObjects.add(gObj);
@@ -169,10 +188,10 @@ public class Gameboard {
 
     private Point generateRandomPointOnGameboard(){
         int minX = rect_Gameboard.xProperty().intValue();
-        int maxX = rect_Gameboard.widthProperty().intValue() + minX - itemSize.intValue();    // substract itemSize otherwise items in bottem/right redzone
+        int maxX = rect_Gameboard.widthProperty().intValue() + minX - itemSize.intValue();    // substract itemSize otherwise items in bottom/right redzone
 
         int minY = rect_Gameboard.yProperty().intValue();
-        int maxY = rect_Gameboard.heightProperty().intValue() + minY - itemSize.intValue();   // substract itemSize otherwise items in bottem/right redzone
+        int maxY = rect_Gameboard.heightProperty().intValue() + minY - itemSize.intValue();   // substract itemSize otherwise items in bottom/right redzone
 
         Random random = new Random();
         int x = 0;
@@ -212,10 +231,27 @@ public class Gameboard {
         return (tries != 1000) ? new Point(x,y) : null;
     }
 
-    public void setMinionPosition(int minion, int x, int y){
-        if(minion >= 0 && minion < minions.size()) {
-            minions.get(minion).setPosition(x,y);
+    public void setMinionPosition(GameObjectType minion, Point point){
+        int x = (int) point.getX() - minionSize.intValue()/2;   // Camerapoint is center of minion, but gui point is left top corner
+        int y = (int) point.getY() - minionSize.intValue()/2;   // Camerapoint is center of minion, but gui point is left top corner
+
+        switch (minion){
+            case YELLOWMINION: yellowMinion.setPosition(x,y);
+                break;
+            case PURPLEMINION: purpleMinion.setPosition(x,y);
         }
+    }
+
+    public GameObject isCollidingGameObject(GameObject minion){
+        for (GameObject temp : gameObjects){
+            if (minion.imageView.getBoundsInLocal().intersects(temp.imageView.getBoundsInLocal())) {
+                // TODO: Catch Yellow/Purple second collision Purple/Yellow
+                if (temp.equals(minion) == false) {
+                    return temp;
+                }
+            }
+        }
+        return null;
     }
 
     public boolean isOutsideOfGameboard(GameObject minion){
@@ -225,42 +261,18 @@ public class Gameboard {
         return false;
     }
 
-    // TODO: Rewrite: Get called twice 0,1  && 1,0
-    public GameObject isCollidingWithMinion(GameObject minion){
-        for (GameObject temp : minions){
-            if (temp.equals(minion) == false) {
-                if (minion.imageView.getBoundsInLocal().intersects(temp.imageView.getBoundsInLocal())) {
-                    return temp;
-                }
-            }
-        }
-        return null;
-    }
-
-    public GameObject isCollidingWithItem(GameObject minion){
-        for (GameObject temp : items){
-            if (minion.imageView.getBoundsInLocal().intersects(temp.imageView.getBoundsInLocal())) {
-                return temp;
-            }
-        }
-        return null;
-    }
-
     public void removeGameObject(GameObject gObj){
         switch(gObj.type){
             case YELLOWMINION:
                 gameObjects.remove(gObj);
-                int index1 = minions.indexOf(gObj);
-                minions.remove(index1);
+                yellowMinion = null;
                 break;
             case PURPLEMINION:
                 gameObjects.remove(gObj);
-                int index2 = minions.indexOf(gObj);
-                minions.remove(index2);
+                purpleMinion = null;
                 break;
             default:
                 gameObjects.remove(gObj);
-                items.remove(gObj);
                 break;
         }
     }
@@ -298,11 +310,27 @@ public class Gameboard {
         while (iter.hasNext()){
             GameObject gObj = iter.next();
             if(gObj.type == type){
-                if (gObj.type == GameObjectType.YELLOWMINION || gObj.type == GameObjectType.PURPLEMINION){
-                    minions.remove(gObj);
+                if (gObj.type == GameObjectType.YELLOWMINION){
+                    yellowMinion = null;
+                } else if (gObj.type == GameObjectType.PURPLEMINION){
+                    purpleMinion = null;
                 }
                 iter.remove();
             }
         }
     }
+
+    public Point[] getStartPositions(){
+        int xl = (int)rect_Gameboard.getX() + minionSize.intValue()/2;
+        int xr = (int) rect_Gameboard.getX() + rect_Gameboard.widthProperty().intValue() - minionSize.intValue()/2;
+        int yt = (int) rect_Gameboard.getY() + minionSize.intValue()/2;
+        int yb = (int) rect_Gameboard.getY() + rect_Gameboard.heightProperty().intValue() - minionSize.intValue()/2;
+        Point pLT = new Point(xl, yt);
+        Point pRT = new Point(xr, yt);
+        Point pRB = new Point(xr, yb);
+        Point pLB = new Point(xl, yb);
+        Point[] startPositions = {pLT, pRT, pRB, pLB};
+        return startPositions;
+    }
+
 }
