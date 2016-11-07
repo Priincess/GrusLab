@@ -1,5 +1,7 @@
 package game.camera;
 
+import game.GameState;
+import game.GameStateValue;
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -30,13 +32,12 @@ public class ObjTracker {
 	//variables For trackings
 	HSVTracking _yellowMinion;
 	HSVTracking _evilMinion;
-	
-	
 
-	
 	//actual positions of minions
 	Point _yellowPos;
 	Point _evilPos;
+
+	private GameState _gameState;
 	
 	
 	public ObjTracker() {
@@ -52,6 +53,9 @@ public class ObjTracker {
 		//until now, no minions are tracked
 		_yellowPos = null;
 		_evilPos = null;
+
+
+		_gameState = GameState.getInstance();
 	}
 	
 	
@@ -86,6 +90,21 @@ public class ObjTracker {
 			//to not interfere objectTracking from yellow minion, frame gets closed
 
 			_evilPos = _evilMinion.trackMinion(_actualFrame.clone(),  Minion.EVIL);
+
+			changeGameState();
+		}
+	}
+
+	private void changeGameState(){
+		if (_gameState.getGameState() == GameStateValue.PLAY){
+			if (_yellowMinion == null || _evilPos == null) {
+				_gameState.setGameState(GameStateValue.PAUSE);
+			}
+		}
+		if (_gameState.getGameState() == GameStateValue.PAUSE){
+			if (_yellowMinion != null && _evilPos != null) {
+				_gameState.setGameState(GameStateValue.PLAY);
+			}
 		}
 	}
 	
