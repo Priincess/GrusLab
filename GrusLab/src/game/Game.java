@@ -78,8 +78,8 @@ public class Game {
     }
 
     private void runGame(){
-        //updateYellowMinionPosition();
-        //updateEvilMinionPosition();
+        updateYellowMinionPosition();
+        updateEvilMinionPosition();
         checkForCollisions();
     }
 
@@ -89,7 +89,7 @@ public class Game {
             initGameCountdown();
             initGameRunningTask();
             gameTimer.scheduleAtFixedRate(gameTimerTask, 0, 1000);
-            gameTimer.scheduleAtFixedRate(gameRunningTimerTask, 0, 10);
+            gameTimer.scheduleAtFixedRate(gameRunningTimerTask, 0, 5);
         }
     }
 
@@ -136,10 +136,12 @@ public class Game {
     }
 
     private void updateYellowMinionPosition(){
+        // TODO: Minion lost for a while
         gameboard.setMinionPosition(GameObjectType.YELLOWMINION, scaler.transformCameraPointToGameboardPoint(tracker.getYellowPos()));
     }
 
     private void updateEvilMinionPosition(){
+        // TODO: Minion lost for a while
         gameboard.setMinionPosition(GameObjectType.PURPLEMINION, scaler.transformCameraPointToGameboardPoint(tracker.getEvilPos()));
     }
 
@@ -190,7 +192,7 @@ public class Game {
         }
         item = gameboard.isCollidingGameObject(purpleMinion);
         if (item != null){
-            itemCollisionHandler(yellowMinion, item);
+            itemCollisionHandler(purpleMinion, item);
         }
     }
 

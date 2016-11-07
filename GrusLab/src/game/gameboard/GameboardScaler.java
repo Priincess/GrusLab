@@ -57,7 +57,6 @@ public class GameboardScaler {
         this.gameRT = new Point(gamePoints[1].getX(), gamePoints[1].getY());
         this.gameRB = new Point(gamePoints[2].getX(), gamePoints[2].getY());
         this.gameLB = new Point(gamePoints[3].getX(), gamePoints[3].getY());
-
         getPerspective();
     }
 
@@ -86,13 +85,15 @@ public class GameboardScaler {
     }
 
     public java.awt.Point transformCameraPointToGameboardPoint(Point cameraPoint){
+        if (cameraPoint == null){
+            return null;
+        }
         Mat src = new Mat();
         Mat dst = new Mat();
         src.push_back(new MatOfPoint2f(cameraPoint));
         Core.perspectiveTransform(src, dst, homography);
         double[] points = dst.get(0, 0);
         java.awt.Point point = new java.awt.Point((int)points[0], (int)points[1]);
-        //System.out.println("Camerapoint: " + cameraPoint + " Transformed Point: " + point); // TODO: Remove
         return point;
     }
 }

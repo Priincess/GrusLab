@@ -220,8 +220,8 @@ public class Gameboard {
             );
 
             for (GameObject gameObject : gameObjects){
-                if (gameObject.imageView.getBoundsInLocal().intersects(itemCollisionBox.getBoundsInLocal()) == true
-                        || gameObject.imageView.getBoundsInLocal().intersects(minionCollisionBox.getBoundsInLocal()) == true){
+                if (gameObject.getImageView().getBoundsInLocal().intersects(itemCollisionBox.getBoundsInLocal()) == true
+                        || gameObject.getImageView().getBoundsInLocal().intersects(minionCollisionBox.getBoundsInLocal()) == true){
                     collision = true;
                     break;
                 }
@@ -244,25 +244,31 @@ public class Gameboard {
 
     public GameObject isCollidingGameObject(GameObject minion){
         for (GameObject temp : gameObjects){
-            if (minion.imageView.getBoundsInLocal().intersects(temp.imageView.getBoundsInLocal())) {
-                // TODO: Catch Yellow/Purple second collision Purple/Yellow
-                if (temp.equals(minion) == false) {
+            // collision with item
+            if (temp.getType() != GameObjectType.YELLOWMINION && temp.getType() != GameObjectType.PURPLEMINION) {
+                double minionX = minion.getImageView().getX() + minionSize.intValue() / 2;
+                double minionY = minion.getImageView().getY() + minionSize.intValue() / 2;
+                if(temp.getImageView().contains(minionX, minionY) == true){
                     return temp;
                 }
+            }
+            // Only test yellow minion, otherwise minion collision happens twice (Yellow/Purple <-> Purple/Yellow)
+            if (minion.getType() == GameObjectType.YELLOWMINION){
+                return temp;
             }
         }
         return null;
     }
 
     public boolean isOutsideOfGameboard(GameObject minion){
-        if (!rect_GameboardCollisionBox.getBoundsInParent().intersects(minion.imageView.getBoundsInParent())){
+        if (!rect_GameboardCollisionBox.getBoundsInParent().intersects(minion.getImageView().getBoundsInParent())){
             return true;
         }
         return false;
     }
 
     public void removeGameObject(GameObject gObj){
-        switch(gObj.type){
+        switch(gObj.getType()){
             case YELLOWMINION:
                 gameObjects.remove(gObj);
                 yellowMinion = null;
@@ -309,10 +315,10 @@ public class Gameboard {
         Iterator<GameObject> iter = gameObjects.iterator();
         while (iter.hasNext()){
             GameObject gObj = iter.next();
-            if(gObj.type == type){
-                if (gObj.type == GameObjectType.YELLOWMINION){
+            if(gObj.getType() == type){
+                if (gObj.getType() == GameObjectType.YELLOWMINION){
                     yellowMinion = null;
-                } else if (gObj.type == GameObjectType.PURPLEMINION){
+                } else if (gObj.getType() == GameObjectType.PURPLEMINION){
                     purpleMinion = null;
                 }
                 iter.remove();

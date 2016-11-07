@@ -93,8 +93,6 @@ public class GameboardViewController {
     private SequentialTransition gameInfoTextPauseTransition;
     private boolean isGameInfoTextPauseTransitionRunning = false;
 
-    private int calibrationStatus = 0;
-
 
     public void initGameboardViewController(Game game){
         this.game = game;
@@ -119,7 +117,7 @@ public class GameboardViewController {
         initGameInfoTextGameOver();
         initGameInfoTextPause();
 
-        label_InfoText.setText("Calibration (1)\nPut Minions on Position");
+        label_InfoText.setText("Calibration\nPut Minions on Position");
         gameboard.createMinions();
         //startGameInfoTextReady();
     }
@@ -250,27 +248,10 @@ public class GameboardViewController {
 
                 if (y > 70) {
                     if (mouseEvent.isPrimaryButtonDown() == true && gameState.getGameState() == CALIBRATION) {
-                        if (calibrationStatus == 1){
-                            if (game.initCamPoints2() == true){
-                                gameState.setGameState(READY);
-                            } else {
-                                label_InfoText.setText("Calibration (2) failed - Try again or Skip");
-                            }
-                        }
-
-                        if (calibrationStatus == 0){
-                            if (game.initCamPoints1() == true){
-                                calibrationStatus = 1;
-                                gameboard.setMinionStartPosition2();
-                                label_InfoText.setText("Calibration (2)\nPut Minions on Position\nCalibrate or Skip");
-                            } else {
-                                label_InfoText.setText("Calibration (1) failed - Try again");
-                            }
-                        }
-                    }
-                    if (mouseEvent.isSecondaryButtonDown() == true && gameState.getGameState() == CALIBRATION){
-                        if (calibrationStatus == 1){
+                        if (game.initCamPoints1() == true){
                             gameState.setGameState(READY);
+                        } else {
+                            label_InfoText.setText("Calibration failed - Try again");
                         }
                     }
 

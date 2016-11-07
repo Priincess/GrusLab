@@ -11,9 +11,9 @@ import javafx.scene.media.MediaPlayer;
  * Created by Mark Mauerhofer on 08.10.2016.
  */
 public class GameObject {
-    ImageView imageView;
-    GameObjectType type;
-    MediaPlayer player;
+    private ImageView imageView;
+    private GameObjectType type;
+    private MediaPlayer player;
 
     public GameObject(GameObjectType type, IntegerProperty size){
         this.type = type;
