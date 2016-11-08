@@ -24,18 +24,18 @@ public class ObjTracker {
 	private static final int CAM_ID = 0;
 	private static final int NUM_OF_SCALEPOINTS = 4;
 	
-	private static final Point NOT_VALID = new Point(-1,-1);
+	private static final Point NOT_VALID = null;
 
     private VideoCapture _capture;
 	private Mat _actualFrame;
 	
 	//variables For trackings
-	HSVTracking _yellowMinion;
-	HSVTracking _evilMinion;
+	private HSVTracking _yellowMinion;
+	private HSVTracking _evilMinion;
 
 	//actual positions of minions
-	Point _yellowPos;
-	Point _evilPos;
+	private Point _yellowPos;
+	private Point _evilPos;
 
 	private GameState _gameState;
 	
@@ -85,29 +85,23 @@ public class ObjTracker {
 
 			_capture.read(_actualFrame);
 
-			_yellowPos = _yellowMinion.trackMinion(_actualFrame,  Minion.YELLOW);
 
+			//if no minion - catch native exception. can't throw because thread would stop
+			try {
+				_yellowPos = _yellowMinion.trackMinion(_actualFrame, Minion.YELLOW);
+			} catch (Exception e ){
+				_yellowPos = NOT_VALID;
+			}
 			//to not interfere objectTracking from yellow minion, frame gets closed
 
-			_evilPos = _evilMinion.trackMinion(_actualFrame.clone(),  Minion.EVIL);
-
-			changeGameState();
-		}
-	}
-
-	private void changeGameState(){
-		if (_gameState.getGameState() == GameStateValue.PLAY){
-			if (_yellowMinion == null || _evilPos == null) {
-				_gameState.setGameState(GameStateValue.PAUSE);
-			}
-		}
-		if (_gameState.getGameState() == GameStateValue.PAUSE){
-			if (_yellowMinion != null && _evilPos != null) {
-				_gameState.setGameState(GameStateValue.PLAY);
+			try {
+				_evilPos = _evilMinion.trackMinion(_actualFrame.clone(), Minion.EVIL);
+			} catch (Exception e) {
+				_evilPos = NOT_VALID;
 			}
 		}
 	}
-	
+
 	public boolean stopTracking(){
 		
 		//close camera if not longer tracking

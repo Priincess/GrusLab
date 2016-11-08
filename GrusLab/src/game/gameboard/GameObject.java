@@ -13,7 +13,7 @@ import javafx.scene.media.MediaPlayer;
 public class GameObject {
     private ImageView imageView;
     private GameObjectType type;
-    private MediaPlayer player;
+    private MediaPlayer mediaPlayer;
 
     public GameObject(GameObjectType type, IntegerProperty size){
         this.type = type;
@@ -63,17 +63,17 @@ public class GameObject {
     public void playSound(){
         switch (this.type){
             case BANANA:
-                player = new MediaPlayer(new Media(getClass().getResource("gameObjectMedia/bababa_banana.mp3").toExternalForm()));
+                mediaPlayer = new MediaPlayer(new Media(getClass().getResource("gameObjectMedia/bababa_banana.mp3").toExternalForm()));
                 break;
             case BEEDO:
-                player = new MediaPlayer(new Media(getClass().getResource("gameObjectMedia/beedo.mp3").toExternalForm()));
+                mediaPlayer = new MediaPlayer(new Media(getClass().getResource("gameObjectMedia/beedo.mp3").toExternalForm()));
                 break;
             case GOGGLES:
-                player = new MediaPlayer(new Media(getClass().getResource("gameObjectMedia/What.mp3").toExternalForm()));
+                mediaPlayer = new MediaPlayer(new Media(getClass().getResource("gameObjectMedia/What.mp3").toExternalForm()));
                 break;
         }
-        if (player != null) {
-            player.play();
+        if (mediaPlayer != null) {
+            mediaPlayer.play();
         }
     }
 

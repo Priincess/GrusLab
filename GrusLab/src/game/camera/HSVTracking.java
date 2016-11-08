@@ -21,7 +21,7 @@ import org.opencv.imgproc.Imgproc;
 
 public class HSVTracking {
 	
-	private static final Point NOT_VALID = new Point(-1,-1);
+	private static final Point NOT_VALID = null;
 	
 	private Scalar _upperound;
 	
@@ -120,12 +120,12 @@ public class HSVTracking {
 		}
 
 		//hack for getting centroids out of contours
-		 MatOfPoint2f  centroids = new MatOfPoint2f( maxPoint.toArray() );
+		MatOfPoint2f  centroids = new MatOfPoint2f( maxPoint.toArray() );
 		Imgproc.minEnclosingCircle(centroids, center, new float[5]);
 	
 		
 		if (centroids.empty()){
-			return null;	// No Point found
+			return NOT_VALID;	// No Point found
 		}
 		else{
 			return center;

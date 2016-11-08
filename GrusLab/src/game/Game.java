@@ -137,12 +137,22 @@ public class Game {
 
     private void updateYellowMinionPosition(){
         // TODO: Minion lost for a while
-        gameboard.setMinionPosition(GameObjectType.YELLOWMINION, scaler.transformCameraPointToGameboardPoint(tracker.getYellowPos()));
+        Point point = tracker.getYellowPos();
+        if (point == null){
+            gameState.setGameState(PAUSE);
+        } else {
+            gameboard.setMinionPosition(GameObjectType.YELLOWMINION, scaler.transformCameraPointToGameboardPoint(tracker.getYellowPos()));
+        }
     }
 
     private void updateEvilMinionPosition(){
         // TODO: Minion lost for a while
-        gameboard.setMinionPosition(GameObjectType.PURPLEMINION, scaler.transformCameraPointToGameboardPoint(tracker.getEvilPos()));
+        Point point = tracker.getEvilPos();
+        if (point == null){
+            gameState.setGameState(PAUSE);
+        } else {
+            gameboard.setMinionPosition(GameObjectType.PURPLEMINION, scaler.transformCameraPointToGameboardPoint(tracker.getEvilPos()));
+        }
     }
 
     private void initGameRunningTask(){
@@ -175,15 +185,15 @@ public class Game {
         pointsPurpleMinion.set(0);
     }
 
-    private void checkForCollisions(){
+    public void checkForCollisions(){   // TODO: set private
         GameObject yellowMinion = gameboard.getYellowMinion();
         GameObject purpleMinion = gameboard.getPurpleMinion();
 
         if(gameboard.isOutsideOfGameboard(yellowMinion)){
-            // TODO: Stop Robot or Pause Game?
+            // TODO: Pause Game
         }
         if (gameboard.isOutsideOfGameboard(purpleMinion)){
-            // TODO: Stop Robot or Pause Game?
+            // TODO: Pause Game
         }
 
         GameObject item = gameboard.isCollidingGameObject(yellowMinion);
@@ -198,7 +208,8 @@ public class Game {
 
     private void itemCollisionHandler(GameObject minion, GameObject item){
         switch(item.getType()){
-            case PURPLEMINION: // TODO: doSomething;
+            case PURPLEMINION:
+                // TODO: doSomething (Collision between minions)
                 break;
             case BANANA:
                 bananaCollisionHandler(minion,item);

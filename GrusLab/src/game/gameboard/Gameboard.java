@@ -199,7 +199,6 @@ public class Gameboard {
 
         boolean collision = true;
         Rectangle itemCollisionBox;
-        Rectangle minionCollisionBox;
         int tries = 0;
 
         while(collision == true && tries < 1000){
@@ -212,16 +211,9 @@ public class Gameboard {
                     2*itemSize.intValue() + gameObjectDistance.intValue(),
                     2*itemSize.intValue() + gameObjectDistance.intValue()
             );
-            minionCollisionBox = new Rectangle(
-                    x-minionSize.intValue()/2 - gameObjectDistance.intValue()/2,
-                    y-minionSize.intValue()/2 - gameObjectDistance.intValue()/2,
-                    2*minionSize.intValue() + gameObjectDistance.intValue(),
-                    2*minionSize.intValue() + gameObjectDistance.intValue()
-            );
 
             for (GameObject gameObject : gameObjects){
-                if (gameObject.getImageView().getBoundsInLocal().intersects(itemCollisionBox.getBoundsInLocal()) == true
-                        || gameObject.getImageView().getBoundsInLocal().intersects(minionCollisionBox.getBoundsInLocal()) == true){
+                if (gameObject.getImageView().getBoundsInLocal().intersects(itemCollisionBox.getBoundsInLocal()) == true){
                     collision = true;
                     break;
                 }
@@ -243,18 +235,17 @@ public class Gameboard {
     }
 
     public GameObject isCollidingGameObject(GameObject minion){
-        for (GameObject temp : gameObjects){
+        // TODO: Minion Collision
+        // 0 == yellow minion && 1 == purple minion
+        for (int i = 2; i < gameObjects.size(); i++){
             // collision with item
+            GameObject temp = gameObjects.get(i);
             if (temp.getType() != GameObjectType.YELLOWMINION && temp.getType() != GameObjectType.PURPLEMINION) {
                 double minionX = minion.getImageView().getX() + minionSize.intValue() / 2;
                 double minionY = minion.getImageView().getY() + minionSize.intValue() / 2;
                 if(temp.getImageView().contains(minionX, minionY) == true){
                     return temp;
                 }
-            }
-            // Only test yellow minion, otherwise minion collision happens twice (Yellow/Purple <-> Purple/Yellow)
-            if (minion.getType() == GameObjectType.YELLOWMINION){
-                return temp;
             }
         }
         return null;
