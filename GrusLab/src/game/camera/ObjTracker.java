@@ -1,7 +1,7 @@
 package game.camera;
 
 import game.GameState;
-import game.GameStateValue;
+
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -22,7 +22,7 @@ public class ObjTracker {
 	
 	//ID for webcam to be used
 	private static final int CAM_ID = 0;
-	private static final int NUM_OF_SCALEPOINTS = 4;
+//	private static final int NUM_OF_SCALEPOINTS = 4;
 	
 	private static final Point NOT_VALID = null;
 
@@ -36,8 +36,6 @@ public class ObjTracker {
 	//actual positions of minions
 	private Point _yellowPos;
 	private Point _evilPos;
-
-	private GameState _gameState;
 	
 	
 	public ObjTracker() {
@@ -54,8 +52,6 @@ public class ObjTracker {
 		_yellowPos = null;
 		_evilPos = null;
 
-
-		_gameState = GameState.getInstance();
 	}
 	
 	
