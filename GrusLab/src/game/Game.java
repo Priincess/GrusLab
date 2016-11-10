@@ -47,8 +47,8 @@ public class Game {
         gameState = GameState.getInstance();
         gamePreferences = Preferences.userNodeForPackage(this.getClass());
         loadGameSettings();
-
         gameboard = new Gameboard();
+
         addGameStateListener();
     }
 
@@ -268,6 +268,7 @@ public class Game {
                 switch (gameState.getGameState()){
                     case READY:
                         if (old == CALIBRATION.getValue()){
+                            cleanGameboard();
                             initScaler();
                         }
                         if (old == FINISHED.getValue()){
