@@ -6,8 +6,11 @@ package game.player;
  */
 public enum Gamepad {
 	
-	PS4, Xbox;
+	PS4, Xbox, XboxS;
 	
+	private static String PS4_NAME = "Wireless Controller";
+	private static String XBOX_NAME = "Controller (Xbox 360 Wireless Receiver for Windows)";
+	private static String XBOX_S_NAME = "Bluetooth XINPUT compatible input device";
 	private static int PS4_FORWARD = 1;
 	private static int XBOX_FORWARD = 0;
 	private static int PS4_BACKWARD = 2;
@@ -17,25 +20,56 @@ public enum Gamepad {
 	private static int LEFT = -1;
 	private static int RIGHT = 1;
 	
+	public String getName(){
+		switch (this) {
+			case PS4:
+				return PS4_NAME;
+			case Xbox:
+				return XBOX_NAME;
+			case XboxS:
+				return XBOX_S_NAME;
+			default:
+				return "";
+		}
+	}
+	
 	public int getForwardIndex(){
-		if(this.equals(PS4))
-			return PS4_FORWARD;
-		else
-			return XBOX_FORWARD;
+		switch (this) {
+			case PS4:
+				return PS4_FORWARD;
+			case Xbox:
+				return XBOX_FORWARD;
+			case XboxS:
+				return XBOX_FORWARD;
+			default:
+				return -1;
+		}
 	}
 	
 	public int getBackwardIndex(){
-		if(this.equals(PS4))
-			return PS4_BACKWARD;
-		else
-			return XBOX_BACKWARD;
+		switch (this) {
+			case PS4:
+				return PS4_BACKWARD;
+			case Xbox:
+				return XBOX_BACKWARD;
+			case XboxS:
+				return XBOX_BACKWARD;
+			default:
+				return -1;
+		}
 	}
 	
 	public int getStartIndex(){
-		if(this.equals(PS4))
-			return PS4_START;
-		else
-			return XBOX_START;
+		switch (this) {
+			case PS4:
+				return PS4_START;
+			case Xbox:
+				return XBOX_START;
+			case XboxS:
+				return XBOX_START;
+			default:
+				return -1;
+		}
 	}
 	
 	public int getLeftValue(){

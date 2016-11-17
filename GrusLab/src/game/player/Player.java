@@ -16,6 +16,10 @@ public class Player {
 	private Minion _minion;
 	
 	//**********PUBLIC METHODS**********
+	
+	public Player (Minion minion){
+		_minion = minion;
+	}
 
 	/**
 	 * This method sets the state of the pressed controller buttons

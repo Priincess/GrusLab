@@ -3,6 +3,7 @@ package game;
 import game.camera.ObjTracker;
 import game.gui.GuiManager;
 import game.player.ControllerManager;
+import game.player.Minion;
 import game.player.Player;
 import game.server.Server;
 
@@ -18,8 +19,7 @@ public class CentralControl {
 	private GameState _gameState = null;
 	private Server _server = null;
 	private ControllerManager _controllerManager = null;
-	private Player _player1 = null;
-	private Player _player2 = null;
+	private Player[] _players;
 	private ObjTracker _tracker = null;
 	private GuiManager _guiManager = null;
 	private Game _game = null;
@@ -40,13 +40,17 @@ public class CentralControl {
 	
 	private CentralControl(){
 		//initialize components
+		//TODO player = 2; id minion purple = 1
+		_players = new Player[1];
+		//_players[0] = new Player(Minion.Yellow);
+		_players[0] = new Player(Minion.Purple);
 		_gameState = GameState.getInstance();
 		_server = new Server();
 		_controllerManager = new ControllerManager();
 		_tracker = new ObjTracker();
-		_game = new Game(_tracker);
+		//_game = new Game(_tracker);
 		_guiManager = new GuiManager();
-		_guiManager.setGame(_game);
+		//_guiManager.setGame(_game);
 	}
 	
 	//**********PUBLIC METHODS**********
@@ -67,29 +71,31 @@ public class CentralControl {
 		//init threads
 		initThreads();
 
-		_guiRuntime.start();
-		_objectTracker.start();
+		//_guiRuntime.start();
+		//_objectTracker.start();
 //
-//		_controllerInit.start();
-//		_serverInit.start();
+		_controllerInit.start();
+		_serverStart.start();
 //
-//		while(!_controllerInit.getState().equals(Thread.State.TERMINATED) || !_serverInit.getState().equals(Thread.State.TERMINATED)){}
+		
+		while(!_controllerInit.getState().equals(Thread.State.TERMINATED) || !_server.connectionsEstablished()){}
 //
 
 		while(_playing){
 
 //			_gameState.setGameState(GameStateValue.WAIT);
 //
-//			System.out.println("Wait for Players to press start!");
-//			_controllerWaitForStart.start();
+			System.out.println("Wait for Players to press start!");
+			_controllerWaitForStart.start();
 //
-//			while(!_controllerWaitForStart.getState().equals(Thread.State.TERMINATED)){}
+			while(!_controllerWaitForStart.getState().equals(Thread.State.TERMINATED)){}
 //
 //			_gameState.setGameState(GameStateValue.READY);
 
-			while(GameState.getGameState() != GameStateValue.PLAY){}
+	//		while(GameState.getGameState() != GameStateValue.PLAY){}
 
-//			_controllerStart.start();
+			_controllerStart.start();
+			_gameState.setGameState(GameStateValue.PLAY);
 //			_serverStart.start();
 			
 			//TODO: wait for game to finish
@@ -97,7 +103,7 @@ public class CentralControl {
 //			_controllerManager.stopManage();
 //			_tracker.stopTracking();
 			
-//			while(!_controllerStart.getState().equals(Thread.State.TERMINATED) || !_serverStart.getState().equals(Thread.State.TERMINATED)){}
+			while(!_controllerStart.getState().equals(Thread.State.TERMINATED) || !_serverStart.getState().equals(Thread.State.TERMINATED)){}
 		
 		}
 		
@@ -116,7 +122,7 @@ public class CentralControl {
 		_controllerInit = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				_controllerManager.initController(new Player[]{_player1, _player2});
+				_controllerManager.initController(_players);
 			}
 		});
 		
@@ -124,7 +130,7 @@ public class CentralControl {
 		_controllerWaitForStart = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				_controllerManager.waitForPlayer(_player1, _player2);
+				_controllerManager.waitForPlayer(_players);
 			}
 		});
 		
@@ -132,7 +138,7 @@ public class CentralControl {
 		_controllerStart = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				_controllerManager.manageSignals(_player1, _player2);
+				_controllerManager.manageSignals(_players);
 			}
 		});
 		
@@ -140,7 +146,7 @@ public class CentralControl {
 		_serverStart = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				_server.startServer(_player1, _player2);
+				_server.startServer(_players);
 			}
 		});
 
@@ -167,8 +173,7 @@ public class CentralControl {
 	private void quitGame(){
 		_server.stopServer();
 		
-		_player1 = null;
-		_player2 = null;
+		_players = null;
 		_server = null;
 		_controllerManager = null;
 	}
