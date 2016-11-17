@@ -64,7 +64,7 @@ public class Server {
 		
 		while(_running){
 			if(GameState.getGameState() == GameStateValue.PLAY){
-				//checkIfRobotsConnected();
+				checkIfRobotsConnected();
 				for(Communicator c : _communicators){
 					c.setIdel(false);
 				}
@@ -95,8 +95,16 @@ public class Server {
 	 * @return if both robots are connected
 	 */
 	public boolean connectionsEstablished(){
-		//TODO
-		return true;//_com1._isConnected && _com2.isConnected();
+		boolean ret=false;;
+		//check if all players pressed start
+		for(int i =0; i<_communicators.size(); i++){
+			if(i == 0){
+				ret = _communicators.get(i)._isConnected;
+			}else{
+				ret &=  _communicators.get(i)._isConnected;
+			}
+		}
+		return ret;
 	}
 	
 	//**********PRIVATE METHODS**********

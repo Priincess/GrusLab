@@ -40,9 +40,10 @@ public class CentralControl {
 	
 	private CentralControl(){
 		//initialize components
-		_players = new Player[2];
-		_players[0] = new Player(Minion.Yellow);
-		_players[1] = new Player(Minion.Purple);
+		//TODO player = 2; id minion purple = 1
+		_players = new Player[1];
+		//_players[0] = new Player(Minion.Yellow);
+		_players[0] = new Player(Minion.Purple);
 		_gameState = GameState.getInstance();
 		_server = new Server();
 		_controllerManager = new ControllerManager();
