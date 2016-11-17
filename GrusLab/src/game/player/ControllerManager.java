@@ -12,11 +12,6 @@ import game.GameStateValue;
  * This class is responsible for the registered controllers. Among other things it polls the pressed buttons.
  */
 public class ControllerManager {
-
-	private static String PS4_NAME = "Wireless Controller";
-	private static String XBOX_NAME = "Controller (Xbox 360 Wireless Receiver for Windows)";
-	private static int INDEX_CONTROLLER1 = 0;
-	private static int INDEX_CONTROLLER2 = 1;
 	
 	private boolean _manage = false;
 	
@@ -24,7 +19,7 @@ public class ControllerManager {
 	
 	/**
 	 * This method waits until two controller are registered
-	 * @return list of players
+	 * @param players array with players
 	 */
 	public void initController(Player[] players){
 		int amountOfPlayer=0;
@@ -40,17 +35,23 @@ public class ControllerManager {
 			Controllers.poll();
 			//check if xbox or ps4 controller is connected
 			for(int i=0; i<Controllers.getControllerCount(); i++){
-				if(amountOfPlayer < 2){
-					if(Controllers.getController(i).getName().equals(PS4_NAME)){
+				if(amountOfPlayer < players.length){
+					if(Controllers.getController(i).getName().equals(Gamepad.PS4.getName())){
 						if(amountOfPlayer ==0 || !players[amountOfPlayer-1].getController().equals(Controllers.getController(i))){
 							players[amountOfPlayer].setController(Controllers.getController(i));
 							players[amountOfPlayer].setGamepad(Gamepad.PS4);
 							amountOfPlayer++;
 						}
-					}else if(Controllers.getController(i).getName().equals(XBOX_NAME)){
+					}else if(Controllers.getController(i).getName().equals(Gamepad.Xbox.getName())){
 						if(amountOfPlayer ==0 || !players[amountOfPlayer-1].getController().equals(Controllers.getController(i))){
 							players[amountOfPlayer].setController(Controllers.getController(i));
 							players[amountOfPlayer].setGamepad(Gamepad.Xbox);
+							amountOfPlayer++;
+						}
+					}else if(Controllers.getController(i).getName().equals(Gamepad.XboxS.getName())){
+						if(amountOfPlayer ==0 || !players[amountOfPlayer-1].getController().equals(Controllers.getController(i))){
+							players[amountOfPlayer].setController(Controllers.getController(i));
+							players[amountOfPlayer].setGamepad(Gamepad.XboxS);
 							amountOfPlayer++;
 						}
 					}
@@ -58,65 +59,67 @@ public class ControllerManager {
 			}
 			
 			Controllers.destroy();
-		}while(amountOfPlayer < 2);
+		}while(amountOfPlayer < players.length);
+		System.out.println("Controllers connected!");
 	}
 	
 	/**
 	 * This method waits for both player to press the button to start
 	 * 
-	 * @param p1 player 1
-	 * @param p2 player 2
+	 * @param players array of players
 	 */
-	public void waitForPlayer(Player p1, Player p2){
-		boolean p1pressed=false;
-		boolean p2pressed=false;
+	public void waitForPlayer(Player[] players){
+		
+		boolean[] pressed = new boolean[players.length];
+		boolean condition=false;
 		
 		//wait until both player pressed the button
-		while (!p1pressed || !p2pressed) {
-			p1.getController().poll();
-			p2.getController().poll();
-			
-			//check if player 1 pressed the button
-			if (!p1pressed && p1.getController().isButtonPressed(p1.getGamepad().getStartIndex())) {
-				p1pressed =true;
-				System.out.println("Player1 pressed start!");
+		do{
+			for(int i =0; i<players.length; i++){
+				players[i].getController().poll();
+				
+				//check if player pressed the button
+				if (!pressed[i] && players[i].getController().isButtonPressed(players[i].getGamepad().getStartIndex())) {
+					pressed[i] =true;
+					System.out.println("Player"+i+" pressed start!");
+				}
 			}
 			
-			//check if player 2 pressed the button
-			if (!p2pressed && p2.getController().isButtonPressed(p2.getGamepad().getStartIndex())) {
-				p2pressed =true;
-				System.out.println("Player2 pressed start!");
+			//check if all players pressed start
+			for(int i =0; i<pressed.length; i++){
+				if(i == 0){
+					condition = pressed[i];
+				}else{
+					condition &= pressed[i];
+				}
 			}
-		}
+		}while(!condition);
 	}
 	
 	/**
-	 * @param p1 player 1 - check controller
-	 * @param p2 player 2 - check controller
+	 * @param players array with players - check controller
 	 */
-	public void manageSignals(Player p1, Player p2){
+	public void manageSignals(Player[] players){
 		_manage = true;
 		
 		//manage the state the controller until stop signal is set
 		while (_manage) {
 			//poll from controllers
-			if(!p1.getController().poll()){
-				GameState.getInstance().setGameState(GameStateValue.PAUSE);
-				Components.setControllerConnected(INDEX_CONTROLLER1, false);
+			for(int i = 0; i < players.length; i++){
+				if(!players[i].getController().poll()){
+					GameState.getInstance().setGameState(GameStateValue.PAUSE);
+					Components.setControllerConnected(i, false);
+				}
+				
+				//check state of controllers
+				checkControllerState(players[i]);
 			}
-			if(!p2.getController().poll()){
-				GameState.getInstance().setGameState(GameStateValue.PAUSE);
-				Components.setControllerConnected(INDEX_CONTROLLER2, false);
-			}
-			
-			//check state of controllers
-			checkControllerState(p1);
-			checkControllerState(p2);
 		}
 		
 		//reset player
-		p1.reset();
-		p2.reset();
+		for(int i = 0; i < players.length; i++){
+			players[i].reset();
+		}
 	}
 	
 	/**

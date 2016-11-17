@@ -24,10 +24,10 @@ public class Packet {
 	private static int SAFETYBIT_LEGALBITS = 0x3;
 	
 	//data information - sending
-	private static int STATE_SHIFT = 1;
+	private static int STATE_SHIFT = 0;
 	private static int STATE_LEGALBITS = 0x3;
 	private static int CMD_SHIFT = 2;
-	private static int CMD_LEGALBITS = 0x15;
+	private static int CMD_LEGALBITS = 0xf;
 	private static int EXIT_SHIFT = 6;
 	private static int EXIT_LEGALBITS = 0x1;
 	

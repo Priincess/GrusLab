@@ -5,11 +5,12 @@ import java.net.DatagramPacket;
 import java.net.DatagramSocket;
 import java.net.InetAddress;
 import java.net.SocketException;
+import java.util.LinkedList;
+import java.util.List;
 
 import game.Components;
 import game.GameState;
 import game.GameStateValue;
-import game.player.Minion;
 import game.player.Player;
 
 public class Server {
@@ -21,15 +22,15 @@ public class Server {
 	private static int PORT = 2432;
 	private static int VERSION = 1;
 	private static int SAFETYBIT = 2;
-	private static long WAITINGTIME_REPLYREQUEST = 500;
-	private static long WAITINGTIME_DISCONNECED = 1000;
+	private static long WAITINGTIME_REPLYREQUEST = 1000;
+	private static long WAITINGTIME_DISCONNECED = 3000;
+//	private static long WAITINGTIME_REPLYREQUEST = 500;
+//	private static long WAITINGTIME_DISCONNECED = 1000;
 	
 	private DatagramSocket _socket;
 	private boolean _running = false;
 	
-	private Communicator _com1;
-	private Communicator _com2;
-	
+	private List<Communicator> _communicators = new LinkedList<>();
 	
 	//**********PUBLIC METHODS**********
 	
@@ -46,38 +47,40 @@ public class Server {
 	 * @param p1 player 1
 	 * @param p2 player 2
 	 */
-	public void startServer(Player p1, Player p2){
+	public void startServer(Player[] players){
 		
-		//init minions and communicator
-		p1.setMinion(Minion.Yellow);
-		p2.setMinion(Minion.Purple);
-		_com1 = new Communicator(p1);
-		_com2 = new Communicator(p2);
-		
-		Thread t1 = new Thread(_com1);
-		Thread t2 = new Thread(_com2);
-		t1.run();
-		t2.run();
+		List<Thread> threads = new LinkedList<Thread>();
+		//init communicators
+		for(Player p : players){
+			Communicator c = new Communicator(p);
+			_communicators.add(c);
+			
+			Thread t = new Thread(c);
+			threads.add(t);
+			t.start();
+		}
 		
 		_running = true;
 		
 		while(_running){
-			
 			if(GameState.getGameState() == GameStateValue.PLAY){
-				checkIfRobotsConnected();
-				_com1.setIdel(false);
-				_com2.setIdel(false);
+				//checkIfRobotsConnected();
+				for(Communicator c : _communicators){
+					c.setIdel(false);
+				}
 			}else{
-				_com1.setIdel(true);
-				_com2.setIdel(true);
+				for(Communicator c : _communicators){
+					c.setIdel(true);
+				}
 			}
 		}
 		
 		//tell both communicators to finish communication
-		_com1.setFinished();
-		_com2.setFinished();
-		
-		while(t1.getState() != Thread.State.TERMINATED || t2.getState() != Thread.State.TERMINATED){}
+		for(Communicator c : _communicators){
+			c.setFinished();
+		}
+
+		while(!allThreadsTerminated(threads)){}
 		_socket.close();
 	}
 	
@@ -92,10 +95,25 @@ public class Server {
 	 * @return if both robots are connected
 	 */
 	public boolean connectionsEstablished(){
-		return _com1._isConnected && _com2.isConnected();
+		//TODO
+		return true;//_com1._isConnected && _com2.isConnected();
 	}
 	
 	//**********PRIVATE METHODS**********
+	
+	/**
+	 * @param threads list with all running threads
+	 * @return if all threads in list are terminated
+	 */
+	private boolean allThreadsTerminated(List<Thread> threads){
+		boolean ret = true;
+		for(Thread t : threads){
+			if(t.getState() != Thread.State.TERMINATED){
+				ret = false;
+			}
+		}
+		return ret;
+	}
 	
 	/**
 	 * This method checks if both robots are still connected and pause game if not
@@ -103,39 +121,24 @@ public class Server {
 	private void checkIfRobotsConnected(){
 		
 		//check if both robots are connected
-		if(!_com1.isConnected()){
-			
-			//pause game
-			GameState.getInstance().setGameState(GameStateValue.PAUSE);
-			
-			//set idle
-			_com1.setIdel(true);
-			_com2.setIdel(true);
-			Components.setMinionConnected(_com1._player.getMinion().getValue(), false);
-			
-			//wait until reconnect
-			while(!_com1.isConnected()){}
-			
-			//continue game
-			Components.setMinionConnected(_com1._player.getMinion().getValue(), true);
-			GameState.getInstance().setGameState(GameStateValue.PLAY);
-		
-		}else if(!_com2.isConnected()){
-			
-			//pause game
-			GameState.getInstance().setGameState(GameStateValue.PAUSE);
-			
-			//set idle
-			_com1.setIdel(true);
-			_com2.setIdel(true);
-			Components.setMinionConnected(_com2._player.getMinion().getValue(), false);
-			
-			//wait until reconnect
-			while(!_com2.isConnected()){}
-			
-			//continue game
-			Components.setMinionConnected(_com2._player.getMinion().getValue(), true);
-			GameState.getInstance().setGameState(GameStateValue.PLAY);
+		for(Communicator c : _communicators){
+			if(!c.isConnected()){
+				//pause game
+				GameState.getInstance().setGameState(GameStateValue.PAUSE);
+				
+				//set idle
+				for(Communicator c1 : _communicators){
+					c1.setIdel(true);
+				}
+				Components.setMinionConnected(c._player.getMinion().getValue(), false);
+				
+				//wait until reconnect
+				while(!c.isConnected()){}
+				
+				//continue game
+				Components.setMinionConnected(c._player.getMinion().getValue(), true);
+				GameState.getInstance().setGameState(GameStateValue.PLAY);
+			}
 		}
 	}
 	
@@ -149,6 +152,10 @@ public class Server {
 		private boolean _isIdle = true;
 		private boolean _received = false;
 		private InetAddress _robotAddress = null;
+		private int _reply = DISABLED;
+		
+		private long _timestampReply = 0;
+		private long _timestampDisconnected = 0;
 		
 		
 		public Communicator(Player player){
@@ -157,46 +164,54 @@ public class Server {
 		
 		@Override
 		public void run() {
-			
-			long timestampReply = 0;
-			long timestampDisconnected = 0;
-			int reply=DISABLED;
-			
+			System.out.println("Start");
 			//run until game exit
 			while(!_finished){
-				
 				connect();
 				//get current time
-				timestampReply = System.currentTimeMillis();
+				_timestampReply = System.currentTimeMillis();
 				
 				while(_isConnected){
 					
 					//check if game is idle or not
 					if(_isIdle){
-						sendIdleCMD(reply);
+						sendIdleCMD(_reply);
 					}else{
-						sendCMD(reply);
+						sendCMD(_reply);
 					}
 					
 					//check if it is time to get a reply from robot
-					if(reply == DISABLED && timestampReply + WAITINGTIME_REPLYREQUEST <= System.currentTimeMillis()){
-						reply = ENABLED;
+					if(_reply == DISABLED && _timestampReply + WAITINGTIME_REPLYREQUEST <= System.currentTimeMillis()){
+						_reply = ENABLED;
 						new Thread(new Runnable() {
 							
 							@Override
 							public void run() {
-								waitForReply(ENABLED);
+								_received = false;
+								while(!_received){
+									waitForReply(ENABLED);
+								}
+								_received = false;
+								_timestampReply = System.currentTimeMillis();
+								_reply = DISABLED;
 							}
-						}).run();
-						timestampDisconnected = System.currentTimeMillis();
+						}).start();
+						_timestampDisconnected = System.currentTimeMillis();
 					}
 					
 					//if reply is requested check if waiting time is over -> robot is disconnected
-					if(reply == ENABLED && timestampDisconnected + WAITINGTIME_DISCONNECED <= System.currentTimeMillis()){
+					if(_reply == ENABLED && _timestampDisconnected + WAITINGTIME_DISCONNECED <= System.currentTimeMillis()){
 						_isConnected = false;
-						reply = DISABLED;
+						_received = true;
+						System.out.println("Disconnected");
+						_reply = DISABLED;
 					}
 					
+					try {
+						Thread.sleep(10);
+					} catch (InterruptedException e) {
+						e.printStackTrace();
+					}
 				}
 			}		
 			exit();
@@ -233,11 +248,12 @@ public class Server {
 				//receive packet from robot
 				DatagramPacket packet = Packet.getReceivePacket();
 				_socket.receive(packet);
-				
+								
 				//check if header data fits - Version, RobotID, Safetybit, RequestReply and IsAlive
 				if(VERSION == Packet.getVersion(packet) && _player.getMinion().getValue() == Packet.getRobotID(packet) && SAFETYBIT == Packet.getSafetyBit(packet) && ENABLED == Packet.getReplyRequest(packet) && ENABLED == Packet.getIsAlive(packet)){
 					_robotAddress = packet.getAddress();
 					_isConnected = true;
+					System.out.println("Connected Minion "+_player.getMinion().getValue()+"!");
 				}
 				
 			} catch (IOException e) {
@@ -250,7 +266,7 @@ public class Server {
 		 */
 		private void sendCMD(int requestReply){
 			//create command packet
-			DatagramPacket packet = Packet.createPacket(SAFETYBIT, requestReply, _player.getMinion().getValue(), VERSION, IDLE, IDLE, DISABLED);
+			DatagramPacket packet = Packet.createPacket(SAFETYBIT, requestReply, _player.getMinion().getValue(), VERSION, _player.getPlayerState().getStateValue(), _player.getControllerState().getControllerValue(), DISABLED);
 			packet.setAddress(_robotAddress);
 			packet.setPort(PORT);
 			try {
@@ -292,16 +308,19 @@ public class Server {
 					while(!_received){
 						try {
 							_socket.send(packet);
-							Thread.sleep(5);
+							Thread.sleep(10);
 						} catch (IOException | InterruptedException e) {
 							e.printStackTrace();
 						}
 					}
 					_received = false;
 				}
-			}).run();
+			}).start();
 			
-			waitForReply(DISABLED);
+			_received = false;
+			while(!_received){
+				waitForReply(DISABLED);
+			}
 		}
 		
 		/**
