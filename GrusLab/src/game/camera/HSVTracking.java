@@ -13,7 +13,6 @@ import org.opencv.core.Point;
 
 import org.opencv.core.Scalar;
 import org.opencv.core.Size;
-
 //import org.opencv.highgui.Highgui;
 import org.opencv.imgproc.Imgproc;
 
@@ -26,8 +25,6 @@ public class HSVTracking {
 	private Scalar _upperound;
 	
 	private Scalar _lowerbound;
-	
-	//NANANANANANA
 	
 	Mat _mask;
 	
@@ -57,12 +54,13 @@ public class HSVTracking {
 	 * */
 	private void getMinionBlob(Mat frame,Minion name){
 
+		
 		//BLuuuur for the colour
 		Imgproc.GaussianBlur(frame, _mask, new Size(11, 11), 3);
 
 		//Magic HSV picture generated
 		Imgproc.cvtColor(frame, _mask, Imgproc.COLOR_BGR2HSV);
-		
+
 		//Check if boundaries are in range somewhere - returns black white bit img
 		Core.inRange(_mask, _lowerbound, _upperound, _mask);
 		
@@ -80,7 +78,7 @@ public class HSVTracking {
 			Imgproc.dilate(_mask, _mask, new Mat(), new Point(-1,-1), 2);
 		}
 		
-	//	Highgui.imwrite("dilli" + name + ".jpeg", _mask);
+		//Highgui.imwrite("dilli" + name + ".jpeg", _mask);
 
 	}
 	
