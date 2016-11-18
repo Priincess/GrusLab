@@ -215,6 +215,7 @@ public class GameboardViewController {
 //                    case CALIBRATION:
 //                        break;
                     case READY:
+                        hideMenu();
                         stopGameInfoTextGameOver();
                         startGameInfoTextReady();
                         break;
@@ -257,6 +258,12 @@ public class GameboardViewController {
                     if (mouseEvent.isPrimaryButtonDown() == true && gameState.getGameState() == GameStateValue.FINISHED) {
                         gameState.setGameState(READY);
                     }
+
+                    // TODO: Remove
+                    if (mouseEvent.isPrimaryButtonDown() == true && gameState.getGameState() == PAUSE){
+                        gameState.setGameState(PLAY);
+                    }
+                    // For Testing purposes
                     if (gameState.getGameState() == PLAY) {
                         if (mouseEvent.isPrimaryButtonDown() == true) {
                             gameboard.setMinionPosition(GameObjectType.YELLOWMINION, point);

@@ -230,7 +230,7 @@ public class Gameboard {
             }
             tries++;
         }
-        return (tries != 1000) ? new Point(x,y) : new Point(x, y);
+        return new Point(x,y); // After 1000 tries, just use the random point despite of collision, so that the game can go on
     }
 
     public void setMinionPosition(GameObjectType minion, Point point){

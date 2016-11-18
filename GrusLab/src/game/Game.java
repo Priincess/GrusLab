@@ -42,19 +42,19 @@ public class Game {
     private TimerTask gameTimerTask;
     private TimerTask gameRunningTimerTask;
 
-
+    // TODO: add to gui
     private int goggleCounterMax = 1;
-    private int goggleCounter = 1;  // one game start there is already a item here;
+    private int goggleCounter = 1;          // one game start there is already a goggle;
     private int goggleDropRateTop = 20;
     private int goggleDropRateBottom = 5;   // after that time item drops
-    private int goggleDropOnGameTime = 0;
+    private int goggleDropOnGameTime = 0;   // TODO: work with several goggles
 
-
+    // TODO: add to gui
     private int beedoCounterMax = 1;
-    private int beedoCounter = 1;  // one game start there is already a item here;
-    private int beedoDropRateTop = 20;
-    private int beedoDropRateBottom = 5;
-    private int beedoDropOnGameTime = 0;
+    private int beedoCounter = 1;           // one game start there is already a beedo;
+    private int beedoDropRateTop = 15;
+    private int beedoDropRateBottom = 5;    // after that time item drops
+    private int beedoDropOnGameTime = 0;    // TODO: work with several beedos
 
     public Game(final ObjTracker tracker){
         this.tracker = tracker;
@@ -65,6 +65,7 @@ public class Game {
 
         this.gameboard = new Gameboard();
         addGameStateListener();
+        addGameTimeListener();
     }
 
     public Gameboard getGameboard(){
@@ -129,10 +130,6 @@ public class Game {
                 Platform.runLater(new Runnable() {
                     public void run() {
                         gameTime.set(gameTime.intValue() - 1);
-                        dropItems();
-                        if (gameTime.intValue() == 0) {
-                            gameOver();
-                        }
                     }
                 });
             }
@@ -288,6 +285,19 @@ public class Game {
         return -1;
     }
 
+    private void addGameTimeListener(){
+        gameTime.addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal,
+                                          Object newVal){
+                //int old = (int) oldVal;
+                int act = (int) newVal;
+                if (gameTime.intValue() == 0) {
+                    gameOver();
+                }
+                dropItems();
+            }
+        });
+    }
 
     private void addGameStateListener(){
         gameState.getGameStateNumber().addListener(new ChangeListener(){
