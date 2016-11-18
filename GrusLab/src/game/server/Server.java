@@ -143,6 +143,10 @@ public class Server {
 				//wait until reconnect
 				while(!c.isConnected()){}
 				
+				//release idle
+				for(Communicator c1 : _communicators){
+					c1.setIdel(false);
+				}
 				//continue game
 				Components.setMinionConnected(c._player.getMinion().getValue(), true);
 				GameState.getInstance().setGameState(GameStateValue.PLAY);
