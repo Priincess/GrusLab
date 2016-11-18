@@ -129,14 +129,18 @@ public class Gameboard {
 
     public void setMinionStartPosition1(){
         Point[] points = getStartPositions();
-        setMinionPosition(GameObjectType.YELLOWMINION, points[0]);  // Left Top
-        setMinionPosition(GameObjectType.PURPLEMINION, points[2]);  // Right Bottom
+        if (yellowMinion != null && purpleMinion != null) {
+            setMinionPosition(GameObjectType.YELLOWMINION, points[0]);  // Left Top
+            setMinionPosition(GameObjectType.PURPLEMINION, points[2]);  // Right Bottom
+        }
     }
 
     public void setMinionStartPosition2(){
         Point[] points = getStartPositions();
-        setMinionPosition(GameObjectType.YELLOWMINION, points[1]);  // Right Top
-        setMinionPosition(GameObjectType.PURPLEMINION, points[3]);  // Left Bottom
+        if (yellowMinion != null && purpleMinion != null) {
+            setMinionPosition(GameObjectType.YELLOWMINION, points[1]);  // Right Top
+            setMinionPosition(GameObjectType.PURPLEMINION, points[3]);  // Left Bottom
+        }
     }
 
     public void saveGameboardPreferences(){
@@ -226,7 +230,7 @@ public class Gameboard {
             }
             tries++;
         }
-        return (tries != 1000) ? new Point(x,y) : null;
+        return (tries != 1000) ? new Point(x,y) : new Point((int) rect_GameboardCollisionBox.getX(),(int) rect_Gameboard.getY());
     }
 
     public void setMinionPosition(GameObjectType minion, Point point){
@@ -282,23 +286,17 @@ public class Gameboard {
 
     public void generateBanana(){
         Point p = generateRandomPointOnGameboard();
-        if (p != null) {
-            createGameObject(GameObjectType.BANANA, p.x, p.y);
-        }
+        createGameObject(GameObjectType.BANANA, p.x, p.y);
     }
 
     public void generateBeedo(){
         Point p = generateRandomPointOnGameboard();
-        if (p != null) {
-            createGameObject(GameObjectType.BEEDO, p.x, p.y);
-        }
+        createGameObject(GameObjectType.BEEDO, p.x, p.y);
     }
 
     public void generateGoggles(){
         Point p = generateRandomPointOnGameboard();
-        if (p != null) {
-            createGameObject(GameObjectType.GOGGLES, p.x, p.y);
-        }
+        createGameObject(GameObjectType.GOGGLES, p.x, p.y);
     }
 
 
