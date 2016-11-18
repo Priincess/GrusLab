@@ -47,8 +47,8 @@ public class Game {
         gameState = GameState.getInstance();
         gamePreferences = Preferences.userNodeForPackage(this.getClass());
         loadGameSettings();
-        gameboard = new Gameboard();
 
+        gameboard = new Gameboard();
         addGameStateListener();
     }
 
