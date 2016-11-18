@@ -13,6 +13,7 @@ import game.server.Server;
  */
 public class CentralControl {
 
+	private static final int AMOUNT_OF_PLAYERS = 1;
 	private static CentralControl _instance = new CentralControl();
 	
 	//components
@@ -40,8 +41,8 @@ public class CentralControl {
 	
 	private CentralControl(){
 		//initialize components
-		//TODO player = 2; id minion purple = 1
-		_players = new Player[1];
+		//TODO id minion purple = 1
+		_players = new Player[AMOUNT_OF_PLAYERS];
 		//_players[0] = new Player(Minion.Yellow);
 		_players[0] = new Player(Minion.Purple);
 		_gameState = GameState.getInstance();
@@ -85,7 +86,7 @@ public class CentralControl {
 
 //			_gameState.setGameState(GameStateValue.WAIT);
 //
-			System.out.println("Wait for Players to press start!");
+			
 			_controllerWaitForStart.start();
 //
 			while(!_controllerWaitForStart.getState().equals(Thread.State.TERMINATED)){}
