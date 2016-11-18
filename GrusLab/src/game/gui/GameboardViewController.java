@@ -57,8 +57,6 @@ public class GameboardViewController {
     private TextField textField_GameboardWidth;
     @FXML
     private TextField textField_GameboardHeight;
-    @FXML
-    private TextField textField_RedzoneWidth;
 
     @FXML
     private TextField textField_MinionSize;
@@ -101,7 +99,6 @@ public class GameboardViewController {
 
         pane_GameboardView.setStyle("-fx-background-color: black;");
         pane_GameboardView.getChildren().add(gameboard.getRect_Gameboard());
-        pane_GameboardView.getChildren().add(gameboard.getRect_GameboardCollisionBox());
 
         addGameObjectsListener();
         addGameStateListener();
@@ -132,7 +129,7 @@ public class GameboardViewController {
         Bindings.bindBidirectional(textField_GameboardY.textProperty(), temp.yProperty(), numStringConver);
         Bindings.bindBidirectional(textField_GameboardWidth.textProperty(), temp.widthProperty(), numStringConver);
         Bindings.bindBidirectional(textField_GameboardHeight.textProperty(), temp.heightProperty(), numStringConver);
-        Bindings.bindBidirectional(textField_RedzoneWidth.textProperty(), temp.strokeWidthProperty(), numStringConver);
+        Bindings.bindBidirectional(textField_MinionSize.textProperty(), temp.strokeWidthProperty(), numStringConver);
     }
 
     private void setGameObjectBindings(){
@@ -456,12 +453,6 @@ public class GameboardViewController {
         label_InfoText.setText("PAUSE");
         label_InfoText.setTextFill(Color.WHITE);
         label_InfoText.setVisible(true);
-    }
-
-
-    public void toggleCollisionBox(){
-        Rectangle temp = gameboard.getRect_GameboardCollisionBox();
-        temp.setVisible(!temp.isVisible());
     }
 
 
