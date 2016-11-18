@@ -230,7 +230,7 @@ public class Gameboard {
             }
             tries++;
         }
-        return (tries != 1000) ? new Point(x,y) : new Point((int) rect_GameboardCollisionBox.getX(),(int) rect_Gameboard.getY());
+        return (tries != 1000) ? new Point(x,y) : new Point(x, y);
     }
 
     public void setMinionPosition(GameObjectType minion, Point point){
