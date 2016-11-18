@@ -48,12 +48,6 @@
                         <TextField fx:id="textField_GameboardHeight" prefWidth="75.0" />
                      </graphic>
                   </MenuItem>
-                  <MenuItem mnemonicParsing="false" text="Redzone-Width">
-                     <graphic>
-                        <TextField fx:id="textField_RedzoneWidth" prefWidth="75.0" />
-                     </graphic>
-                  </MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction="#toggleCollisionBox" text="Toggle Collisionbox" />
             </items>
           </Menu>
             <Menu mnemonicParsing="false" text="GameObjects">
