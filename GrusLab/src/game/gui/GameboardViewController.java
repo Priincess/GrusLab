@@ -117,6 +117,7 @@ public class GameboardViewController {
         // Set first text here - because gamestate change from wait to calibration will not be recognized since the controller does not exist at that time
         label_InfoText.setText("Calibration\nPut Minions on Position");
         gameboard.createMinions();  // Create Minions on Startposition for Calibration
+        //gameState.setGameState(READY);  // TODO: DELETE
     }
 
     private void setGameBindings(){
