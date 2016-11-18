@@ -59,6 +59,8 @@ public class ControllerManager {
 			}
 			
 			Controllers.destroy();
+			System.gc();
+			System.runFinalization();
 		}while(amountOfPlayer < players.length);
 		System.out.println("Controllers connected!");
 	}
@@ -70,13 +72,18 @@ public class ControllerManager {
 	 */
 	public void waitForPlayer(Player[] players){
 		
+		System.out.println("Wait for Players to press start!");
+		
 		boolean[] pressed = new boolean[players.length];
 		boolean condition=false;
 		
 		//wait until both player pressed the button
 		do{
 			for(int i =0; i<players.length; i++){
-				players[i].getController().poll();
+				if(!players[i].getController().poll()){
+					initController(players);
+					System.out.println("Wait for Players to press start!");
+				}
 				
 				//check if player pressed the button
 				if (!pressed[i] && players[i].getController().isButtonPressed(players[i].getGamepad().getStartIndex())) {
@@ -109,10 +116,14 @@ public class ControllerManager {
 				if(!players[i].getController().poll()){
 					GameState.getInstance().setGameState(GameStateValue.PAUSE);
 					Components.setControllerConnected(i, false);
+					players[i].setControllerState(false, false, false, false);
+					initController(players);
+					waitForPlayer(players);
+					Components.setControllerConnected(i, true);
+				}else{
+					//check state of controllers
+					checkControllerState(players[i]);
 				}
-				
-				//check state of controllers
-				checkControllerState(players[i]);
 			}
 		}
 		
