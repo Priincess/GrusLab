@@ -3,6 +3,8 @@ package game.gameboard;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
@@ -43,7 +45,8 @@ public class Gameboard {
 
         initGameboardCollisionBoxRectangle();
 
-        gameObjects = FXCollections.observableArrayList();
+        gameObjects =  FXCollections.observableArrayList();
+        addGameboardChangeListener();
     }
 
 
@@ -328,6 +331,33 @@ public class Gameboard {
         Point pLB = new Point(xl, yb);
         Point[] startPositions = {pLT, pRT, pRB, pLB};
         return startPositions;
+    }
+
+    private void addGameboardChangeListener(){
+        rect_Gameboard.xProperty().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal,
+                                          Object newVal){
+                setMinionStartPosition1();
+            }
+        });
+        rect_Gameboard.yProperty().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal,
+                                          Object newVal){
+                setMinionStartPosition1();
+            }
+        });
+        rect_Gameboard.widthProperty().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal,
+                                          Object newVal){
+                setMinionStartPosition1();
+            }
+        });
+        rect_Gameboard.heightProperty().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal,
+                                          Object newVal){
+                setMinionStartPosition1();
+            }
+        });
     }
 
 }
