@@ -47,6 +47,7 @@ public class Gameboard {
         loadGameboardPreferences();
         gameObjects =  FXCollections.observableArrayList();
         addGameboardChangeListener();
+        addMinionSizeChangeListener();
     }
 
 
@@ -354,6 +355,15 @@ public class Gameboard {
             }
         });
         rect_Gameboard.heightProperty().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal,
+                                          Object newVal){
+                setMinionStartPosition1();
+            }
+        });
+    }
+
+    private void addMinionSizeChangeListener(){
+        minionSize.addListener(new ChangeListener(){
             @Override public void changed(ObservableValue o, Object oldVal,
                                           Object newVal){
                 setMinionStartPosition1();
