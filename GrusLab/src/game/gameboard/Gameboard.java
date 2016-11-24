@@ -3,6 +3,8 @@ package game.gameboard;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.IntegerProperty;
 import javafx.beans.property.SimpleIntegerProperty;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.scene.paint.Color;
@@ -24,6 +26,7 @@ public class Gameboard {
     private Preferences gameboardPreferences;
     private Rectangle rect_Gameboard;
     private Rectangle rect_GameboardCollisionBox;
+    private Rectangle rect_GameboardOutlineBox;
 
     private IntegerProperty minionSize = new SimpleIntegerProperty(0);  // Overwritten by Preferences
     private IntegerProperty itemSize = new SimpleIntegerProperty(0);    // Overwritten by Preferences
@@ -35,24 +38,21 @@ public class Gameboard {
     private ObservableList<GameObject> gameObjects;
 
 
-
     public Gameboard(){
         gameboardPreferences = Preferences.userNodeForPackage(this.getClass());
         initGameboardRectangle();
-        loadGameboardPreferences();
-
+        initGameboardOutlineBox();
         initGameboardCollisionBoxRectangle();
 
-        gameObjects = FXCollections.observableArrayList();
+        loadGameboardPreferences();
+        gameObjects =  FXCollections.observableArrayList();
+        addGameboardChangeListener();
+        addMinionSizeChangeListener();
     }
 
 
     public Rectangle getRect_Gameboard(){
         return rect_Gameboard;
-    }
-
-    public Rectangle getRect_GameboardCollisionBox(){
-        return rect_GameboardCollisionBox;
     }
 
     public IntegerProperty getMinionSize(){
@@ -87,10 +87,17 @@ public class Gameboard {
         rect_Gameboard.setStroke(Color.RED);
     }
 
+    private void initGameboardOutlineBox(){
+        rect_GameboardOutlineBox = new Rectangle();
+        rect_GameboardOutlineBox.xProperty().bind(rect_Gameboard.xProperty());
+        rect_GameboardOutlineBox.yProperty().bind(rect_Gameboard.yProperty());
+        rect_GameboardOutlineBox.widthProperty().bind(rect_Gameboard.widthProperty());
+        rect_GameboardOutlineBox.heightProperty().bind(rect_Gameboard.heightProperty());
+    }
+
     private void initGameboardCollisionBoxRectangle(){
         rect_GameboardCollisionBox = new Rectangle();
         rect_GameboardCollisionBox.setFill(Color.ANTIQUEWHITE);
-        rect_GameboardCollisionBox.setVisible(false);
         NumberBinding x = rect_Gameboard.xProperty().add(new SimpleIntegerProperty(minionSize.intValue()));
         NumberBinding y = rect_Gameboard.yProperty().add(new SimpleIntegerProperty(minionSize.intValue()));
         NumberBinding width = rect_Gameboard.widthProperty().subtract(new SimpleIntegerProperty(2*minionSize.intValue()));
@@ -123,14 +130,18 @@ public class Gameboard {
 
     public void setMinionStartPosition1(){
         Point[] points = getStartPositions();
-        setMinionPosition(GameObjectType.YELLOWMINION, points[0]);  // Left Top
-        setMinionPosition(GameObjectType.PURPLEMINION, points[2]);  // Right Bottom
+        if (yellowMinion != null && purpleMinion != null) {
+            setMinionPosition(GameObjectType.YELLOWMINION, points[0]);  // Left Top
+            setMinionPosition(GameObjectType.PURPLEMINION, points[2]);  // Right Bottom
+        }
     }
 
     public void setMinionStartPosition2(){
         Point[] points = getStartPositions();
-        setMinionPosition(GameObjectType.YELLOWMINION, points[1]);  // Right Top
-        setMinionPosition(GameObjectType.PURPLEMINION, points[3]);  // Left Bottom
+        if (yellowMinion != null && purpleMinion != null) {
+            setMinionPosition(GameObjectType.YELLOWMINION, points[1]);  // Right Top
+            setMinionPosition(GameObjectType.PURPLEMINION, points[3]);  // Left Bottom
+        }
     }
 
     public void saveGameboardPreferences(){
@@ -151,7 +162,7 @@ public class Gameboard {
         rect_Gameboard.setY(gameboardPreferences.getInt("GAMEBOARD_Y", 90));
         rect_Gameboard.setWidth(gameboardPreferences.getInt("GAMEBOARD_WIDTH", 800));
         rect_Gameboard.setHeight(gameboardPreferences.getInt("GAMEBOARD_HEIGHT", 400));
-        rect_Gameboard.setStrokeWidth(gameboardPreferences.getInt("GAMEBOARD_STROKE", 50));
+        rect_Gameboard.setStrokeWidth(gameboardPreferences.getInt("MINION_SIZE", minionSize.intValue()));
 
         minionSize.set(gameboardPreferences.getInt("MINION_SIZE", 50));
         itemSize.set(gameboardPreferences.getInt("ITEM_SIZE", 50));
@@ -220,7 +231,7 @@ public class Gameboard {
             }
             tries++;
         }
-        return (tries != 1000) ? new Point(x,y) : null;
+        return new Point(x,y); // After 1000 tries, just use the random point despite of collision, so that the game can go on
     }
 
     public void setMinionPosition(GameObjectType minion, Point point){
@@ -252,7 +263,7 @@ public class Gameboard {
     }
 
     public boolean isOutsideOfGameboard(GameObject minion){
-        if (!rect_GameboardCollisionBox.getBoundsInParent().intersects(minion.getImageView().getBoundsInParent())){
+        if (!rect_GameboardOutlineBox.getBoundsInParent().intersects(minion.getImageView().getBoundsInParent())){
             return true;
         }
         return false;
@@ -276,23 +287,17 @@ public class Gameboard {
 
     public void generateBanana(){
         Point p = generateRandomPointOnGameboard();
-        if (p != null) {
-            createGameObject(GameObjectType.BANANA, p.x, p.y);
-        }
+        createGameObject(GameObjectType.BANANA, p.x, p.y);
     }
 
     public void generateBeedo(){
         Point p = generateRandomPointOnGameboard();
-        if (p != null) {
-            createGameObject(GameObjectType.BEEDO, p.x, p.y);
-        }
+        createGameObject(GameObjectType.BEEDO, p.x, p.y);
     }
 
     public void generateGoggles(){
         Point p = generateRandomPointOnGameboard();
-        if (p != null) {
-            createGameObject(GameObjectType.GOGGLES, p.x, p.y);
-        }
+        createGameObject(GameObjectType.GOGGLES, p.x, p.y);
     }
 
 
@@ -328,6 +333,42 @@ public class Gameboard {
         Point pLB = new Point(xl, yb);
         Point[] startPositions = {pLT, pRT, pRB, pLB};
         return startPositions;
+    }
+
+    private void addGameboardChangeListener(){
+        rect_Gameboard.xProperty().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal,
+                                          Object newVal){
+                setMinionStartPosition1();
+            }
+        });
+        rect_Gameboard.yProperty().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal,
+                                          Object newVal){
+                setMinionStartPosition1();
+            }
+        });
+        rect_Gameboard.widthProperty().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal,
+                                          Object newVal){
+                setMinionStartPosition1();
+            }
+        });
+        rect_Gameboard.heightProperty().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal,
+                                          Object newVal){
+                setMinionStartPosition1();
+            }
+        });
+    }
+
+    private void addMinionSizeChangeListener(){
+        minionSize.addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal,
+                                          Object newVal){
+                setMinionStartPosition1();
+            }
+        });
     }
 
 }

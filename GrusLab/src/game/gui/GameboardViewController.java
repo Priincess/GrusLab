@@ -57,8 +57,6 @@ public class GameboardViewController {
     private TextField textField_GameboardWidth;
     @FXML
     private TextField textField_GameboardHeight;
-    @FXML
-    private TextField textField_RedzoneWidth;
 
     @FXML
     private TextField textField_MinionSize;
@@ -101,7 +99,6 @@ public class GameboardViewController {
 
         pane_GameboardView.setStyle("-fx-background-color: black;");
         pane_GameboardView.getChildren().add(gameboard.getRect_Gameboard());
-        pane_GameboardView.getChildren().add(gameboard.getRect_GameboardCollisionBox());
 
         addGameObjectsListener();
         addGameStateListener();
@@ -119,7 +116,8 @@ public class GameboardViewController {
 
         // Set first text here - because gamestate change from wait to calibration will not be recognized since the controller does not exist at that time
         label_InfoText.setText("Calibration\nPut Minions on Position");
-        gameboard.createMinions();  // Create Minions on Startposition for Calibration TODO: Not here
+        gameboard.createMinions();  // Create Minions on Startposition for Calibration
+        //gameState.setGameState(READY);  // TODO: DELETE
     }
 
     private void setGameBindings(){
@@ -132,7 +130,7 @@ public class GameboardViewController {
         Bindings.bindBidirectional(textField_GameboardY.textProperty(), temp.yProperty(), numStringConver);
         Bindings.bindBidirectional(textField_GameboardWidth.textProperty(), temp.widthProperty(), numStringConver);
         Bindings.bindBidirectional(textField_GameboardHeight.textProperty(), temp.heightProperty(), numStringConver);
-        Bindings.bindBidirectional(textField_RedzoneWidth.textProperty(), temp.strokeWidthProperty(), numStringConver);
+        Bindings.bindBidirectional(textField_MinionSize.textProperty(), temp.strokeWidthProperty(), numStringConver);
     }
 
     private void setGameObjectBindings(){
@@ -217,6 +215,7 @@ public class GameboardViewController {
 //                    case CALIBRATION:
 //                        break;
                     case READY:
+                        hideMenu();
                         stopGameInfoTextGameOver();
                         startGameInfoTextReady();
                         break;
@@ -259,6 +258,12 @@ public class GameboardViewController {
                     if (mouseEvent.isPrimaryButtonDown() == true && gameState.getGameState() == GameStateValue.FINISHED) {
                         gameState.setGameState(READY);
                     }
+
+                    // TODO: Remove
+                    if (mouseEvent.isPrimaryButtonDown() == true && gameState.getGameState() == PAUSE){
+                        gameState.setGameState(PLAY);
+                    }
+                    // For Testing purposes
                     if (gameState.getGameState() == PLAY) {
                         if (mouseEvent.isPrimaryButtonDown() == true) {
                             gameboard.setMinionPosition(GameObjectType.YELLOWMINION, point);
@@ -271,7 +276,6 @@ public class GameboardViewController {
             }
         });
     }
-
 
     private void initGameInfoTextReady(){
         gameInfoTextReadyTransition = new SequentialTransition();
@@ -457,12 +461,6 @@ public class GameboardViewController {
         label_InfoText.setText("PAUSE");
         label_InfoText.setTextFill(Color.WHITE);
         label_InfoText.setVisible(true);
-    }
-
-
-    public void toggleCollisionBox(){
-        Rectangle temp = gameboard.getRect_GameboardCollisionBox();
-        temp.setVisible(!temp.isVisible());
     }
 
 

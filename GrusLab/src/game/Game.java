@@ -14,6 +14,7 @@ import org.opencv.core.Point;
 
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.prefs.Preferences;
 
 import static game.GameStateValue.CALIBRATION;
@@ -41,15 +42,30 @@ public class Game {
     private TimerTask gameTimerTask;
     private TimerTask gameRunningTimerTask;
 
+    // TODO: add to gui
+    private int goggleCounterMax = 1;
+    private int goggleCounter = 1;          // one game start there is already a goggle;
+    private int goggleDropRateTop = 20;
+    private int goggleDropRateBottom = 5;   // after that time item drops
+    private int goggleDropOnGameTime = 0;   // TODO: work with several goggles
+
+    // TODO: add to gui
+    private int beedoCounterMax = 1;
+    private int beedoCounter = 1;           // one game start there is already a beedo;
+    private int beedoDropRateTop = 15;
+    private int beedoDropRateBottom = 5;    // after that time item drops
+    private int beedoDropOnGameTime = 0;    // TODO: work with several beedos
+
     public Game(final ObjTracker tracker){
         this.tracker = tracker;
         this.scaler = new GameboardScaler();
-        gameState = GameState.getInstance();
-        gamePreferences = Preferences.userNodeForPackage(this.getClass());
+        this.gameState = GameState.getInstance();
+        this.gamePreferences = Preferences.userNodeForPackage(this.getClass());
         loadGameSettings();
-        gameboard = new Gameboard();
 
+        this.gameboard = new Gameboard();
         addGameStateListener();
+        addGameTimeListener();
     }
 
     public Gameboard getGameboard(){
@@ -114,9 +130,6 @@ public class Game {
                 Platform.runLater(new Runnable() {
                     public void run() {
                         gameTime.set(gameTime.intValue() - 1);
-                        if (gameTime.intValue() == 0) {
-                            gameOver();
-                        }
                     }
                 });
             }
@@ -155,6 +168,18 @@ public class Game {
         }
     }
 
+
+    private void dropItems(){
+        if (goggleCounter < goggleCounterMax && goggleDropOnGameTime == gameTime.intValue()){
+            gameboard.generateGoggles();
+            goggleCounter++;
+        }
+        if (beedoCounter < beedoCounterMax && beedoDropOnGameTime == gameTime.intValue()){
+            gameboard.generateBeedo();
+            beedoCounter++;
+        }
+    }
+
     private void initGameRunningTask(){
         gameRunningTimerTask = new TimerTask() {
             public void run() {
@@ -185,15 +210,12 @@ public class Game {
         pointsPurpleMinion.set(0);
     }
 
-    public void checkForCollisions(){   // TODO: set private
+    private void checkForCollisions(){
         GameObject yellowMinion = gameboard.getYellowMinion();
         GameObject purpleMinion = gameboard.getPurpleMinion();
 
-        if(gameboard.isOutsideOfGameboard(yellowMinion)){
-            // TODO: Pause Game
-        }
-        if (gameboard.isOutsideOfGameboard(purpleMinion)){
-            // TODO: Pause Game
+        if(gameboard.isOutsideOfGameboard(yellowMinion) || gameboard.isOutsideOfGameboard(purpleMinion)){
+            gameState.setGameState(PAUSE);
         }
 
         GameObject item = gameboard.isCollidingGameObject(yellowMinion);
@@ -242,12 +264,16 @@ public class Game {
         // TODO: stop other robot
         item.playSound();
         gameboard.removeGameObject(item);
+        beedoDropOnGameTime = gameTime.intValue() - ThreadLocalRandom.current().nextInt(beedoDropRateBottom, beedoDropRateTop+1);
+        beedoCounter--;
     }
 
     private void gogglesCollisionHandler(GameObject minion, GameObject item){
         // TODO: speedup robot
         item.playSound();
         gameboard.removeGameObject(item);
+        goggleDropOnGameTime = gameTime.intValue() - ThreadLocalRandom.current().nextInt(goggleDropRateBottom, goggleDropRateTop+1);
+        goggleCounter--;
     }
 
     public int whichMinionWon(){
@@ -259,6 +285,19 @@ public class Game {
         return -1;
     }
 
+    private void addGameTimeListener(){
+        gameTime.addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal,
+                                          Object newVal){
+                //int old = (int) oldVal;
+                int act = (int) newVal;
+                if (gameTime.intValue() == 0) {
+                    gameOver();
+                }
+                dropItems();
+            }
+        });
+    }
 
     private void addGameStateListener(){
         gameState.getGameStateNumber().addListener(new ChangeListener(){
