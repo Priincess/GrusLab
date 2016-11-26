@@ -25,25 +25,25 @@ import javafx.util.Duration;
  */
 public class GameStartViewController {
 
-    private GameState gameState;
-    private GuiManager guiManager;
+    private GameState _gameState;
+    private GuiManager _guiManager;
 
-    private MediaPlayer mediaPlayer;
+    private MediaPlayer _mediaPlayer;
 
     @FXML
-    Pane pane_GameStartView;
+    Pane _pane_GameStartView;
     @FXML
-    MediaView mediaView_Background;
+    MediaView _mediaView_Background;
     @FXML
-    Label label_GameInfoText;
+    Label _label_GameInfoText;
 
-    private SequentialTransition gameInfoTextLoadingTransition;
-    private boolean isGameInfoTextLoadingTransitionRunning = false;
+    private SequentialTransition _gameInfoTextLoadingTransition;
+    private boolean _isGameInfoTextLoadingTransitionRunning = false;
 
     @FXML
     public void initialize(){
-        gameState = GameState.getInstance();
-        guiManager = new GuiManager();
+        _gameState = GameState.getInstance();
+        _guiManager = new GuiManager();
         initPane();
         initBackgroundVideo();
         initGameInfoTextLoadingTransition();
@@ -55,106 +55,105 @@ public class GameStartViewController {
     }
 
     private void initPane(){
-        pane_GameStartView.setStyle("-fx-background-color: black;");
+        _pane_GameStartView.setStyle("-fx-background-color: black;");
     }
 
 
     private void initBackgroundVideo(){
         Media video = new Media(getClass().getResource("media/minionsWantsBanana.mp4").toExternalForm());
-        mediaPlayer = new MediaPlayer(video);
-        mediaPlayer.setAutoPlay(true);
-        mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
-        mediaView_Background.setMediaPlayer(mediaPlayer);
-        mediaView_Background.setSmooth(true);
+        _mediaPlayer = new MediaPlayer(video);
+        _mediaPlayer.setAutoPlay(true);
+        _mediaPlayer.setCycleCount(MediaPlayer.INDEFINITE);
+        _mediaView_Background.setMediaPlayer(_mediaPlayer);
+        _mediaView_Background.setSmooth(true);
     }
 
     private void initBindings(){
-        DoubleProperty width = mediaView_Background.fitWidthProperty();
-        DoubleProperty height = mediaView_Background.fitHeightProperty();
+        DoubleProperty width = _mediaView_Background.fitWidthProperty();
+        DoubleProperty height = _mediaView_Background.fitHeightProperty();
 
-        width.bind(Bindings.selectDouble(mediaView_Background.sceneProperty(), "width"));
-        height.bind(Bindings.selectDouble(mediaView_Background.sceneProperty(), "height"));
+        width.bind(Bindings.selectDouble(_mediaView_Background.sceneProperty(), "width"));
+        height.bind(Bindings.selectDouble(_mediaView_Background.sceneProperty(), "height"));
 
-        label_GameInfoText.layoutXProperty().bind(mediaView_Background.fitWidthProperty().divide(2).
-                subtract(label_GameInfoText.widthProperty().divide(2)));
+        _label_GameInfoText.layoutXProperty().bind(_mediaView_Background.fitWidthProperty().divide(2).
+                subtract(_label_GameInfoText.widthProperty().divide(2)));
     }
 
     private void initGameInfoTextLoadingTransition(){
-        gameInfoTextLoadingTransition = new SequentialTransition();
-        FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.5), label_GameInfoText);
+        _gameInfoTextLoadingTransition = new SequentialTransition();
+        FadeTransition fadeOut = new FadeTransition(Duration.seconds(1.5), _label_GameInfoText);
         fadeOut.setFromValue(1.0);
         fadeOut.setToValue(0.0);
         fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                switch (label_GameInfoText.getText()) {
+                switch (_label_GameInfoText.getText()) {
                     case "Loading":
-                        label_GameInfoText.setText("Loading.");
+                        _label_GameInfoText.setText("Loading.");
                         break;
                     case "Loading.":
-                        label_GameInfoText.setText("Loading..");
+                        _label_GameInfoText.setText("Loading..");
                         break;
                     case "Loading..":
-                        label_GameInfoText.setText("Loading...");
+                        _label_GameInfoText.setText("Loading...");
                         break;
                     case "Loading...":
-                        label_GameInfoText.setText("Loading");
+                        _label_GameInfoText.setText("Loading");
                         break;
                 }
             }
         });
-        gameInfoTextLoadingTransition.getChildren().add(fadeOut);
+        _gameInfoTextLoadingTransition.getChildren().add(fadeOut);
 
-        FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), label_GameInfoText);
+        FadeTransition fadeIn = new FadeTransition(Duration.seconds(1), _label_GameInfoText);
         fadeIn.setFromValue(0.0);
         fadeIn.setToValue(1.0);
 
-        gameInfoTextLoadingTransition.getChildren().add(fadeIn);
-        gameInfoTextLoadingTransition.setCycleCount(SequentialTransition.INDEFINITE);
+        _gameInfoTextLoadingTransition.getChildren().add(fadeIn);
+        _gameInfoTextLoadingTransition.setCycleCount(SequentialTransition.INDEFINITE);
     }
 
     private void startGameInfoTextLoadingTransition(){
-        if ( isGameInfoTextLoadingTransitionRunning == false) {
+        if (_isGameInfoTextLoadingTransitionRunning == false) {
             resetGameInfoTextLoadingTransition();
-            isGameInfoTextLoadingTransitionRunning = true;
-            gameInfoTextLoadingTransition.play();
+            _isGameInfoTextLoadingTransitionRunning = true;
+            _gameInfoTextLoadingTransition.play();
         }
     }
 
     private void stopGameInfoTextLoadingTransition(){
-        if (gameInfoTextLoadingTransition != null) {
-            isGameInfoTextLoadingTransitionRunning = false;
-            gameInfoTextLoadingTransition.stop();
+        if (_gameInfoTextLoadingTransition != null) {
+            _isGameInfoTextLoadingTransitionRunning = false;
+            _gameInfoTextLoadingTransition.stop();
         }
     }
 
     private void resetGameInfoTextLoadingTransition(){
-        label_GameInfoText.setText("Loading");
-        label_GameInfoText.setTextFill(Color.WHITE);
-        label_GameInfoText.setVisible(true);
+        _label_GameInfoText.setText("Loading");
+        _label_GameInfoText.setTextFill(Color.WHITE);
+        _label_GameInfoText.setVisible(true);
     }
 
-    // TODO: Remove
+    // TODO: Remove: Only for Debugging/Simulating
     private void addMouseListenerToPane(){
-        pane_GameStartView.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+        _pane_GameStartView.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 if (mouseEvent.isPrimaryButtonDown() == true){
-                    gameState.setGameState(GameStateValue.CALIBRATION); // TODO: Remove, change state to Calibration after all components are loaded
+                    _gameState.setGameState(GameStateValue.CALIBRATION);
                 }
             }
         });
     }
 
     private void addGameStateListener(){
-        gameState.getGameStateNumber().addListener(new ChangeListener(){
-            @Override public void changed(ObservableValue o, Object oldVal,
-                                          Object newVal){
-                switch (gameState.getGameState()){
+        _gameState.getGameStateNumber().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal, Object newVal){
+                switch (_gameState.getGameState()){
                     case CALIBRATION:
                         stopGameInfoTextLoadingTransition();
-                        mediaPlayer.stop();
-                        guiManager.gotoGameboardView();
+                        _mediaPlayer.stop();
+                        _guiManager.gotoGameboardView();
                         break;
                 }
             }

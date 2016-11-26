@@ -36,69 +36,70 @@ import static game.GameStateValue.*;
  */
 public class GameboardViewController {
 
-    private Game game;
-    private Gameboard gameboard;
-    private GameState gameState;
+    private Game _game;
+    private Gameboard _gameboard;
+    private GameState _gameState;
 
-    private NumberStringConverter numStringConver = new NumberStringConverter();
-
-    @FXML
-    private Pane pane_GameboardView;
-    @FXML
-    private MenuBar menubar;
+    private NumberStringConverter _numStringConver = new NumberStringConverter();
 
     @FXML
-    private TextField textField_GameTimer;
+    private Pane _pane_GameboardView;
     @FXML
-    private TextField textField_GameboardX;
-    @FXML
-    private TextField textField_GameboardY;
-    @FXML
-    private TextField textField_GameboardWidth;
-    @FXML
-    private TextField textField_GameboardHeight;
+    private MenuBar _menubar;
 
     @FXML
-    private TextField textField_MinionSize;
+    private TextField _textField_GameTimer;
     @FXML
-    private TextField textField_ItemSize;
+    private TextField _textField_GameboardX;
     @FXML
-    private TextField textField_GameObjectDistance;
+    private TextField _textField_GameboardY;
+    @FXML
+    private TextField _textField_GameboardWidth;
+    @FXML
+    private TextField _textField_GameboardHeight;
 
     @FXML
-    private Label label_Timer;
+    private TextField _textField_MinionSize;
     @FXML
-    private Pane pane_YellowMinion;
+    private TextField _textField_ItemSize;
     @FXML
-    private Label label_YellowMinionPoints;
-    @FXML
-    private Pane pane_EvilMinion;
-    @FXML
-    private Label label_EvilMinionPoints;
-    @FXML
-    private Label label_InfoText;
+    private TextField _textField_GameObjectDistance;
 
-    private SequentialTransition gameInfoTextReadyTransition;
-    private boolean isGameInfoTextReadyTransitionRunning = false;
+    @FXML
+    private Label _label_Timer;
+    @FXML
+    private Pane _pane_YellowMinion;
+    @FXML
+    private Label _label_YellowMinionPoints;
+    @FXML
+    private Pane _pane_EvilMinion;
+    @FXML
+    private Label _label_EvilMinionPoints;
+    @FXML
+    private Label _label_InfoText;
 
-    private SequentialTransition gameInfoTextCountdownTransition;
-    private boolean isGameInfoTextCountdownTransitionRunning = false;
+    private SequentialTransition _gameInfoTextReadyTransition;
+    private boolean _isGameInfoTextReadyTransitionRunning = false;
 
-    private SequentialTransition gameInfoTextGameOverTransition;
-    private boolean isGameInfoTextGameOverTransitionRunning = false;
-    private int gameInfoTextGameOverStatus = 0;
+    private SequentialTransition _gameInfoTextCountdownTransition;
+    private boolean _isGameInfoTextCountdownTransitionRunning = false;
 
-    private SequentialTransition gameInfoTextPauseTransition;
-    private boolean isGameInfoTextPauseTransitionRunning = false;
+    private SequentialTransition _gameInfoTextGameOverTransition;
+    private boolean _isGameInfoTextGameOverTransitionRunning = false;
+    private int _gameInfoTextGameOverStatus = 0;
+
+    private SequentialTransition _gameInfoTextPauseTransition;
+    private boolean _isGameInfoTextPauseTransitionRunning = false;
 
 
     public void initGameboardViewController(Game game){
-        this.game = game;
-        this.gameboard = game.getGameboard();
-        gameState = GameState.getInstance();
+        _game = game;
+        _gameboard = game.getGameboard();
+        _gameState = GameState.getInstance();
 
-        pane_GameboardView.setStyle("-fx-background-color: black;");
-        pane_GameboardView.getChildren().add(gameboard.getRect_Gameboard());
+        _pane_GameboardView.setStyle("-fx-background-color: black;");
+        _pane_GameboardView.getChildren().add(_gameboard.getRect_Gameboard());
+        _menubar.toFront();
 
         addGameObjectsListener();
         addGameStateListener();
@@ -115,88 +116,40 @@ public class GameboardViewController {
         initGameInfoTextPause();
 
         // Set first text here - because gamestate change from wait to calibration will not be recognized since the controller does not exist at that time
-        label_InfoText.setText("Calibration\nPut Minions on Position");
-        gameboard.createMinions();  // Create Minions on Startposition for Calibration
-        //gameState.setGameState(READY);  // TODO: DELETE
+        _label_InfoText.setText("Calibration\nPut Minions on Position");
+        hideLabels();   //  during calibration hide labels
     }
 
-    private void setGameBindings(){
-        Bindings.bindBidirectional(textField_GameTimer.textProperty(), game.getGameTime(), numStringConver);
-    }
-
-    private void setGameboardBindings(){
-        Rectangle temp = gameboard.getRect_Gameboard();
-        Bindings.bindBidirectional(textField_GameboardX.textProperty(), temp.xProperty(), numStringConver);
-        Bindings.bindBidirectional(textField_GameboardY.textProperty(), temp.yProperty(), numStringConver);
-        Bindings.bindBidirectional(textField_GameboardWidth.textProperty(), temp.widthProperty(), numStringConver);
-        Bindings.bindBidirectional(textField_GameboardHeight.textProperty(), temp.heightProperty(), numStringConver);
-        Bindings.bindBidirectional(textField_MinionSize.textProperty(), temp.strokeWidthProperty(), numStringConver);
-    }
-
-    private void setGameObjectBindings(){
-        Bindings.bindBidirectional(textField_MinionSize.textProperty(), gameboard.getMinionSize(), numStringConver);
-        Bindings.bindBidirectional(textField_ItemSize.textProperty(), gameboard.getItemSize(), numStringConver);
-        Bindings.bindBidirectional(textField_GameObjectDistance.textProperty(), gameboard.getGameObjectDistance(), numStringConver);
-    }
-
-    private void setGameTextBindings(){
-        //Binding Gametext Position
-        pane_YellowMinion.layoutXProperty().bind(gameboard.getRect_Gameboard().xProperty().add(10));
-        NumberBinding labelGameTextPositionY = gameboard.getRect_Gameboard().yProperty().
-                add(gameboard.getRect_Gameboard().heightProperty()).
-                subtract(pane_YellowMinion.prefHeightProperty());
-        pane_YellowMinion.layoutYProperty().bind(labelGameTextPositionY);
-        pane_YellowMinion.toFront();
-
-        pane_EvilMinion.layoutXProperty().bind(gameboard.getRect_Gameboard().xProperty().
-                add(gameboard.getRect_Gameboard().widthProperty()).
-                subtract(pane_EvilMinion.getPrefWidth()-30));
-        pane_EvilMinion.layoutYProperty().bind(labelGameTextPositionY);
-        pane_EvilMinion.toFront();
-
-        label_Timer.layoutXProperty().bind(gameboard.getRect_Gameboard().xProperty().
-                add(gameboard.getRect_Gameboard().widthProperty().divide(2)).
-                subtract(label_Timer.getPrefHeight()));
-        label_Timer.layoutYProperty().bind(labelGameTextPositionY);
-        label_Timer.toFront();
-
-        // Gametimer
-        Bindings.bindBidirectional(label_Timer.textProperty(), game.getGameTime(), numStringConver);
-
-        // InfoText
-        label_InfoText.layoutXProperty().bind(gameboard.getRect_Gameboard().xProperty().
-                add(gameboard.getRect_Gameboard().widthProperty().divide(2)).
-                subtract(label_InfoText.widthProperty().divide(2)));
-        label_InfoText.layoutYProperty().bind(gameboard.getRect_Gameboard().yProperty().
-                add(gameboard.getRect_Gameboard().heightProperty().divide(2)).
-                subtract(label_InfoText.heightProperty().divide(2)));
-        label_InfoText.toFront();
-
-        // Points
-        Bindings.bindBidirectional(label_YellowMinionPoints.textProperty(), game.getPointsYellowMinion(), numStringConver);
-        Bindings.bindBidirectional(label_EvilMinionPoints.textProperty(), game.getPointsPurpleMinion(), numStringConver);
+    // Method which is called after the scene is set, otherwise window size is not known
+    public void initGameboardSize(){
+        if (_gameboard.getUseGameboardPreferences() == false) {
+            _gameboard.getRect_Gameboard().setX(_gameboard.getRect_Gameboard().getStrokeWidth());
+            _gameboard.getRect_Gameboard().setY(_gameboard.getRect_Gameboard().getStrokeWidth());
+            _gameboard.getRect_Gameboard().setWidth(_pane_GameboardView.getWidth() - 2 * _gameboard.getRect_Gameboard().getStrokeWidth());
+            _gameboard.getRect_Gameboard().setHeight(_pane_GameboardView.getHeight() - 2 * _gameboard.getRect_Gameboard().getStrokeWidth());
+        }
     }
 
     private void addGameObjectsListener(){
         // Load and add GameObjects already in List...
-        for (GameObject gameObject : gameboard.getGameObjects()){
-            pane_GameboardView.getChildren().add(gameObject.getImageView());
+        for (GameObject gameObject : _gameboard.getGameObjects()){
+            _pane_GameboardView.getChildren().add(gameObject.getImageView());
         }
 
-        gameboard.getGameObjects().addListener(new ListChangeListener(){
+        _gameboard.getGameObjects().addListener(new ListChangeListener(){
             @Override
             public void onChanged(ListChangeListener.Change change){
                 while (change.next()){
                     if (change.wasAdded() == true){
                         for (int i = 0; i < change.getAddedSize(); i++){
                             GameObject gameObject = (GameObject) change.getAddedSubList().get(i);
-                            pane_GameboardView.getChildren().add(gameObject.getImageView());
+                            _pane_GameboardView.getChildren().add(gameObject.getImageView());
                         }
                     }
                     if (change.wasRemoved()){
                         for (int i = 0; i < change.getRemovedSize(); i++){
                             GameObject gameObject = (GameObject) change.getRemoved().get(i);
-                            pane_GameboardView.getChildren().remove(gameObject.getImageView());
+                            _pane_GameboardView.getChildren().remove(gameObject.getImageView());
                         }
                     }
 
@@ -206,21 +159,33 @@ public class GameboardViewController {
     }
 
     private void addGameStateListener(){
-        gameState.getGameStateNumber().addListener(new ChangeListener(){
+        _gameState.getGameStateNumber().addListener(new ChangeListener(){
             @Override public void changed(ObservableValue o, Object oldVal,
                                           Object newVal){
                 int old = (int) oldVal;
-//                int act = gameState.getGameStateNumber().intValue();
-                switch (gameState.getGameState()){
-//                    case CALIBRATION:
-//                        break;
+                switch (_gameState.getGameState()){
+                    case CALIBRATION:
+                        if (old == CALIBRATIONVALIDATION.getValue()){
+                            _label_InfoText.setText("Calibration failed - Try again");  // TODO: BUG - It does not change text
+                        }
+                        break;
                     case READY:
-                        hideMenu();
-                        stopGameInfoTextGameOver();
+                        if (old == CALIBRATIONVALIDATION.getValue()) {
+                            showLabels();
+                            //hideMenu();   // TODO: uncomment
+                        } else if (old == FINISHED.getValue()) {
+                            stopGameInfoTextGameOver();
+                        }
                         startGameInfoTextReady();
                         break;
+                    case COUNTDOWN:
+                        stopGameInfoTextReady();
+                        startGameInfoTextCountdown();
+                        break;
                     case PLAY:
-                        stopGameInfoTextPause();
+                        if (old == PAUSE.getValue()) {
+                            stopGameInfoTextPause();
+                        }
                         break;
                     case PAUSE:
                         startGameInfoTextPause();
@@ -233,43 +198,30 @@ public class GameboardViewController {
         });
     }
 
-
+    // TODO: Remove/Deactivate: Only for Debugging/Simulating Gamepad
     private void addMouseListenerToPane(){
-        pane_GameboardView.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
+        _pane_GameboardView.addEventFilter(MouseEvent.MOUSE_PRESSED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 int x = (int) mouseEvent.getX();
                 int y = (int) mouseEvent.getY();
                 Point point = new Point(x,y);
 
-                if (y > 70) {
-                    if (mouseEvent.isPrimaryButtonDown() == true && gameState.getGameState() == CALIBRATION) {
-                        if (game.initCamPoints1() == true){
-                            gameState.setGameState(READY);
-                        } else {
-                            label_InfoText.setText("Calibration failed - Try again");
-                        }
-                    }
-
-                    if (mouseEvent.isPrimaryButtonDown() == true && gameState.getGameState() == READY) {
-                        stopGameInfoTextReady();
-                        startGameInfoTextCountdown();
-                    }
-                    if (mouseEvent.isPrimaryButtonDown() == true && gameState.getGameState() == GameStateValue.FINISHED) {
-                        gameState.setGameState(READY);
-                    }
-
-                    // TODO: Remove
-                    if (mouseEvent.isPrimaryButtonDown() == true && gameState.getGameState() == PAUSE){
-                        gameState.setGameState(PLAY);
-                    }
-                    // For Testing purposes
-                    if (gameState.getGameState() == PLAY) {
+                if (y > 75) {   // so you can use the menubar without moving minions with mouseclick
+                    if (mouseEvent.isPrimaryButtonDown() == true && _gameState.getGameState() == CALIBRATION) {
+                        _gameState.setGameState(CALIBRATIONVALIDATION);
+                    } else if (mouseEvent.isPrimaryButtonDown() == true && _gameState.getGameState() == READY) {
+                        _gameState.setGameState(COUNTDOWN);
+                    } else if (mouseEvent.isPrimaryButtonDown() == true && _gameState.getGameState() == GameStateValue.FINISHED) {
+                        _gameState.setGameState(READY);
+                    } else if (mouseEvent.isPrimaryButtonDown() == true && _gameState.getGameState() == PAUSE){
+                        _gameState.setGameState(PLAY);
+                    } else if (_gameState.getGameState() == PLAY) {
                         if (mouseEvent.isPrimaryButtonDown() == true) {
-                            gameboard.setMinionPosition(GameObjectType.YELLOWMINION, point);
+                            _gameboard.setMinionPosition(GameObjectType.YELLOWMINION, point);
                         }
                         if (mouseEvent.isSecondaryButtonDown()) {
-                            gameboard.setMinionPosition(GameObjectType.PURPLEMINION, point);
+                            _gameboard.setMinionPosition(GameObjectType.PURPLEMINION, point);
                         }
                     }
                 }
@@ -277,60 +229,117 @@ public class GameboardViewController {
         });
     }
 
+    private void setGameBindings(){
+        Bindings.bindBidirectional(_textField_GameTimer.textProperty(), _game.getGameTime(), _numStringConver);
+    }
+
+    private void setGameboardBindings(){
+        Rectangle temp = _gameboard.getRect_Gameboard();
+        Bindings.bindBidirectional(_textField_GameboardX.textProperty(), temp.xProperty(), _numStringConver);
+        Bindings.bindBidirectional(_textField_GameboardY.textProperty(), temp.yProperty(), _numStringConver);
+        Bindings.bindBidirectional(_textField_GameboardWidth.textProperty(), temp.widthProperty(), _numStringConver);
+        Bindings.bindBidirectional(_textField_GameboardHeight.textProperty(), temp.heightProperty(), _numStringConver);
+    }
+
+    private void setGameObjectBindings(){
+        Bindings.bindBidirectional(_textField_MinionSize.textProperty(), _gameboard.getMinionSize(), _numStringConver);
+        Bindings.bindBidirectional(_textField_ItemSize.textProperty(), _gameboard.getItemSize(), _numStringConver);
+        Bindings.bindBidirectional(_textField_GameObjectDistance.textProperty(), _gameboard.getGameObjectDistance(), _numStringConver);
+    }
+
+    private void setGameTextBindings(){
+        //Binding Gametext Position
+        _pane_YellowMinion.layoutXProperty().bind(_gameboard.getRect_Gameboard().xProperty().add(10));
+        NumberBinding labelGameTextPositionY = _gameboard.getRect_Gameboard().yProperty().
+                add(_gameboard.getRect_Gameboard().heightProperty()).
+                subtract(_pane_YellowMinion.prefHeightProperty());
+        _pane_YellowMinion.layoutYProperty().bind(labelGameTextPositionY);
+        _pane_YellowMinion.toFront();
+
+        _pane_EvilMinion.layoutXProperty().bind(_gameboard.getRect_Gameboard().xProperty().
+                add(_gameboard.getRect_Gameboard().widthProperty()).
+                subtract(_pane_EvilMinion.getPrefWidth()-30));
+        _pane_EvilMinion.layoutYProperty().bind(labelGameTextPositionY);
+        _pane_EvilMinion.toFront();
+
+        _label_Timer.layoutXProperty().bind(_gameboard.getRect_Gameboard().xProperty().
+                add(_gameboard.getRect_Gameboard().widthProperty().divide(2)).
+                subtract(_label_Timer.getPrefHeight()));
+        _label_Timer.layoutYProperty().bind(labelGameTextPositionY);
+        _label_Timer.toFront();
+
+        // Gametimer
+        Bindings.bindBidirectional(_label_Timer.textProperty(), _game.getGameTime(), _numStringConver);
+
+        // InfoText
+        _label_InfoText.layoutXProperty().bind(_gameboard.getRect_Gameboard().xProperty().
+                add(_gameboard.getRect_Gameboard().widthProperty().divide(2)).
+                subtract(_label_InfoText.widthProperty().divide(2)));
+        _label_InfoText.layoutYProperty().bind(_gameboard.getRect_Gameboard().yProperty().
+                add(_gameboard.getRect_Gameboard().heightProperty().divide(2)).
+                subtract(_label_InfoText.heightProperty().divide(2)));
+        _label_InfoText.toFront();
+
+        // Points
+        Bindings.bindBidirectional(_label_YellowMinionPoints.textProperty(), _game.getPointsYellowMinion(), _numStringConver);
+        Bindings.bindBidirectional(_label_EvilMinionPoints.textProperty(), _game.getPointsPurpleMinion(), _numStringConver);
+    }
+
+
     private void initGameInfoTextReady(){
-        gameInfoTextReadyTransition = new SequentialTransition();
-        FadeTransition fadeOut = new FadeTransition(Duration.seconds(2), label_InfoText);
+        _gameInfoTextReadyTransition = new SequentialTransition();
+        FadeTransition fadeOut = new FadeTransition(Duration.seconds(2), _label_InfoText);
         fadeOut.setFromValue(1.0);
         fadeOut.setToValue(0.1);
-        gameInfoTextReadyTransition.getChildren().add(fadeOut);
+        _gameInfoTextReadyTransition.getChildren().add(fadeOut);
 
-        FadeTransition fadeIn = new FadeTransition(Duration.seconds(2), label_InfoText);
+        FadeTransition fadeIn = new FadeTransition(Duration.seconds(2), _label_InfoText);
         fadeIn.setFromValue(0.1);
         fadeIn.setToValue(1.0);
 
-        gameInfoTextReadyTransition.getChildren().add(fadeIn);
-        gameInfoTextReadyTransition.setCycleCount(SequentialTransition.INDEFINITE);
+        _gameInfoTextReadyTransition.getChildren().add(fadeIn);
+        _gameInfoTextReadyTransition.setCycleCount(SequentialTransition.INDEFINITE);
     }
 
     private void startGameInfoTextReady(){
-        if (isGameInfoTextReadyTransitionRunning == false) {
+        if (_isGameInfoTextReadyTransitionRunning == false) {
             resetGameInfoTextReady();
-            isGameInfoTextReadyTransitionRunning = true;
-            gameInfoTextReadyTransition.play();
+            _isGameInfoTextReadyTransitionRunning = true;
+            _gameInfoTextReadyTransition.play();
         }
     }
 
     private void stopGameInfoTextReady(){
-        if (gameInfoTextReadyTransition != null) {
-            isGameInfoTextReadyTransitionRunning = false;
-            gameInfoTextReadyTransition.stop();
+        if (_gameInfoTextReadyTransition != null) {
+            _isGameInfoTextReadyTransitionRunning = false;
+            _gameInfoTextReadyTransition.stop();
         }
     }
 
     private void resetGameInfoTextReady(){
-        label_InfoText.setText("Players Press Start!");
-        label_InfoText.setTextFill(Color.WHITE);
-        label_InfoText.setVisible(true);
+        _label_InfoText.setText("Players Press Start!");
+        _label_InfoText.setTextFill(Color.WHITE);
+        _label_InfoText.setVisible(true);
     }
 
-
+    // Attention: Here is game-logic: Countdown starts game;
     private void initGameInfoTextCountdown(){
-        gameInfoTextCountdownTransition = new SequentialTransition();
-        FadeTransition fadeOut = new FadeTransition(Duration.seconds(2), label_InfoText);
+        _gameInfoTextCountdownTransition = new SequentialTransition();
+        FadeTransition fadeOut = new FadeTransition(Duration.seconds(2), _label_InfoText);
         fadeOut.setFromValue(1.0);
         fadeOut.setToValue(0.0);
         fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                switch (label_InfoText.getText()) {
+                switch (_label_InfoText.getText()) {
                     case "READY":
-                        label_InfoText.setText("SET");
-                        label_InfoText.setTextFill(Color.YELLOW);
+                        _label_InfoText.setText("SET");
+                        _label_InfoText.setTextFill(Color.YELLOW);
                         break;
                     case "SET":
-                        label_InfoText.setText("GO!");
-                        label_InfoText.setTextFill(Color.GREEN);
-                        gameState.setGameState(PLAY);
+                        _label_InfoText.setText("GO!");
+                        _label_InfoText.setTextFill(Color.GREEN);
+                        _gameState.setGameState(PLAY);  // Already set here play, so you can start playing while "GO" is fading out
                         break;
                     case "GO!":
                         stopGameInfoTextCountdown();
@@ -338,160 +347,168 @@ public class GameboardViewController {
                 }
             }
         });
-        gameInfoTextCountdownTransition.getChildren().add(fadeOut);
-        gameInfoTextCountdownTransition.setCycleCount(SequentialTransition.INDEFINITE);
+        _gameInfoTextCountdownTransition.getChildren().add(fadeOut);
+        _gameInfoTextCountdownTransition.setCycleCount(SequentialTransition.INDEFINITE);
     }
 
     private void startGameInfoTextCountdown(){
-        if (isGameInfoTextCountdownTransitionRunning == false) {
+        if (_isGameInfoTextCountdownTransitionRunning == false) {
             resetGameInfoTextCountdown();
-            isGameInfoTextCountdownTransitionRunning = true;
-            gameInfoTextCountdownTransition.play();
+            _isGameInfoTextCountdownTransitionRunning = true;
+            _gameInfoTextCountdownTransition.play();
         }
     }
 
     private void stopGameInfoTextCountdown(){
-        if (gameInfoTextCountdownTransition != null) {
-            label_InfoText.setVisible(true);
-            isGameInfoTextCountdownTransitionRunning = false;
-            gameInfoTextCountdownTransition.stop();
+        if (_gameInfoTextCountdownTransition != null) {
+            _label_InfoText.setVisible(false);
+            _isGameInfoTextCountdownTransitionRunning = false;
+            _gameInfoTextCountdownTransition.stop();
         }
     }
 
     private void resetGameInfoTextCountdown(){
-        label_InfoText.setText("READY");
-        label_InfoText.setTextFill(Color.RED);
-        label_InfoText.setVisible(true);
+        _label_InfoText.setText("READY");
+        _label_InfoText.setTextFill(Color.RED);
+        _label_InfoText.setVisible(true);
     }
 
+    // Attention: Here is game-logic: asks game which minion won and sets text accordingly
     private void initGameInfoTextGameOver(){
-        gameInfoTextGameOverTransition = new SequentialTransition();
-        FadeTransition fadeOut = new FadeTransition(Duration.seconds(3), label_InfoText);
+        _gameInfoTextGameOverTransition = new SequentialTransition();
+        FadeTransition fadeOut = new FadeTransition(Duration.seconds(3), _label_InfoText);
         fadeOut.setFromValue(1.0);
         fadeOut.setToValue(0.0);
         fadeOut.setOnFinished(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
-                switch (gameInfoTextGameOverStatus) {
+                switch (_gameInfoTextGameOverStatus) {
                     case 0:
-                        int x = game.whichMinionWon();
-                        if ( x == 0 ) {
-                            label_InfoText.setText("Minion Won!");
-                            label_InfoText.setTextFill(Color.YELLOW);
-                        } else if (x == 1) {
-                            label_InfoText.setText("Evil Minion Won!");
-                            label_InfoText.setTextFill(Color.PURPLE);
+                        GameObjectType minion = _game.whichMinionWon();
+                        if ( minion == GameObjectType.YELLOWMINION ) {
+                            _label_InfoText.setText("Minion Won!");
+                            _label_InfoText.setTextFill(Color.YELLOW);
+                        } else if (minion == GameObjectType.PURPLEMINION) {
+                            _label_InfoText.setText("Evil Minion Won!");
+                            _label_InfoText.setTextFill(Color.PURPLE);
                         } else {
-                            label_InfoText.setText("DRAW!");
+                            _label_InfoText.setText("DRAW!");
                         }
-                        gameInfoTextGameOverStatus++;
+                        _gameInfoTextGameOverStatus++;
                         break;
                     case 1:
-                        label_InfoText.setText("Press X or A to Restart");
-                        label_InfoText.setTextFill(Color.WHITE);
+                        _label_InfoText.setText("Press X or A to Restart");
+                        _label_InfoText.setTextFill(Color.WHITE);
                         break;
                 }
             }
         });
-        gameInfoTextGameOverTransition.getChildren().add(fadeOut);
+        _gameInfoTextGameOverTransition.getChildren().add(fadeOut);
 
-        FadeTransition fadeIn = new FadeTransition(Duration.seconds(3), label_InfoText);
+        FadeTransition fadeIn = new FadeTransition(Duration.seconds(3), _label_InfoText);
         fadeIn.setFromValue(0.1);
         fadeIn.setToValue(1.0);
 
-        gameInfoTextGameOverTransition.getChildren().add(fadeIn);
-        gameInfoTextGameOverTransition.setCycleCount(SequentialTransition.INDEFINITE);
+        _gameInfoTextGameOverTransition.getChildren().add(fadeIn);
+        _gameInfoTextGameOverTransition.setCycleCount(SequentialTransition.INDEFINITE);
     }
 
     private void startGameInfoTextGameOver(){
-        if (isGameInfoTextGameOverTransitionRunning == false) {
+        if (_isGameInfoTextGameOverTransitionRunning == false) {
             resetGameInfoTextGameOver();
-            isGameInfoTextGameOverTransitionRunning = true;
-            gameInfoTextGameOverTransition.play();
+            _isGameInfoTextGameOverTransitionRunning = true;
+            _gameInfoTextGameOverTransition.play();
         }
     }
 
     private void stopGameInfoTextGameOver(){
-        if (gameInfoTextGameOverTransition != null) {
-            label_InfoText.setVisible(true);
-            isGameInfoTextGameOverTransitionRunning = false;
-            gameInfoTextGameOverTransition.stop();
+        if (_gameInfoTextGameOverTransition != null) {
+            _label_InfoText.setVisible(false);
+            _isGameInfoTextGameOverTransitionRunning = false;
+            _gameInfoTextGameOverTransition.stop();
         }
     }
 
     private void resetGameInfoTextGameOver(){
-        label_InfoText.setText("GAME OVER");
-        label_InfoText.setTextFill(Color.WHITE);
-        label_InfoText.setVisible(true);
-        gameInfoTextGameOverStatus = 0;
+        _label_InfoText.setText("GAME OVER");
+        _label_InfoText.setTextFill(Color.WHITE);
+        _label_InfoText.setVisible(true);
+        _gameInfoTextGameOverStatus = 0;
     }
 
     private void initGameInfoTextPause(){
-        gameInfoTextPauseTransition = new SequentialTransition();
-        FadeTransition fadeOut = new FadeTransition(Duration.seconds(3), label_InfoText);
+        _gameInfoTextPauseTransition = new SequentialTransition();
+        FadeTransition fadeOut = new FadeTransition(Duration.seconds(3), _label_InfoText);
         fadeOut.setFromValue(1.0);
         fadeOut.setToValue(0.4);
-        gameInfoTextPauseTransition.getChildren().add(fadeOut);
+        _gameInfoTextPauseTransition.getChildren().add(fadeOut);
 
-        FadeTransition fadeIn = new FadeTransition(Duration.seconds(3), label_InfoText);
+        FadeTransition fadeIn = new FadeTransition(Duration.seconds(3), _label_InfoText);
         fadeIn.setFromValue(0.4);
         fadeIn.setToValue(1.0);
 
-        gameInfoTextPauseTransition.getChildren().add(fadeIn);
-        gameInfoTextPauseTransition.setCycleCount(SequentialTransition.INDEFINITE);
+        _gameInfoTextPauseTransition.getChildren().add(fadeIn);
+        _gameInfoTextPauseTransition.setCycleCount(SequentialTransition.INDEFINITE);
     }
 
     private void startGameInfoTextPause(){
-        if ( isGameInfoTextPauseTransitionRunning == false) {
+        if (_isGameInfoTextPauseTransitionRunning == false) {
             resetGameInfoTextPause();
-            isGameInfoTextPauseTransitionRunning = true;
-            gameInfoTextPauseTransition.play();
+            _isGameInfoTextPauseTransitionRunning = true;
+            _gameInfoTextPauseTransition.play();
         }
     }
 
     private void stopGameInfoTextPause(){
-        if (gameInfoTextPauseTransition != null) {
-            isGameInfoTextPauseTransitionRunning = false;
-            gameInfoTextPauseTransition.stop();
-            label_InfoText.setVisible(false);
+        if (_gameInfoTextPauseTransition != null) {
+            _isGameInfoTextPauseTransitionRunning = false;
+            _gameInfoTextPauseTransition.stop();
+            _label_InfoText.setVisible(false);
         }
     }
 
     private void resetGameInfoTextPause(){
-        label_InfoText.setText("PAUSE");
-        label_InfoText.setTextFill(Color.WHITE);
-        label_InfoText.setVisible(true);
+        _label_InfoText.setText("PAUSE");
+        _label_InfoText.setTextFill(Color.WHITE);
+        _label_InfoText.setVisible(true);
     }
 
 
-    public void generateBanana(){
-        gameboard.generateBanana();
+    private void hideLabels(){
+        _label_Timer.setVisible(false);
+        _pane_YellowMinion.setVisible(false);
+        _pane_EvilMinion.setVisible(false);
     }
 
-    public void generateBeedo(){
-        gameboard.generateBeedo();
+    private void showLabels(){
+        _label_Timer.setVisible(true);
+        _pane_YellowMinion.setVisible(true);
+        _pane_EvilMinion.setVisible(true);
     }
-
-    public void generateGoggles(){
-        gameboard.generateGoggles();
-    }
-
 
     public void saveGameboardPreferences(){
-        gameboard.saveGameboardPreferences();
-        game.saveGameSettings();    // TODO: make real save game settings button
+        _gameboard.saveGameboardPreferences();
+        _game.saveGameSettings();    // TODO: make real save game settings button
     }
-
+    // TODO: make private and remove it from gui
     public void hideMenu(){
-        pane_GameboardView.getChildren().remove(menubar);
+        _pane_GameboardView.getChildren().remove(_menubar);
     }
 
+    // method for GUI
+    public void maximizeGameboard(){
+        _gameboard.setUseGameboardPreferences(false);
+        initGameboardSize();
+    }
+
+    // TODO: Remove (also from gui)
     public void pauseGame(){
-        gameState.setGameState(PAUSE);
+        _gameState.setGameState(PAUSE);
     }
 
+    // TODO: Remove (also from gui)
     public void continueGame(){
-        gameState.setGameState(PLAY);
+        _gameState.setGameState(PLAY);
     }
 
 }

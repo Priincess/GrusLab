@@ -11,37 +11,37 @@ import javafx.scene.media.MediaPlayer;
  * Created by Mark Mauerhofer on 08.10.2016.
  */
 public class GameObject {
-    private ImageView imageView;
-    private GameObjectType type;
-    private MediaPlayer mediaPlayer;
+    private ImageView _imageView;
+    private GameObjectType _type;
+    private MediaPlayer _mediaPlayer;
 
     public GameObject(GameObjectType type, IntegerProperty size){
-        this.type = type;
+        _type = type;
 
         switch (type){
             case YELLOWMINION:
-                this.imageView = new ImageView(getClass().getResource("gameObjectMedia/minion1.png").toExternalForm());
+                _imageView = new ImageView(getClass().getResource("gameObjectMedia/minion1.png").toExternalForm());
                 break;
             case PURPLEMINION:
-                this.imageView = new ImageView(getClass().getResource("gameObjectMedia/minion2.png").toExternalForm());
+                _imageView = new ImageView(getClass().getResource("gameObjectMedia/minion2.png").toExternalForm());
                 break;
             case BANANA:
-                this.imageView = new ImageView(getClass().getResource("gameObjectMedia/banana.png").toExternalForm());
+                _imageView = new ImageView(getClass().getResource("gameObjectMedia/banana.png").toExternalForm());
                 break;
             case GOGGLES:
-                this.imageView = new ImageView(getClass().getResource("gameObjectMedia/goggles.png").toExternalForm());
+                _imageView = new ImageView(getClass().getResource("gameObjectMedia/goggles.png").toExternalForm());
                 break;
             case BEEDO:
-                this.imageView = new ImageView(getClass().getResource("gameObjectMedia/beedo.png").toExternalForm());
+                _imageView = new ImageView(getClass().getResource("gameObjectMedia/beedo.png").toExternalForm());
                 break;
             case REFERENCEPOINT:
-                this.imageView = new ImageView(getClass().getResource("gameObjectMedia/referencePoint.png").toExternalForm());
+                _imageView = new ImageView(getClass().getResource("gameObjectMedia/referencePoint.png").toExternalForm());
                 break;
             case CAMERAPOINT:
-                this.imageView = new ImageView(getClass().getResource("gameObjectMedia/cameraPoint.png").toExternalForm());
+                _imageView = new ImageView(getClass().getResource("gameObjectMedia/cameraPoint.png").toExternalForm());
                 break;
             default:
-                this.imageView = new ImageView(getClass().getResource("gameObjectMedia/dummy.jpg").toExternalForm());
+                _imageView = new ImageView(getClass().getResource("gameObjectMedia/dummy.jpg").toExternalForm());
                 break;
         }
         setSize(size);
@@ -49,39 +49,39 @@ public class GameObject {
 
     public void setSize(IntegerProperty size){
         if (size != null) {
-            imageView.setPreserveRatio(true);
-            imageView.fitWidthProperty().bind(size);
-            imageView.fitHeightProperty().bind(size);
+            _imageView.setPreserveRatio(true);
+            _imageView.fitWidthProperty().bind(size);
+            _imageView.fitHeightProperty().bind(size);
         }
     }
 
     public void setPosition(int x, int y){
-        imageView.setX(x);
-        imageView.setY(y);
+        _imageView.setX(x);
+        _imageView.setY(y);
     }
 
     public void playSound(){
-        switch (this.type){
+        switch (_type){
             case BANANA:
-                mediaPlayer = new MediaPlayer(new Media(getClass().getResource("gameObjectMedia/bababa_banana.mp3").toExternalForm()));
+                _mediaPlayer = new MediaPlayer(new Media(getClass().getResource("gameObjectMedia/bababa_banana.mp3").toExternalForm()));
                 break;
             case BEEDO:
-                mediaPlayer = new MediaPlayer(new Media(getClass().getResource("gameObjectMedia/beedo.mp3").toExternalForm()));
+                _mediaPlayer = new MediaPlayer(new Media(getClass().getResource("gameObjectMedia/beedo.mp3").toExternalForm()));
                 break;
             case GOGGLES:
-                mediaPlayer = new MediaPlayer(new Media(getClass().getResource("gameObjectMedia/What.mp3").toExternalForm()));
+                _mediaPlayer = new MediaPlayer(new Media(getClass().getResource("gameObjectMedia/What.mp3").toExternalForm()));
                 break;
         }
-        if (mediaPlayer != null) {
-            mediaPlayer.play();
+        if (_mediaPlayer != null) {
+            _mediaPlayer.play();
         }
     }
 
     public ImageView getImageView(){
-        return imageView;
+        return _imageView;
     }
 
     public GameObjectType getType(){
-        return this.type;
+        return _type;
     }
 }
