@@ -99,8 +99,10 @@ public class Game {
     }
 
     private void runGame(){
-        updateYellowMinionPosition();
-        updateEvilMinionPosition();
+        if (_tracker != null) {
+            updateYellowMinionPosition();
+            updateEvilMinionPosition();
+        }
         checkForCollisions();
     }
 
@@ -270,9 +272,13 @@ public class Game {
 
     private void beedoCollisionHandler(GameObject minion, GameObject item){
         if (minion.getType() == GameObjectType.YELLOWMINION){
-            _yellowPlayer.setPlayerState(PlayerState.Blocked);
+            if (_yellowPlayer != null) {
+                _yellowPlayer.setPlayerState(PlayerState.Blocked);
+            }
         } else {
-            _purplePlayer.setPlayerState(PlayerState.Blocked);
+            if (_purplePlayer != null) {
+                _purplePlayer.setPlayerState(PlayerState.Blocked);
+            }
         }
         item.playSound();
         _gameboard.removeGameObject(item);
@@ -282,9 +288,13 @@ public class Game {
 
     private void gogglesCollisionHandler(GameObject minion, GameObject item){
         if (minion.getType() == GameObjectType.YELLOWMINION){
-            _yellowPlayer.setPlayerState(PlayerState.Speedy);
+            if (_yellowPlayer != null) {
+                _yellowPlayer.setPlayerState(PlayerState.Speedy);
+            }
         } else {
-            _purplePlayer.setPlayerState(PlayerState.Speedy);
+            if (_purplePlayer != null) {
+                _purplePlayer.setPlayerState(PlayerState.Speedy);
+            }
         }
         item.playSound();
         _gameboard.removeGameObject(item);

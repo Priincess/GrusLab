@@ -160,19 +160,19 @@ public class GameboardViewController {
 
     private void addGameStateListener(){
         _gameState.getGameStateNumber().addListener(new ChangeListener(){
-            @Override public void changed(ObservableValue o, Object oldVal,
-                                          Object newVal){
+            @Override public void changed(ObservableValue o, Object oldVal, Object newVal){
                 int old = (int) oldVal;
                 switch (_gameState.getGameState()){
                     case CALIBRATION:
                         if (old == CALIBRATIONVALIDATION.getValue()){
-                            _label_InfoText.setText("Calibration failed - Try again");  // TODO: BUG - It does not change text
+                            System.out.println("Failed");
+                            //_label_InfoText.setText("Calibration failed - Try again");  // TODO: BUG - It does not change text
                         }
                         break;
                     case READY:
                         if (old == CALIBRATIONVALIDATION.getValue()) {
                             showLabels();
-                            //hideMenu();   // TODO: uncomment
+                            hideMenu();
                         } else if (old == FINISHED.getValue()) {
                             stopGameInfoTextGameOver();
                         }
@@ -322,7 +322,7 @@ public class GameboardViewController {
         _label_InfoText.setVisible(true);
     }
 
-    // Attention: Here is game-logic: Countdown starts game;
+    // Attention: Countdown starts game;
     private void initGameInfoTextCountdown(){
         _gameInfoTextCountdownTransition = new SequentialTransition();
         FadeTransition fadeOut = new FadeTransition(Duration.seconds(2), _label_InfoText);
@@ -373,7 +373,7 @@ public class GameboardViewController {
         _label_InfoText.setVisible(true);
     }
 
-    // Attention: Here is game-logic: asks game which minion won and sets text accordingly
+    // Attention: Here is a game-function-called: asks game which minion won and sets text accordingly
     private void initGameInfoTextGameOver(){
         _gameInfoTextGameOverTransition = new SequentialTransition();
         FadeTransition fadeOut = new FadeTransition(Duration.seconds(3), _label_InfoText);
@@ -486,10 +486,12 @@ public class GameboardViewController {
         _pane_EvilMinion.setVisible(true);
     }
 
+    // Attention: Here is a game-function-called:
     public void saveGameboardPreferences(){
         _gameboard.saveGameboardPreferences();
         _game.saveGameSettings();    // TODO: make real save game settings button
     }
+
     // TODO: make private and remove it from gui
     public void hideMenu(){
         _pane_GameboardView.getChildren().remove(_menubar);
