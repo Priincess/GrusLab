@@ -23,94 +23,102 @@ import java.util.prefs.Preferences;
 
 public class Gameboard {
 
-    private Preferences gameboardPreferences;
-    private Rectangle rect_Gameboard;
-    private Rectangle rect_GameboardCollisionBox;
-    private Rectangle rect_GameboardOutlineBox;
+    private Preferences _gameboardPreferences;
+    private Rectangle _rect_Gameboard = new Rectangle();
+    private boolean _useGameboardPreferences = false;
+    private Rectangle _rect_GameboardCollisionBox;
+    private Rectangle _rect_GameboardOutlineBox;
 
-    private IntegerProperty minionSize = new SimpleIntegerProperty(0);  // Overwritten by Preferences
-    private IntegerProperty itemSize = new SimpleIntegerProperty(0);    // Overwritten by Preferences
+    private IntegerProperty _minionSize = new SimpleIntegerProperty(0);  // Overwritten by Preferences
+    private IntegerProperty _itemSize = new SimpleIntegerProperty(0);    // Overwritten by Preferences
 
-    private IntegerProperty gameObjectDistance = new SimpleIntegerProperty(0);  // Overwritten by Preferences
+    private IntegerProperty _gameObjectDistance = new SimpleIntegerProperty(0);  // Overwritten by Preferences
 
-    private GameObject yellowMinion;
-    private GameObject purpleMinion;
-    private ObservableList<GameObject> gameObjects;
+    private GameObject _yellowMinion;
+    private GameObject _purpleMinion;
+    private ObservableList<GameObject> _gameObjects;
 
 
     public Gameboard(){
-        gameboardPreferences = Preferences.userNodeForPackage(this.getClass());
+        _gameboardPreferences = Preferences.userNodeForPackage(this.getClass());
+        loadGameboardPreferences();
         initGameboardRectangle();
         initGameboardOutlineBox();
         initGameboardCollisionBoxRectangle();
 
-        loadGameboardPreferences();
-        gameObjects =  FXCollections.observableArrayList();
+        _gameObjects =  FXCollections.observableArrayList();
         addGameboardChangeListener();
         addMinionSizeChangeListener();
     }
 
 
     public Rectangle getRect_Gameboard(){
-        return rect_Gameboard;
+        return _rect_Gameboard;
     }
 
+    public boolean getUseGameboardPreferences() { return _useGameboardPreferences; }
+
+    public void setUseGameboardPreferences(boolean value){ _useGameboardPreferences = value; }
+
     public IntegerProperty getMinionSize(){
-        return minionSize;
+        return _minionSize;
     }
 
     public IntegerProperty getItemSize(){
-        return itemSize;
+        return _itemSize;
     }
 
     public IntegerProperty getGameObjectDistance(){
-        return gameObjectDistance;
+        return _gameObjectDistance;
     }
 
     public ObservableList<GameObject> getGameObjects(){
-        return gameObjects;
+        return _gameObjects;
     }
 
     public GameObject getYellowMinion(){
-        return yellowMinion;
+        return _yellowMinion;
     }
 
     public GameObject getPurpleMinion(){
-        return purpleMinion;
+        return _purpleMinion;
     }
 
 
     private void initGameboardRectangle(){
-        rect_Gameboard = new Rectangle();
-        rect_Gameboard.setFill(Color.BLACK);
-        rect_Gameboard.setStrokeType(StrokeType.OUTSIDE);
-        rect_Gameboard.setStroke(Color.RED);
+        _rect_Gameboard.setFill(Color.BLACK);
+        _rect_Gameboard.setStrokeType(StrokeType.OUTSIDE);
+        _rect_Gameboard.setStroke(Color.RED);
+        int strokeWidth = _minionSize.intValue();
+        _rect_Gameboard.setStrokeWidth(strokeWidth/2);
+        double x1 = _rect_Gameboard.getStrokeWidth();
+        int x = 0;
     }
 
     private void initGameboardOutlineBox(){
-        rect_GameboardOutlineBox = new Rectangle();
-        rect_GameboardOutlineBox.xProperty().bind(rect_Gameboard.xProperty());
-        rect_GameboardOutlineBox.yProperty().bind(rect_Gameboard.yProperty());
-        rect_GameboardOutlineBox.widthProperty().bind(rect_Gameboard.widthProperty());
-        rect_GameboardOutlineBox.heightProperty().bind(rect_Gameboard.heightProperty());
+        _rect_GameboardOutlineBox = new Rectangle();
+        _rect_GameboardOutlineBox.xProperty().bind(_rect_Gameboard.xProperty());
+        _rect_GameboardOutlineBox.yProperty().bind(_rect_Gameboard.yProperty());
+        _rect_GameboardOutlineBox.widthProperty().bind(_rect_Gameboard.widthProperty());
+        _rect_GameboardOutlineBox.heightProperty().bind(_rect_Gameboard.heightProperty());
     }
 
     private void initGameboardCollisionBoxRectangle(){
-        rect_GameboardCollisionBox = new Rectangle();
-        rect_GameboardCollisionBox.setFill(Color.ANTIQUEWHITE);
-        NumberBinding x = rect_Gameboard.xProperty().add(new SimpleIntegerProperty(minionSize.intValue()));
-        NumberBinding y = rect_Gameboard.yProperty().add(new SimpleIntegerProperty(minionSize.intValue()));
-        NumberBinding width = rect_Gameboard.widthProperty().subtract(new SimpleIntegerProperty(2*minionSize.intValue()));
-        NumberBinding height = rect_Gameboard.heightProperty().subtract(new SimpleIntegerProperty(2*minionSize.intValue()));
+        _rect_GameboardCollisionBox = new Rectangle();
+        _rect_GameboardCollisionBox.setFill(Color.ANTIQUEWHITE);
+        NumberBinding x = _rect_Gameboard.xProperty().add(new SimpleIntegerProperty(_minionSize.intValue()));
+        NumberBinding y = _rect_Gameboard.yProperty().add(new SimpleIntegerProperty(_minionSize.intValue()));
+        NumberBinding width = _rect_Gameboard.widthProperty().subtract(new SimpleIntegerProperty(2*_minionSize.intValue()));
+        NumberBinding height = _rect_Gameboard.heightProperty().subtract(new SimpleIntegerProperty(2*_minionSize.intValue()));
 
-        rect_GameboardCollisionBox.xProperty().bind(x);
-        rect_GameboardCollisionBox.yProperty().bind(y);
-        rect_GameboardCollisionBox.widthProperty().bind(width);
-        rect_GameboardCollisionBox.heightProperty().bind(height);
+        _rect_GameboardCollisionBox.xProperty().bind(x);
+        _rect_GameboardCollisionBox.yProperty().bind(y);
+        _rect_GameboardCollisionBox.widthProperty().bind(width);
+        _rect_GameboardCollisionBox.heightProperty().bind(height);
     }
 
     public boolean gameboardStartSetup(){
-        if (yellowMinion == null && purpleMinion == null) {
+        if (_yellowMinion == null && _purpleMinion == null) {
             createMinions();
             generateGoggles();
             generateBeedo();
@@ -121,7 +129,7 @@ public class Gameboard {
     }
 
     public void createMinions() {
-        if (yellowMinion == null && purpleMinion == null) {
+        if (_yellowMinion == null && _purpleMinion == null) {
             createGameObject(GameObjectType.YELLOWMINION, 0, 0);
             createGameObject(GameObjectType.PURPLEMINION, 0, 0);
             setMinionStartPosition1();
@@ -130,7 +138,7 @@ public class Gameboard {
 
     public void setMinionStartPosition1(){
         Point[] points = getStartPositions();
-        if (yellowMinion != null && purpleMinion != null) {
+        if (_yellowMinion != null && _purpleMinion != null) {
             setMinionPosition(GameObjectType.YELLOWMINION, points[0]);  // Left Top
             setMinionPosition(GameObjectType.PURPLEMINION, points[2]);  // Right Bottom
         }
@@ -138,35 +146,38 @@ public class Gameboard {
 
     public void setMinionStartPosition2(){
         Point[] points = getStartPositions();
-        if (yellowMinion != null && purpleMinion != null) {
+        if (_yellowMinion != null && _purpleMinion != null) {
             setMinionPosition(GameObjectType.YELLOWMINION, points[1]);  // Right Top
             setMinionPosition(GameObjectType.PURPLEMINION, points[3]);  // Left Bottom
         }
     }
 
     public void saveGameboardPreferences(){
-        gameboardPreferences.putInt("GAMEBOARD_X", rect_Gameboard.xProperty().intValue());
-        gameboardPreferences.putInt("GAMEBOARD_Y", rect_Gameboard.yProperty().intValue());
-        gameboardPreferences.putInt("GAMEBOARD_WIDTH", rect_Gameboard.widthProperty().intValue());
-        gameboardPreferences.putInt("GAMEBOARD_HEIGHT", rect_Gameboard.heightProperty().intValue());
-        gameboardPreferences.putInt("GAMEBOARD_STROKE", (int) rect_Gameboard.getStrokeWidth());
+        _gameboardPreferences.putInt("GAMEBOARD_X", _rect_Gameboard.xProperty().intValue());
+        _gameboardPreferences.putInt("GAMEBOARD_Y", _rect_Gameboard.yProperty().intValue());
+        _gameboardPreferences.putInt("GAMEBOARD_WIDTH", _rect_Gameboard.widthProperty().intValue());
+        _gameboardPreferences.putInt("GAMEBOARD_HEIGHT", _rect_Gameboard.heightProperty().intValue());
+        _gameboardPreferences.putInt("GAMEBOARD_STROKE", (int) _rect_Gameboard.getStrokeWidth());
 
-        gameboardPreferences.putInt("MINION_SIZE", minionSize.intValue());
-        gameboardPreferences.putInt("ITEM_SIZE", itemSize.intValue());
-        gameboardPreferences.putInt("GAMEOBJECT_DISTANCE", gameObjectDistance.intValue());
+        _gameboardPreferences.putInt("MINION_SIZE", _minionSize.intValue());
+        _gameboardPreferences.putInt("ITEM_SIZE", _itemSize.intValue());
+        _gameboardPreferences.putInt("GAMEOBJECT_DISTANCE", _gameObjectDistance.intValue());
 
     }
 
     private void loadGameboardPreferences(){
-        rect_Gameboard.setX(gameboardPreferences.getInt("GAMEBOARD_X", 50));
-        rect_Gameboard.setY(gameboardPreferences.getInt("GAMEBOARD_Y", 90));
-        rect_Gameboard.setWidth(gameboardPreferences.getInt("GAMEBOARD_WIDTH", 800));
-        rect_Gameboard.setHeight(gameboardPreferences.getInt("GAMEBOARD_HEIGHT", 400));
-        rect_Gameboard.setStrokeWidth(gameboardPreferences.getInt("MINION_SIZE", minionSize.intValue()));
+        _rect_Gameboard.setX(_gameboardPreferences.getInt("GAMEBOARD_X", -1));
+        _rect_Gameboard.setY(_gameboardPreferences.getInt("GAMEBOARD_Y", -1));
+        _rect_Gameboard.setWidth(_gameboardPreferences.getInt("GAMEBOARD_WIDTH", 1000));
+        _rect_Gameboard.setHeight(_gameboardPreferences.getInt("GAMEBOARD_HEIGHT", 1000));
 
-        minionSize.set(gameboardPreferences.getInt("MINION_SIZE", 50));
-        itemSize.set(gameboardPreferences.getInt("ITEM_SIZE", 50));
-        gameObjectDistance.set(gameboardPreferences.getInt("GAMEOBJECT_DISTANCE", 50));
+        if (_rect_Gameboard.getX() == -1){
+            _useGameboardPreferences = false;
+        }
+
+        _minionSize.set(_gameboardPreferences.getInt("MINION_SIZE", 50));
+        _itemSize.set(_gameboardPreferences.getInt("ITEM_SIZE", 50));
+        _gameObjectDistance.set(_gameboardPreferences.getInt("GAMEOBJECT_DISTANCE", 50));
     }
 
 
@@ -175,34 +186,34 @@ public class Gameboard {
         gObj.setPosition(x, y);
         switch (type){
             case YELLOWMINION:
-                gObj.setSize(minionSize);
-                yellowMinion = gObj;
+                gObj.setSize(_minionSize);
+                _yellowMinion = gObj;
                 break;
             case PURPLEMINION:
-                gObj.setSize(minionSize);
-                purpleMinion = gObj;
+                gObj.setSize(_minionSize);
+                _purpleMinion = gObj;
                 break;
             case REFERENCEPOINT:
-                gObj.setSize(minionSize);
+                gObj.setSize(_minionSize);
                 break;
             case CAMERAPOINT:
-                gObj.setSize(minionSize);
+                gObj.setSize(_minionSize);
                 break;
             default:
-                gObj.setSize(itemSize);
+                gObj.setSize(_itemSize);
         }
 
-        gameObjects.add(gObj);
+        _gameObjects.add(gObj);
         return gObj;
     }
 
 
     private Point generateRandomPointOnGameboard(){
-        int minX = rect_Gameboard.xProperty().intValue();
-        int maxX = rect_Gameboard.widthProperty().intValue() + minX - itemSize.intValue();    // substract itemSize otherwise items in bottom/right redzone
+        int minX = _rect_Gameboard.xProperty().intValue();
+        int maxX = _rect_Gameboard.widthProperty().intValue() + minX - _itemSize.intValue();    // substract itemSize otherwise items in bottom/right redzone
 
-        int minY = rect_Gameboard.yProperty().intValue();
-        int maxY = rect_Gameboard.heightProperty().intValue() + minY - itemSize.intValue();   // substract itemSize otherwise items in bottom/right redzone
+        int minY = _rect_Gameboard.yProperty().intValue();
+        int maxY = _rect_Gameboard.heightProperty().intValue() + minY - _itemSize.intValue();   // substract itemSize otherwise items in bottom/right redzone
 
         Random random = new Random();
         int x = 0;
@@ -217,13 +228,13 @@ public class Gameboard {
             x = random.nextInt(maxX - minX + 1) + minX;
             y = random.nextInt(maxY - minY + 1) + minY;
             itemCollisionBox = new Rectangle(
-                    x-itemSize.intValue()/2 - gameObjectDistance.intValue(),
-                    y-itemSize.intValue()/2 - gameObjectDistance.intValue(),
-                    2*itemSize.intValue() + gameObjectDistance.intValue(),
-                    2*itemSize.intValue() + gameObjectDistance.intValue()
+                    x-_itemSize.intValue()/2 - _gameObjectDistance.intValue(),
+                    y-_itemSize.intValue()/2 - _gameObjectDistance.intValue(),
+                    2*_itemSize.intValue() + _gameObjectDistance.intValue(),
+                    2*_itemSize.intValue() + _gameObjectDistance.intValue()
             );
 
-            for (GameObject gameObject : gameObjects){
+            for (GameObject gameObject : _gameObjects){
                 if (gameObject.getImageView().getBoundsInLocal().intersects(itemCollisionBox.getBoundsInLocal()) == true){
                     collision = true;
                     break;
@@ -235,25 +246,25 @@ public class Gameboard {
     }
 
     public void setMinionPosition(GameObjectType minion, Point point){
-        int x = (int) point.getX() - minionSize.intValue()/2;   // Camerapoint is center of minion, but gui point is left top corner
-        int y = (int) point.getY() - minionSize.intValue()/2;   // Camerapoint is center of minion, but gui point is left top corner
+        int x = (int) point.getX() - _minionSize.intValue()/2;   // Camerapoint is center of minion, but gui point is left top corner
+        int y = (int) point.getY() - _minionSize.intValue()/2;   // Camerapoint is center of minion, but gui point is left top corner
 
         switch (minion){
-            case YELLOWMINION: yellowMinion.setPosition(x,y);
+            case YELLOWMINION: _yellowMinion.setPosition(x,y);
                 break;
-            case PURPLEMINION: purpleMinion.setPosition(x,y);
+            case PURPLEMINION: _purpleMinion.setPosition(x,y);
         }
     }
 
     public GameObject isCollidingGameObject(GameObject minion){
         // TODO: Minion Collision
         // 0 == yellow minion && 1 == purple minion
-        for (int i = 2; i < gameObjects.size(); i++){
+        for (int i = 2; i < _gameObjects.size(); i++){
             // collision with item
-            GameObject temp = gameObjects.get(i);
+            GameObject temp = _gameObjects.get(i);
             if (temp.getType() != GameObjectType.YELLOWMINION && temp.getType() != GameObjectType.PURPLEMINION) {
-                double minionX = minion.getImageView().getX() + minionSize.intValue() / 2;
-                double minionY = minion.getImageView().getY() + minionSize.intValue() / 2;
+                double minionX = minion.getImageView().getX() + _minionSize.intValue() / 2;
+                double minionY = minion.getImageView().getY() + _minionSize.intValue() / 2;
                 if(temp.getImageView().contains(minionX, minionY) == true){
                     return temp;
                 }
@@ -263,7 +274,7 @@ public class Gameboard {
     }
 
     public boolean isOutsideOfGameboard(GameObject minion){
-        if (!rect_GameboardOutlineBox.getBoundsInParent().intersects(minion.getImageView().getBoundsInParent())){
+        if (!_rect_GameboardOutlineBox.getBoundsInParent().intersects(minion.getImageView().getBoundsInParent())){
             return true;
         }
         return false;
@@ -272,15 +283,15 @@ public class Gameboard {
     public void removeGameObject(GameObject gObj){
         switch(gObj.getType()){
             case YELLOWMINION:
-                gameObjects.remove(gObj);
-                yellowMinion = null;
+                _gameObjects.remove(gObj);
+                _yellowMinion = null;
                 break;
             case PURPLEMINION:
-                gameObjects.remove(gObj);
-                purpleMinion = null;
+                _gameObjects.remove(gObj);
+                _purpleMinion = null;
                 break;
             default:
-                gameObjects.remove(gObj);
+                _gameObjects.remove(gObj);
                 break;
         }
     }
@@ -308,14 +319,14 @@ public class Gameboard {
     }
 
     public void removeObjects(GameObjectType type){
-        Iterator<GameObject> iter = gameObjects.iterator();
+        Iterator<GameObject> iter = _gameObjects.iterator();
         while (iter.hasNext()){
             GameObject gObj = iter.next();
             if(gObj.getType() == type){
                 if (gObj.getType() == GameObjectType.YELLOWMINION){
-                    yellowMinion = null;
+                    _yellowMinion = null;
                 } else if (gObj.getType() == GameObjectType.PURPLEMINION){
-                    purpleMinion = null;
+                    _purpleMinion = null;
                 }
                 iter.remove();
             }
@@ -323,10 +334,10 @@ public class Gameboard {
     }
 
     public Point[] getStartPositions(){
-        int xl = (int)rect_Gameboard.getX() + minionSize.intValue()/2;
-        int xr = (int) rect_Gameboard.getX() + rect_Gameboard.widthProperty().intValue() - minionSize.intValue()/2;
-        int yt = (int) rect_Gameboard.getY() + minionSize.intValue()/2;
-        int yb = (int) rect_Gameboard.getY() + rect_Gameboard.heightProperty().intValue() - minionSize.intValue()/2;
+        int xl = (int) _rect_Gameboard.getX() + _minionSize.intValue()/2;
+        int xr = (int) _rect_Gameboard.getX() + _rect_Gameboard.widthProperty().intValue() - _minionSize.intValue()/2;
+        int yt = (int) _rect_Gameboard.getY() + _minionSize.intValue()/2;
+        int yb = (int) _rect_Gameboard.getY() + _rect_Gameboard.heightProperty().intValue() - _minionSize.intValue()/2;
         Point pLT = new Point(xl, yt);
         Point pRT = new Point(xr, yt);
         Point pRB = new Point(xr, yb);
@@ -336,37 +347,34 @@ public class Gameboard {
     }
 
     private void addGameboardChangeListener(){
-        rect_Gameboard.xProperty().addListener(new ChangeListener(){
-            @Override public void changed(ObservableValue o, Object oldVal,
-                                          Object newVal){
+        _rect_Gameboard.xProperty().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal, Object newVal){
                 setMinionStartPosition1();
             }
         });
-        rect_Gameboard.yProperty().addListener(new ChangeListener(){
-            @Override public void changed(ObservableValue o, Object oldVal,
-                                          Object newVal){
+        _rect_Gameboard.yProperty().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal, Object newVal){
                 setMinionStartPosition1();
             }
         });
-        rect_Gameboard.widthProperty().addListener(new ChangeListener(){
-            @Override public void changed(ObservableValue o, Object oldVal,
-                                          Object newVal){
+        _rect_Gameboard.widthProperty().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal, Object newVal){
                 setMinionStartPosition1();
             }
         });
-        rect_Gameboard.heightProperty().addListener(new ChangeListener(){
-            @Override public void changed(ObservableValue o, Object oldVal,
-                                          Object newVal){
+        _rect_Gameboard.heightProperty().addListener(new ChangeListener(){
+            @Override public void changed(ObservableValue o, Object oldVal, Object newVal){
                 setMinionStartPosition1();
             }
         });
     }
 
     private void addMinionSizeChangeListener(){
-        minionSize.addListener(new ChangeListener(){
+        _minionSize.addListener(new ChangeListener(){
             @Override public void changed(ObservableValue o, Object oldVal,
                                           Object newVal){
                 setMinionStartPosition1();
+                _rect_Gameboard.setStrokeWidth( _minionSize.intValue()/2);
             }
         });
     }

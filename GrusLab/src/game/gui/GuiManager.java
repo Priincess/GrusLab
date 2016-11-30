@@ -33,8 +33,8 @@ public class GuiManager extends Application{
     @Override
     public void start(Stage primaryStage) throws Exception {
         _stage = primaryStage;
-        //_stage.setFullScreen(true);
-        _stage.setMaximized(true);
+        //_stage.setFullScreen(true);   // TODO: Uncomment
+        _stage.setMaximized(true);  // TODO: Remove
         _stage.setTitle("Gru´s Lab - Immer Der Banana Nach");
         _stage.setOnCloseRequest(new EventHandler<WindowEvent>() {
             @Override
@@ -64,6 +64,7 @@ public class GuiManager extends Application{
             GameboardViewController controller = loader.getController();
             controller.initGameboardViewController(_game);
             sceneChange(root);
+            controller.initGameboardSize(); // Have to do it here, otherwise i do not know the windows size;
         } catch (Exception ex){
             ex.printStackTrace();
         }
@@ -72,8 +73,8 @@ public class GuiManager extends Application{
     private void sceneChange(Parent root){
         if (_stage.getScene() == null){
             _stage.setScene(new Scene(root));
-            //_stage.setFullScreen(true);
-            _stage.setMaximized(true);
+            //_stage.setFullScreen(true);   // TODO: uncomment
+            _stage.setMaximized(true);      // TODO: Remove
             _stage.show();
         } else {
             _stage.getScene().setRoot(root);

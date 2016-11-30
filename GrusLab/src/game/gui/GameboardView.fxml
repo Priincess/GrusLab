@@ -5,47 +5,48 @@
 <?import javafx.scene.control.*?>
 <?import javafx.scene.layout.*?>
 
-<Pane fx:id="pane_GameboardView" maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="game.gui.GameboardViewController">
+<Pane fx:id="_pane_GameboardView" maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="game.gui.GameboardViewController">
    <children>
-      <Label fx:id="label_InfoText" text="Some Info Text" textAlignment="CENTER" textFill="WHITE">
+      <Label fx:id="_label_InfoText" text="Some Info Text" textAlignment="CENTER" textFill="WHITE">
          <font>
             <Font size="64.0" />
          </font></Label>
-      <MenuBar fx:id="menubar">
+      <MenuBar fx:id="_menubar">
         <menus>
             <Menu mnemonicParsing="false" text="Game">
               <items>
                   <MenuItem mnemonicParsing="false" onAction="#hideMenu" text="Hide Menubar" />
-                  <MenuItem mnemonicParsing="false" onAction="#saveGameboardPreferences" text="Save Gameboard" />
                   <MenuItem mnemonicParsing="false" onAction="#pauseGame" text="Pause Game" />
                   <MenuItem mnemonicParsing="false" onAction="#continueGame" text="Continue Game" />
                   <MenuItem mnemonicParsing="false" text="Game-Timer">
                      <graphic>
-                        <TextField fx:id="textField_GameTimer" prefWidth="75.0" />
+                        <TextField fx:id="_textField_GameTimer" prefWidth="75.0" />
                      </graphic>
                   </MenuItem>
               </items>
             </Menu>
           <Menu mnemonicParsing="false" text="Gameboard">
             <items>
+                  <MenuItem mnemonicParsing="false" onAction="#saveGameboardPreferences" text="Save Gameboard" />
+                  <MenuItem mnemonicParsing="false" onAction="#maximizeGameboard" text="Maximize Gameboard" />
               <MenuItem mnemonicParsing="false" text="Board-X">
                      <graphic>
-                        <TextField fx:id="textField_GameboardX" prefWidth="75.0" />
+                        <TextField fx:id="_textField_GameboardX" prefWidth="75.0" />
                      </graphic>
                   </MenuItem>
                   <MenuItem mnemonicParsing="false" text="Board-Y">
                      <graphic>
-                        <TextField fx:id="textField_GameboardY" prefWidth="75.0" />
+                        <TextField fx:id="_textField_GameboardY" prefWidth="75.0" />
                      </graphic>
                   </MenuItem>
                   <MenuItem mnemonicParsing="false" text="Board-Width">
                      <graphic>
-                        <TextField fx:id="textField_GameboardWidth" prefWidth="75.0" />
+                        <TextField fx:id="_textField_GameboardWidth" prefWidth="75.0" />
                      </graphic>
                   </MenuItem>
                   <MenuItem mnemonicParsing="false" text="Board-Height">
                      <graphic>
-                        <TextField fx:id="textField_GameboardHeight" prefWidth="75.0" />
+                        <TextField fx:id="_textField_GameboardHeight" prefWidth="75.0" />
                      </graphic>
                   </MenuItem>
             </items>
@@ -54,54 +55,51 @@
               <items>
                     <MenuItem mnemonicParsing="false" text="Minion-Size">
                      <graphic>
-                        <TextField fx:id="textField_MinionSize" prefWidth="75.0" />
+                        <TextField fx:id="_textField_MinionSize" prefWidth="75.0" />
                      </graphic>
                   </MenuItem>
                     <MenuItem mnemonicParsing="false" text="Item-Size">
                      <graphic>
-                        <TextField fx:id="textField_ItemSize" prefWidth="75.0" />
+                        <TextField fx:id="_textField_ItemSize" prefWidth="75.0" />
                      </graphic>
                   </MenuItem>
                     <MenuItem mnemonicParsing="false" text="Distance">
                      <graphic>
-                        <TextField fx:id="textField_GameObjectDistance" prefWidth="75.0" />
+                        <TextField fx:id="_textField_GameObjectDistance" prefWidth="75.0" />
                      </graphic>
                   </MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction="#generateBanana" text="Generate Banana" />
-                  <MenuItem mnemonicParsing="false" onAction="#generateBeedo" text="Generate Beedo" />
-                  <MenuItem mnemonicParsing="false" onAction="#generateGoggles" text="Generate Goggles" />
               </items>
             </Menu>
         </menus>
       </MenuBar>
 
-       <Label fx:id="label_Timer" alignment="CENTER" prefHeight="35.0" prefWidth="100.0" text="120" textFill="WHITE">
+       <Label fx:id="_label_Timer" alignment="CENTER" prefHeight="35.0" prefWidth="100.0" text="120" textFill="WHITE">
            <font>
                <Font size="24.0" />
            </font>
        </Label>
-       <Pane fx:id="pane_YellowMinion" prefHeight="35.0" prefWidth="170.0">
+       <Pane fx:id="_pane_YellowMinion" prefHeight="35.0" prefWidth="170.0">
            <children>
-               <Label fx:id="label_YellowMinion" prefHeight="35.0" prefWidth="100.0" text="Minion:" textFill="#f5e050">
+               <Label fx:id="_label_YellowMinion" prefHeight="35.0" prefWidth="100.0" text="Minion:" textFill="#f5e050">
                    <font>
                        <Font size="24.0" />
                    </font>
                </Label>
-               <Label fx:id="label_YellowMinionPoints" layoutX="100.0" prefHeight="35.0" prefWidth="60.0" text="0" textFill="#f5e050">
+               <Label fx:id="_label_YellowMinionPoints" layoutX="100.0" prefHeight="35.0" prefWidth="60.0" text="0" textFill="#f5e050">
                    <font>
                        <Font size="24.0" />
                    </font>
                </Label>
            </children>
        </Pane>
-       <Pane fx:id="pane_EvilMinion" prefHeight="35.0" prefWidth="200.0">
+       <Pane fx:id="_pane_EvilMinion" prefHeight="35.0" prefWidth="200.0">
            <children>
-               <Label fx:id="label_EvilMinion" prefHeight="35.0" prefWidth="130.0" text="Evil Minion:" textFill="#743980">
+               <Label fx:id="_label_EvilMinion" prefHeight="35.0" prefWidth="130.0" text="Evil Minion:" textFill="#743980">
                    <font>
                        <Font size="24.0" />
                    </font>
                </Label>
-               <Label fx:id="label_EvilMinionPoints" layoutX="140.0" prefHeight="35.0" prefWidth="60.0" text="0" textFill="#743980">
+               <Label fx:id="_label_EvilMinionPoints" layoutX="140.0" prefHeight="35.0" prefWidth="60.0" text="0" textFill="#743980">
                    <font>
                        <Font size="24.0" />
                    </font>

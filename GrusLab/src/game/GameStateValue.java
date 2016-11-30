@@ -7,17 +7,19 @@ package game;
 public enum GameStateValue {
 	INIT(0),
 	WAIT(1),
+	CALIBRATION(6),
+	CALIBRATIONVALIDATION(7),
 	READY(2),
+	COUNTDOWN(8),
 	PLAY(3),
 	PAUSE(4),
-	FINISHED(5),
-	CALIBRATION(6);
+	FINISHED(5);
 
-	private final int value;
+	private final int _value;
 	GameStateValue(int value){
-		this.value = value;
+		_value = value;
 	}
 	public int getValue() {
-		return value;
+		return _value;
 	}
 }

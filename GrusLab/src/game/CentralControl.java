@@ -49,7 +49,7 @@ public class CentralControl {
 		_server = new Server();
 		_controllerManager = new ControllerManager();
 		_tracker = new ObjTracker();
-		//_game = new Game(_tracker);
+		//_game = new Game(_tracker, players[0], players[1]);
 		_guiManager = new GuiManager();
 		//_guiManager.setGame(_game);
 	}
