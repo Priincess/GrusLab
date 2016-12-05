@@ -1,0 +1,96 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.*?>
+<?import java.lang.*?>
+<?import javafx.scene.layout.*?>
+
+<Pane fx:id="_pane_GameSettingsView" maxHeight="Infinity" maxWidth="Infinity" minHeight="-Infinity" minWidth="-Infinity" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Temporary.gui.GameSettingsViewController">
+   <children>
+      <MenuBar fx:id="_menuBar_menu">
+        <menus>
+          <Menu mnemonicParsing="false" text="Game">
+            <items>
+                  <MenuItem mnemonicParsing="false" onAction="#gotoStartView" text="Back to Startscreen" />
+                  <MenuItem mnemonicParsing="false" text="Game-Time">
+                     <graphic>
+                        <TextField fx:id="_textField_GameTime" />
+                     </graphic>
+                  </MenuItem>
+              <MenuItem mnemonicParsing="false" onAction="#saveGameSettings" text="Save Game-Settings" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Gameboard">
+            <items>
+                  <MenuItem mnemonicParsing="false" onAction="#maximizeGameboard" text="Maximize Gameboard" />
+                  <MenuItem mnemonicParsing="false" text="Gameboard-X">
+                     <graphic>
+                        <Slider fx:id="_slider_gameboardX" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" text="Gameboard-Y">
+                     <graphic>
+                        <Slider fx:id="_slider_gameboardY" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" text="Gameboard-Width">
+                     <graphic>
+                        <Slider fx:id="_slider_gameboardWidth" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" text="Gameboard-Height">
+                     <graphic>
+                        <Slider fx:id="_slider_gameboardHeight" />
+                     </graphic>
+                  </MenuItem>
+              <MenuItem mnemonicParsing="false" onAction="#saveGameboardSettings" text="Save Gameboard-Settings" />
+            </items>
+          </Menu>
+            <Menu mnemonicParsing="false" text="GameObjects">
+               <items>
+                  <MenuItem mnemonicParsing="false" text="Minion-Size">
+                     <graphic>
+                        <Slider fx:id="_slider_minionSize" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" text="Item-Size">
+                     <graphic>
+                        <Slider fx:id="_slider_itemSize" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" text="Distance">
+                     <graphic>
+                        <Slider fx:id="_slider_distance" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" text="Goggle Drop rate">
+                     <graphic>
+                        <ComboBox fx:id="_comboBox_goggleDropRate" prefWidth="150.0" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" text="Beedo Drop rate">
+                     <graphic>
+                        <ComboBox fx:id="_comboBox_beedoDropRate" prefWidth="150.0" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#saveGameObjectSettings" text="Save GameObjects-Settings" />
+               </items>
+            </Menu>
+            <Menu mnemonicParsing="false" text="Camera">
+              <items>
+                  <MenuItem mnemonicParsing="false" text="Camera">
+                     <graphic>
+                        <ComboBox fx:id="_comboBox_Camera" prefWidth="150.0" />
+                     </graphic>
+                  </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#saveCameraSettings" text="Save Camera-Settings" />
+              </items>
+            </Menu>
+          <Menu mnemonicParsing="false" text="Calibration">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#saveCalibration" text="Save Calibration" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </children>
+</Pane>
