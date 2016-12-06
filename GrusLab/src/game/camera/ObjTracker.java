@@ -21,11 +21,12 @@ public class ObjTracker {
 	//HI
 	
 	//ID for webcam to be used
-	private static final int CAM_ID = 0;
+	
 //	private static final int NUM_OF_SCALEPOINTS = 4;
 	
 	private static final Point NOT_VALID = null;
 
+	private int _camId = 1;
     private VideoCapture _capture;
 	private Mat _actualFrame;
 	
@@ -56,6 +57,10 @@ public class ObjTracker {
 
 	}
 	
+	public void setCamID(int id){
+		_camId = id;
+	}
+	
 	
 	public Point getYellowPos(){
 		return _yellowPos;
@@ -71,7 +76,7 @@ public class ObjTracker {
 	
 	public void startTracking(){
 		
-		_capture.open(CAM_ID);
+		_capture.open(_camId);
 
 		//First time when camera runs - the first frames are white - so tracking won't work
 		//so i'll grab the first 1000 frames to make sure to have "clear" picture
