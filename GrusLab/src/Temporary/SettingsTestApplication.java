@@ -40,8 +40,7 @@ public class SettingsTestApplication extends Application {
         try {
             FXMLLoader loader = new FXMLLoader();
             Parent root = (Parent) loader.load(getClass().getResource("gui/GameSettingsView.fxml").openStream());
-            GameSettingsViewController controller = loader.getController();
-            controller.initGameSettingsViewController(new GameSettingsController());
+            //GameSettingsViewController controller = loader.getController();
             sceneChange(root);
         } catch (Exception ex){
             ex.printStackTrace();

@@ -1,7 +1,5 @@
 package Temporary;
 
-import java.util.prefs.Preferences;
-
 /**
  * Created by Mark Mauerhofer on 04.12.2016.
  */
@@ -19,8 +17,9 @@ public class Settings {
     public static final int GAMEBOARD_WIDTH_DEFAULT = 1000;
     public static final String GAMEBOARD_HEIGHT = "GAMEBOARD_HEIGHT";
     public static final int GAMEBOARD_HEIGHT_DEFAULT = 500;
-    public static final String GAMEBOARD_DISTANCE = "GAMEOBJECT_DISTANCE";
-    public static final int GAMEBOARD_DISTANCE_DEFAULT = 1000;
+
+    public static final String GAMEOBJECT_DISTANCE = "GAMEOBJECT_DISTANCE";
+    public static final int GAMEOBJECT_DISTANCE_DEFAULT = 100;
 
     // default widths/heights should be the same as the representive pictures
     public static final String MINION_WIDTH = "MINION_WIDTH";
@@ -43,4 +42,9 @@ public class Settings {
     public static final String GOGGLE_HEIGHT = "GOGGLE_HEIGHT";
     public static final int GOGGLE_HEIGHT_DEFAULT = 81;
 
+    public static final String CAMERA_ID = "CAMERA_ID";
+    public static final int CAMERA_DEFAULT = 0;
+
+
+    // TODO: font size of labels
 }
