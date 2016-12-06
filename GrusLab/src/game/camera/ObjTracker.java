@@ -12,15 +12,14 @@ public class ObjTracker {
 
 	static{ System.loadLibrary(Core.NATIVE_LIBRARY_NAME); }
 
+	private static final int SKIP_CAM_FRAMES = 1000;
+	
 	//upper & Lower bounds for nice and evil minion
 	private static final Scalar YELLOW_UPPER = new Scalar(30,255,255);
 	private static final Scalar YELLOW_LOWER = new Scalar(20, 100, 100);
 	private static final Scalar EVIL_UPPER = new Scalar(160, 127, 65);
 	private static final Scalar EVIL_LOWER = new Scalar(120,77,10);
 	
-	//HI
-	
-	//ID for webcam to be used
 	
 //	private static final int NUM_OF_SCALEPOINTS = 4;
 	
@@ -71,7 +70,7 @@ public class ObjTracker {
 	}
 	
 	public int CameraReadyPercent(){
-		return (_cameracount/1000)*100;
+		return (_cameracount/SKIP_CAM_FRAMES)*100;
 	}
 	
 	public void startTracking(){
@@ -80,7 +79,7 @@ public class ObjTracker {
 
 		//First time when camera runs - the first frames are white - so tracking won't work
 		//so i'll grab the first 1000 frames to make sure to have "clear" picture
-		for(int i = 0; i < 1000; i++){
+		for(int i = 0; i < SKIP_CAM_FRAMES; i++){
 			_capture.read(_actualFrame);
 			++_cameracount;
 		}
