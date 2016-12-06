@@ -64,7 +64,7 @@ public class GameSettingsViewController {
 
     @FXML
     public void initialize(){
-        _gameSettingsController = new GameSettingsController(); // TODO: getController from Central
+        _gameSettingsController = new GameSettingsController(); // TODO: getInstance from ControllerManager
 
         _numStringConver = new NumberStringConverter();
 
@@ -92,11 +92,11 @@ public class GameSettingsViewController {
 
     private void initImages(){
         // TODO: use final static...global path
-        _imageView_yellowMinion = new ImageView(getClass().getResource("gameObjectMedia/minion1.png").toExternalForm());
-        _imageView_purpleMinion = new ImageView(getClass().getResource("gameObjectMedia/minion2.png").toExternalForm());
-        _imageView_banana = new ImageView(getClass().getResource("gameObjectMedia/banana.png").toExternalForm());
-        _imageView_goggle = new ImageView(getClass().getResource("gameObjectMedia/goggles.png").toExternalForm());
-        _imageView_beedo = new ImageView(getClass().getResource("gameObjectMedia/beedo.png").toExternalForm());
+        _imageView_yellowMinion = new ImageView(getClass().getResource("media/minion1.png").toExternalForm());
+        _imageView_purpleMinion = new ImageView(getClass().getResource("media/minion2.png").toExternalForm());
+        _imageView_banana = new ImageView(getClass().getResource("media/banana.png").toExternalForm());
+        _imageView_goggle = new ImageView(getClass().getResource("media/goggles.png").toExternalForm());
+        _imageView_beedo = new ImageView(getClass().getResource("media/beedo.png").toExternalForm());
 
         _imageView_yellowMinion.setPreserveRatio(true);
         _imageView_purpleMinion.setPreserveRatio(true);
@@ -257,8 +257,8 @@ public class GameSettingsViewController {
     }
 
 
-    public void gotoStartView(){
-        _gameSettingsController.gotoStartView();
+    public void gotoMenuView(){
+        _gameSettingsController.gotoMenuView();
     }
 
     public void saveGameSettings(){

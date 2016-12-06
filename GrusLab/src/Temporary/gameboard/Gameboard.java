@@ -54,7 +54,7 @@ public class Gameboard {
         int beedoWidth  = _gameboardPreferences.getInt(Settings.BEEDO_WIDTH, Settings.BEEDO_WIDTH_DEFAULT);
         int beedoHeight  = _gameboardPreferences.getInt(Settings.BEEDO_HEIGHT, Settings.BEEDO_HEIGHT_DEFAULT);
 
-        int _gameObjectDistance = _gameboardPreferences.getInt(Settings.GAMEBOARD_DISTANCE, Settings.GAMEBOARD_DISTANCE_DEFAULT);
+        int _gameObjectDistance = _gameboardPreferences.getInt(Settings.GAMEOBJECT_DISTANCE, Settings.GAMEOBJECT_DISTANCE_DEFAULT);
 
         _rectGameboard = new Rectangle(gameboardX, gameboardY, gameboardWidth, gameboardHeight);
         _rectMinion = new Rectangle(0, 0, minionWidth, minionHeight);
