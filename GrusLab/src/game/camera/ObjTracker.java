@@ -29,6 +29,8 @@ public class ObjTracker {
     private VideoCapture _capture;
 	private Mat _actualFrame;
 	
+	private int _cameracount;
+	
 	//variables For trackings
 	private HSVTracking _yellowMinion;
 	private HSVTracking _evilMinion;
@@ -63,6 +65,9 @@ public class ObjTracker {
 		return _evilPos;
 	}
 	
+	public int CameraReadyPercent(){
+		return (_cameracount/1000)*100;
+	}
 	
 	public void startTracking(){
 		
@@ -72,8 +77,7 @@ public class ObjTracker {
 		//so i'll grab the first 1000 frames to make sure to have "clear" picture
 		for(int i = 0; i < 1000; i++){
 			_capture.read(_actualFrame);
-			if (i % 10 == 0)
-				System.out.println("Camera loading: " + i/10 + "%");
+			++_cameracount;
 		}
 		System.out.println("Camera loading: 100%\tCamera is ready!");
 
