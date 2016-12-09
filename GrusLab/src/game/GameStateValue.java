@@ -6,6 +6,7 @@ package game;
  */
 public enum GameStateValue {
 	INIT,
+	LOADED,
 	CALIBRATION,
 	READY,
 	COUNTDOWN,
