@@ -20,7 +20,6 @@ public class ControllerManager {
 		return _gameSettingsController;
 	}
 	
-	
 	public static GameboardController getGameBoardController(){
 		return _gameBoardController;
 	}
