@@ -9,7 +9,6 @@ import javafx.beans.property.SimpleIntegerProperty;
 import java.util.List;
 import java.util.prefs.BackingStoreException;
 import java.util.prefs.Preferences;
-import com.github.sarxos.webcam.*;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 
