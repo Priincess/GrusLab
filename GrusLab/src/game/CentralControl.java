@@ -80,7 +80,7 @@ public class CentralControl {
 		_gamepadStart.start();
 		
 		//wait until both minions are connected
-		while(!_server.connectionsEstablished()){}
+		while(!_server.connectionsEstablished() || !_tracker.isReady()){}
 		
 		//all components are loaded
 		GameState.getInstance().setGameState(GameStateValue.LOADED);
