@@ -1,5 +1,5 @@
 package Temporary.controller;
 
-public class GameboardController {
+public class GameBoardController {
 
 }
