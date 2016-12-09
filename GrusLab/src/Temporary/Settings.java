@@ -93,6 +93,11 @@ public class Settings implements SettingConstants{
         _hashmap.put(GAMEOBJECT_DISTANCE, GAMEOBJECT_DISTANCE_DEFAULT);
         _hashmap.put(MINION_WIDTH, MINION_WIDTH_DEFAULT);
         _hashmap.put(MINION_HEIGHT, MINION_HEIGHT_DEFAULT);
+
+
+        _hashmap.put(ITEM_MIN_DROPRATE, ITEM_MIN_DROPRATE_DEFAULT);
+        _hashmap.put(ITEM_MAX_DROPRATE, ITEM_MAX_DROPRATE_DEFAULT);
+
         _hashmap.put(BANANA_WIDTH, BANANA_WIDTH_DEFAULT);
         _hashmap.put(BANANA_HEIGHT, BANANA_HEIGHT_DEFAULT);
 
@@ -101,6 +106,9 @@ public class Settings implements SettingConstants{
 
         _hashmap.put(GOGGLE_WIDTH, GOGGLE_WIDTH_DEFAULT);
         _hashmap.put(GOGGLE_HEIGHT, GOGGLE_HEIGHT_DEFAULT);
+
+        _hashmap.put(GAMEBOARD_X, GAMEBOARD_X_DEFAULT);
+        _hashmap.put(GAMEBOARD_Y,GAMEBOARD_Y_DEFAULT);
 
         _hashmap.put(CAMERA_ID, CAMERA_ID_DEFAULT);
 
