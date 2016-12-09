@@ -120,6 +120,7 @@ public class GamepadManager {
 						players[i].setControllerState(false, false, false, false);
 						initController(players);
 						Components.setControllerConnected(i, true);
+						GameState.problemSolved(this.toString());
 					}else{
 						//check state of controllers
 						checkControllerState(players[i]);
