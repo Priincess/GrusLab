@@ -55,9 +55,9 @@ public class Gameboard {
 	}
 
 	// TODO: offset?
-	public void createMinions(int offset) {
-		_yellowMinion = new Minion(new Point(START_POS_X_YELLOW, START_POS_Y_YELLOW), MINION_HEIGHT, MINION_WIDTH, offset);
-		_purpleMinion = new Minion(new Point(START_POS_X_PURPLE, START_POS_Y_PURPLE), MINION_HEIGHT, MINION_WIDTH, offset);
+	public void createMinions(int offset, int height, int width, Point sPointYellow, Point sPointEvil) {
+		_yellowMinion = new Minion(sPointYellow, height, width, offset);
+		_purpleMinion = new Minion(sPointEvil, height, width, offset);
 
 	}
 

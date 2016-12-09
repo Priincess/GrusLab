@@ -58,11 +58,15 @@ public class Game implements I_GameMessages {
 
 		_gameboard = new Gameboard(_gamePreferences.getIntProperty(Settings.GAMEBOARD_WIDTH),
 				_gamePreferences.getIntProperty(Settings.GAMEBOARD_HEIGHT));
-		
+
 		_gameMaxTime = _gamePreferences.getIntProperty(Settings.GAME_TIME);
 		_dropTime = getNewDropTime();
-		
-		
+
+		_gameboard.createMinions(_gamePreferences.getIntProperty(Settings.MINION_OFFSET),
+				_gamePreferences.getIntProperty(Settings.MINION_HEIGHT),
+				_gamePreferences.getIntProperty(Settings.MINION_WIDTH), 
+				new Point(_gamePreferences.getIntProperty(Settings.YELLOW_MINION_STARTX), _gamePreferences.getIntProperty(Settings.YELLOW_MINION_STARTY)),
+				new Point(_gamePreferences.getIntProperty(Settings.PURPLE_MINION_STARTX), _gamePreferences.getIntProperty(Settings.PURPLE_MINION_STARTY)));
 
 	}
 
@@ -158,12 +162,10 @@ public class Game implements I_GameMessages {
 		_gameTime = _gameMaxTime;
 	}
 
-
-
 	private void updateYellowMinionPosition() {
 
 		Point point = _tracker.getYellowPos();
-		
+
 		if (point == null) {
 
 			GameState.problemOccured(this.toString());
