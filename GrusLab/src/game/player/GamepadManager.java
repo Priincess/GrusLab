@@ -102,7 +102,7 @@ public class GamepadManager {
 			}
 		}while(!condition);
 	}
-	
+		
 	/**
 	 * @param players array with players - check controller
 	 */
@@ -111,7 +111,7 @@ public class GamepadManager {
 		
 		//manage the state the controller until stop signal is set
 		while (_manage) {
-			if(GameState.getGameState() == GameStateValue.PLAY){
+			if(GameState.getGameState() != GameStateValue.PAUSE){
 				//poll from controllers
 				for(int i = 0; i < players.length; i++){
 					if(!players[i].getController().poll()){
@@ -168,7 +168,7 @@ public class GamepadManager {
 			right = true;
 		}	
 		
-		//set conrtoller state
+		//set controller state
 		player.setControllerState(forward, backward, left, right);
 	}
 }
