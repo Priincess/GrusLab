@@ -30,7 +30,6 @@ public class Game implements I_GameMessages {
 	private Player _purplePlayer;
 
 	private Gameboard _gameboard;
-
 	private GameState _gameState;
 
 	private ObjTracker _tracker;
@@ -63,22 +62,7 @@ public class Game implements I_GameMessages {
 
 	}
 	
-	private void initPreferences(){
-
-		_gameboard = new Gameboard(_gamePreferences.getIntProperty(Settings.GAMEBOARD_WIDTH),
-				_gamePreferences.getIntProperty(Settings.GAMEBOARD_HEIGHT));
-
-		_gameMaxTime = _gamePreferences.getIntProperty(Settings.GAME_TIME);
-		_dropTime = getNewDropTime();
-
-		_gameboard.createMinions(_gamePreferences.getIntProperty(Settings.MINION_OFFSET),
-				_gamePreferences.getIntProperty(Settings.MINION_HEIGHT),
-				_gamePreferences.getIntProperty(Settings.MINION_WIDTH),
-				new Point(_gamePreferences.getIntProperty(Settings.YELLOW_MINION_STARTX),
-						_gamePreferences.getIntProperty(Settings.YELLOW_MINION_STARTY)),
-				new Point(_gamePreferences.getIntProperty(Settings.PURPLE_MINION_STARTX),
-						_gamePreferences.getIntProperty(Settings.PURPLE_MINION_STARTY)));
-	}
+	
 
 	public int getGameTime() {
 		return _gameTime;
@@ -102,6 +86,10 @@ public class Game implements I_GameMessages {
 
 	public List<I_GameObject> getAllItems() {
 		return _gameboard.getGameObjects();
+	}
+	
+	public int getCameraReadyPercet(){
+		return _tracker.CameraReadyPercent();
 	}
 
 	public void cleanGameboard() {
@@ -141,6 +129,25 @@ public class Game implements I_GameMessages {
 		}
 	}
 
+	private void initPreferences(){
+		
+		_gameboard = new Gameboard(_gamePreferences.getIntProperty(Settings.GAMEBOARD_WIDTH),
+				_gamePreferences.getIntProperty(Settings.GAMEBOARD_HEIGHT));
+		
+		_gameMaxTime = _gamePreferences.getIntProperty(Settings.GAME_TIME);
+		_dropTime = getNewDropTime();
+		
+		_gameboard.createMinions(_gamePreferences.getIntProperty(Settings.MINION_OFFSET),
+				_gamePreferences.getIntProperty(Settings.MINION_HEIGHT),
+				_gamePreferences.getIntProperty(Settings.MINION_WIDTH),
+				new Point(_gamePreferences.getIntProperty(Settings.YELLOW_MINION_STARTX),
+						_gamePreferences.getIntProperty(Settings.YELLOW_MINION_STARTY)),
+				new Point(_gamePreferences.getIntProperty(Settings.PURPLE_MINION_STARTX),
+						_gamePreferences.getIntProperty(Settings.PURPLE_MINION_STARTY)));
+		
+		_tracker.setCamID(_gamePreferences.getIntProperty(Settings.CAMERA_ID));
+	}
+	
 	private void runGame() {
 		if (_problemReported) {
 			checkProblemSolved();
