@@ -5,7 +5,7 @@ import org.opencv.core.Point;
 /**
  * Created by Mark Mauerhofer on 03.12.2016.
  */
-public class CollisionBox {
+public class CollisionBox implements I_CollisionBox{
 	private Point _leftTop;
 	private Point _rightBottom;
 	private Point _center;

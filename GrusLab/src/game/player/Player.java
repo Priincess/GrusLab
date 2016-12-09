@@ -16,11 +16,29 @@ public class Player {
 	private Minion _minion;
     private int _points = 0;
 
+    private int _blockedTime;
+    private int _speedTime;
 	
 	//**********PUBLIC METHODS**********
 	
 	public Player (Minion minion){
 		_minion = minion;
+	}
+	
+	public int getBlockedTime(){
+		return _blockedTime;
+	}
+	
+	public void setBlockedTime(int blockedTime){
+		_blockedTime = blockedTime;
+	}
+	
+	public void setSpeedTime(int speedTime){
+		_speedTime = speedTime;
+	}
+	
+	public int getSpeedTime(){
+		return _speedTime;
 	}
 
 	/**

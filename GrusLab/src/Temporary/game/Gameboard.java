@@ -8,6 +8,7 @@ import java.util.Random;
 import org.opencv.core.Point;
 
 import Temporary.gameObjects.GameObject;
+import Temporary.gameObjects.I_GameObject;
 import Temporary.gameObjects.Item;
 import Temporary.gameObjects.Minion;
 
@@ -15,14 +16,6 @@ import Temporary.gameObjects.Minion;
  * Created by Mark Mauerhofer on 03.12.2016.
  */
 public class Gameboard {
-
-	private static int MINION_HEIGHT = 10;
-	private static int MINION_WIDTH = 10;
-
-	private static int START_POS_X_YELLOW = 0;
-	private static int START_POS_Y_YELLOW = 0;
-	private static int START_POS_X_PURPLE = 0;
-	private static int START_POS_Y_PURPLE = 0;
 
 	private Point _startPoint;
 	private int _width;
@@ -44,8 +37,8 @@ public class Gameboard {
 		//
 	}
 
-	public List<GameObject> getGameObjects() {
-		List<GameObject> objects = new ArrayList<>();
+	public List<I_GameObject> getGameObjects() {
+		List<I_GameObject> objects = new ArrayList<>();
 
 		objects.addAll(_items);
 		objects.add(_yellowMinion);
@@ -54,7 +47,6 @@ public class Gameboard {
 		return objects;
 	}
 
-	// TODO: offset?
 	public void createMinions(int offset, int height, int width, Point sPointYellow, Point sPointEvil) {
 		_yellowMinion = new Minion(sPointYellow, height, width, offset);
 		_purpleMinion = new Minion(sPointEvil, height, width, offset);
@@ -65,7 +57,7 @@ public class Gameboard {
 
 		Point pos = generateRandomPoint(itemHeight, itemWidth);
 		Item obj=null;
-		// TODO: größe?
+
 		switch (item) {
 		case BANANA:
 			obj = new Item(pos, itemHeight, itemWidth, GameObjectType.BANANA);
@@ -80,7 +72,10 @@ public class Gameboard {
 			break;
 		}
 		
-		List<GameObject> gos = getGameObjects();
+		List<GameObject> gos = new ArrayList<>();
+		gos.addAll(_items); 
+		gos.add(_purpleMinion);
+		gos.add(_yellowMinion);
 		
 		
 		int tries =0;
@@ -117,7 +112,6 @@ public class Gameboard {
 	}
 
 	// half of the minion is outside
-	// TODO: not valid
 	public boolean isOutsideOfGameboard() {
 
 		if (yellowMinionOutOfBoard() || purpleMinionOutOfBoard()) {
@@ -152,7 +146,6 @@ public class Gameboard {
 
 			}
 		}
-		// TODO: nimu nimu not valid value
 		return null;
 	}
 	

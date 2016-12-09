@@ -5,14 +5,14 @@ import org.opencv.core.Point;
 /**
  * Created by Mark Mauerhofer on 03.12.2016.
  */
-public abstract class GameObject {
+public abstract class GameObject implements I_GameObject{
 	protected CollisionBox _box;
 
 	public GameObject(Point lt, int height, int width) {
 		_box = new CollisionBox(lt, width, height);
 	}
 
-	public CollisionBox getBox() {
+	public I_CollisionBox getBox() {
 		return _box;
 	}
 
@@ -22,7 +22,7 @@ public abstract class GameObject {
 
 	public boolean isColliding(GameObject object) {
 		
-		CollisionBox toCompBox = object.getBox();
+		I_CollisionBox toCompBox = object.getBox();
 		
 		if (object instanceof Minion) {
 			

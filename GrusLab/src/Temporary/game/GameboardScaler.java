@@ -6,7 +6,6 @@ import org.opencv.core.*;
 import org.opencv.core.Point;
 
 import java.util.LinkedList;
-import java.util.prefs.Preferences;
 
 /**
  * Created by Mark Mauerhofer on 17.10.2016.

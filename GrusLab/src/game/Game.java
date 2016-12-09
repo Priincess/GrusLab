@@ -72,10 +72,8 @@ public class Game {
         addGameStateListener();
         addGameTimeListener();
     }
-
-    public Gameboard getGameboard(){
-        return _gameboard;
-    }
+    
+    //
 
     public void saveGameSettings(){
         _gamePreferences.putInt("GAME_TIME", _gameTime.intValue());

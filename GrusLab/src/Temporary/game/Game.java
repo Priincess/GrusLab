@@ -1,5 +1,6 @@
 package Temporary.game;
 
+import java.util.List;
 import java.util.Random;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -7,6 +8,8 @@ import java.util.TimerTask;
 import org.opencv.core.Point;
 
 import Temporary.Settings;
+import Temporary.gameObjects.I_CollisionBox;
+import Temporary.gameObjects.I_GameObject;
 import game.GameState;
 import game.GameStateValue;
 import game.camera.ObjTracker;
@@ -64,14 +67,28 @@ public class Game implements I_GameMessages {
 
 		_gameboard.createMinions(_gamePreferences.getIntProperty(Settings.MINION_OFFSET),
 				_gamePreferences.getIntProperty(Settings.MINION_HEIGHT),
-				_gamePreferences.getIntProperty(Settings.MINION_WIDTH), 
-				new Point(_gamePreferences.getIntProperty(Settings.YELLOW_MINION_STARTX), _gamePreferences.getIntProperty(Settings.YELLOW_MINION_STARTY)),
-				new Point(_gamePreferences.getIntProperty(Settings.PURPLE_MINION_STARTX), _gamePreferences.getIntProperty(Settings.PURPLE_MINION_STARTY)));
+				_gamePreferences.getIntProperty(Settings.MINION_WIDTH),
+				new Point(_gamePreferences.getIntProperty(Settings.YELLOW_MINION_STARTX),
+						_gamePreferences.getIntProperty(Settings.YELLOW_MINION_STARTY)),
+				new Point(_gamePreferences.getIntProperty(Settings.PURPLE_MINION_STARTX),
+						_gamePreferences.getIntProperty(Settings.PURPLE_MINION_STARTY)));
 
 	}
 
 	public int getGameTime() {
 		return _gameTime;
+	}
+
+	public int getYellowScore() {
+		return _yellowPlayer.getPoints();
+	}
+
+	public int getPurpleScore() {
+		return _purplePlayer.getPoints();
+	}
+
+	public List<I_GameObject> getAllItems() {
+		return _gameboard.getGameObjects();
 	}
 
 	public void cleanGameboard() {
@@ -119,6 +136,9 @@ public class Game implements I_GameMessages {
 				updateEvilMinionPosition();
 
 				checkForCollisions();
+				//TODO: checkMethod
+				checkPlayerState(_yellowPlayer);
+				checkPlayerState(_purplePlayer);
 			}
 		}
 	}
@@ -203,12 +223,25 @@ public class Game implements I_GameMessages {
 
 						_dropTime = getNewDropTime();
 					}
-
 				} else {
 					gameOver();
 				}
 			}
 		};
+	}
+
+	private void checkPlayerState(Player p) {
+
+		if (p.getPlayerState().equals(PlayerState.Blocked)) {
+			if ((p.getBlockedTime() - _gameTime) <= 0) {
+				p.setPlayerState(PlayerState.Normal);
+			} else if (p.getPlayerState().equals(PlayerState.Speedy)) {
+				if ((p.getSpeedTime() - _gameTime) <= 0) {
+					p.setPlayerState(PlayerState.Normal);
+				}
+			}
+		}
+
 	}
 
 	private int getNewDropTime() {
@@ -258,13 +291,16 @@ public class Game implements I_GameMessages {
 			_gameboard.createItem(GameObjectType.BANANA, _gamePreferences.getIntProperty(Settings.BANANA_WIDTH),
 					_gamePreferences.getIntProperty(Settings.BANANA_HEIGHT));
 		case BEEDO:
-			if (player == _yellowPlayer)
+			if (player == _yellowPlayer) {
 				_purplePlayer.setPlayerState(PlayerState.Blocked);
-			else {
+				_purplePlayer.setBlockedTime(_gameTime - _gamePreferences.getIntProperty(Settings.BEEDO_BLOCK_TIME));
+			} else {
 				_yellowPlayer.setPlayerState(PlayerState.Blocked);
+				_yellowPlayer.setBlockedTime(_gameTime- _gamePreferences.getIntProperty(Settings.BEEDO_BLOCK_TIME));
 			}
 		case GOGGLES:
 			player.setPlayerState(PlayerState.Speedy);
+			player.setSpeedTime(_gameTime- _gamePreferences.getIntProperty(Settings.GOGGLE_SPEED_TIME));
 		default:
 			break;
 		}

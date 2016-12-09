@@ -14,7 +14,7 @@ public class Minion extends GameObject {
 	@Override
 	public boolean isColliding(GameObject object) {
 		
-		CollisionBox toCompBox = object.getBox();
+		I_CollisionBox toCompBox = object.getBox();
 		
 		if((_box.getLeftTop().x < toCompBox.getLeftTop().x + toCompBox.getWidth())
 				&& ((_box.getLeftTop().x + _box.getWidth()) > toCompBox.getLeftTop().x)
