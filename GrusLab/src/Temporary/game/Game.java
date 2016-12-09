@@ -43,6 +43,7 @@ public class Game implements I_GameMessages {
 	private Timer _gameTimer;
 	private TimerTask _gameTimerTask;
 	private TimerTask _gameRunningTimerTask;
+	
 
 	public Game(ObjTracker tracker, Player yellowPlayer, Player purplePlayer) {
 
