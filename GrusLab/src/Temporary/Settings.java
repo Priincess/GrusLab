@@ -1,54 +1,15 @@
 package Temporary;
 
 import java.io.*;
+import java.util.HashMap;
 import java.util.Properties;
 
 /**
  * Created by Mark Mauerhofer on 04.12.2016.
  */
-public class Settings {
-    public static final String PROPERTIESPATH = "config.properties";
-
-    public static final String GAME_TIME = "GAME_TIME";
-    public static final String GAME_TIME_DEFAULT = "100";
-
-    public static final String GAMEBOARD_X = "GAMEBOARD_X";
-    public static final String GAMEBOARD_X_DEFAULT = "100";
-    public static final String GAMEBOARD_Y = "GAMEBOARD_Y";
-    public static final String GAMEBOARD_Y_DEFAULT = "100";
-    public static final String GAMEBOARD_WIDTH = "GAMEBOARD_WIDTH";
-    public static final String GAMEBOARD_WIDTH_DEFAULT = "1000";
-    public static final String GAMEBOARD_HEIGHT = "GAMEBOARD_HEIGHT";
-    public static final String GAMEBOARD_HEIGHT_DEFAULT = "500";
-
-    public static final String GAMEOBJECT_DISTANCE = "GAMEOBJECT_DISTANCE";
-    public static final String GAMEOBJECT_DISTANCE_DEFAULT = "100";
-
-    public static final String MINION_WIDTH = "BANANA_WIDTH";
-    public static final String MINION_WIDTH_DEFAULT = "175";
-    public static final String MINION_HEIGHT = "BANANA_HEIGHT";
-    public static final String MINION_HEIGHT_DEFAULT = "175";
-
-    public static final String BANANA_WIDTH = "BANANA_WIDTH";
-    public static final String BANANA_WIDTH_DEFAULT = "175";
-    public static final String BANANA_HEIGHT = "BANANA_HEIGHT";
-    public static final String BANANA_HEIGHT_DEFAULT = "129";
-
-    public static final String BEEDO_WIDTH = "BEEDO_WIDTH";
-    public static final String BEEDO_WIDTH_DEFAULT = "175";
-    public static final String BEEDO_HEIGHT = "BEEDO_HEIGHT";
-    public static final String BEEDO_HEIGHT_DEFAULT = "184";
-
-    public static final String GOGGLE_WIDTH = "GOGGLE_WIDTH";
-    public static final String GOGGLE_WIDTH_DEFAULT = "175";
-    public static final String GOGGLE_HEIGHT = "GOGGLE_HEIGHT";
-    public static final String GOGGLE_HEIGHT_DEFAULT = "81";
-
-    public static final String CAMERA_ID = "CAMERA_ID";
-    public static final String CAMERA_ID_DEFAULT = "0";
-
-    public static final String FONT_SIZE = "FONT_SIZE";
-    public static final String FONT_SIZE_DEFAULT = "24";
+public class Settings implements SettingConstants{
+    private HashMap<String, String> _hashmap;
+    private static final String PROPERTIESPATH = "config.properties";
 
     private static Settings _instance = new Settings();
 
@@ -59,6 +20,8 @@ public class Settings {
 
     private Settings(){
         _properties = new Properties();
+        _hashmap = new HashMap<String, String>();
+        fillHashmap();
         readProperties();
     }
 
@@ -81,14 +44,14 @@ public class Settings {
                     _output.close();
                 } catch (IOException e) {
                     e.printStackTrace();
-                }		
+                }
             }
         }
     }
 
-    public int getIntProperty(String key, String defaultValue){
-    	
-        String property = _properties.getProperty(key);
+    public int getIntProperty(String key){
+        String defaultValue = _hashmap.get(key);
+        String property = _properties.getProperty(key, defaultValue);
         return Integer.parseInt(property);
     }
 
@@ -118,6 +81,30 @@ public class Settings {
                 }
             }
         }
+    }
+
+    private void fillHashmap(){
+        _hashmap.put(GAME_TIME, GAME_TIME_DEFAULT);
+
+        _hashmap.put(GAMEBOARD_X, GAMEBOARD_X_DEFAULT);
+        _hashmap.put(GAMEBOARD_Y,GAMEBOARD_Y_DEFAULT);
+        _hashmap.put(GAMEBOARD_WIDTH, GAMEBOARD_WIDTH_DEFAULT);
+        _hashmap.put(GAMEBOARD_HEIGHT, GAMEBOARD_HEIGHT_DEFAULT);
+        _hashmap.put(GAMEOBJECT_DISTANCE, GAMEOBJECT_DISTANCE_DEFAULT);
+        _hashmap.put(MINION_WIDTH, MINION_WIDTH_DEFAULT);
+        _hashmap.put(MINION_HEIGHT, MINION_HEIGHT_DEFAULT);
+        _hashmap.put(BANANA_WIDTH, BANANA_WIDTH_DEFAULT);
+        _hashmap.put(BANANA_HEIGHT, BANANA_HEIGHT_DEFAULT);
+
+        _hashmap.put(BEEDO_WIDTH, BEEDO_WIDTH_DEFAULT);
+        _hashmap.put(BEEDO_HEIGHT, BEEDO_HEIGHT_DEFAULT);
+
+        _hashmap.put(GOGGLE_WIDTH, GOGGLE_WIDTH_DEFAULT);
+        _hashmap.put(GOGGLE_HEIGHT, GOGGLE_HEIGHT_DEFAULT);
+
+        _hashmap.put(CAMERA_ID, CAMERA_ID_DEFAULT);
+
+        _hashmap.put(FONT_SIZE, FONT_SIZE_DEFAULT);
     }
 
 
