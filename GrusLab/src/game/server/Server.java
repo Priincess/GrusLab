@@ -274,7 +274,7 @@ public class Server {
 		 */
 		private void sendCMD(int requestReply){
 			//create command packet
-			DatagramPacket packet = Packet.createPacket(SAFETYBIT, requestReply, _player.getMinion().getValue(), VERSION, _player.getPlayerState().getStateValue(), _player.getControllerState().getControllerValue(), DISABLED);
+			DatagramPacket packet = Packet.createPacket(SAFETYBIT, requestReply, _player.getMinion().getValue(), VERSION, _player.getPlayerState().getStateValue(), _player.getControllerState().getGamepadValue(), DISABLED);
 			packet.setAddress(_robotAddress);
 			packet.setPort(PORT);
 			try {

@@ -1,5 +1,8 @@
-package game.gui;
+package game;/**
+ * Created by Mark Mauerhofer on 04.12.2016.
+ */
 
+import game.gui.GameSettingsViewController;
 import javafx.application.Application;
 import javafx.application.Platform;
 import javafx.event.EventHandler;
@@ -9,19 +12,11 @@ import javafx.scene.Scene;
 import javafx.stage.Stage;
 import javafx.stage.WindowEvent;
 
-/**
- * Created by Mark Mauerhofer on 23.10.2016.
- */
-public class GuiManager extends Application{
+public class SettingsTestApplication extends Application {
+    Stage _stage;
 
-    public static final String GAMEMENU_VIEW = "GameMenuView.fxml";
-    public static final String GAMESETTING_VIEW = "GameSettingsView.fxml";
-    public static final String GAMEBOARD_VIEW = "GameboardView.fxml";
-
-    private static Stage _stage;
-
-    public void launchGUI(){
-        launch(null);
+    public static void main(String[] args) {
+        launch(args);
     }
 
     @Override
@@ -37,13 +32,15 @@ public class GuiManager extends Application{
                 System.exit(0);
             }
         });
-        gotoView(GAMESETTING_VIEW);
+        gotoGameSettingsView();
     }
 
-    public void gotoView(String viewName){
+    public void gotoGameSettingsView(){
         try {
             FXMLLoader loader = new FXMLLoader();
-            Parent root = (Parent) loader.load(getClass().getResource(viewName).openStream());
+            Parent root = (Parent) loader.load(getClass().getResource("gui/GameSettingsView.fxml").openStream());
+            GameSettingsViewController controller = loader.getController();
+       //     controller.initGameSettingsViewController(new GameSettingsController());
             sceneChange(root);
         } catch (Exception ex){
             ex.printStackTrace();
@@ -60,5 +57,4 @@ public class GuiManager extends Application{
             _stage.getScene().setRoot(root);
         }
     }
-
 }

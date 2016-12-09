@@ -122,7 +122,7 @@ public class CentralControl {
 		_gamepadInit = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				_gamepadManager.initController(_players);
+				_gamepadManager.initGamepad(_players);
 			}
 		});
 		
