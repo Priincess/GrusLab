@@ -19,9 +19,9 @@ import game.player.PlayerState;
 public class Game implements I_GameMessages {
 
 	private boolean _problemReported;
-	
+
 	private Settings _gamePreferences;
-	
+
 	private Player _yellowPlayer;
 	private Player _purplePlayer;
 
@@ -34,7 +34,9 @@ public class Game implements I_GameMessages {
 
 	private int _dropTime;
 	private int _gameMaxTime;
+
 	private int _gameTime;
+
 	private Timer _gameTimer;
 	private TimerTask _gameTimerTask;
 	private TimerTask _gameRunningTimerTask;
@@ -42,9 +44,10 @@ public class Game implements I_GameMessages {
 	public Game(ObjTracker tracker, Player yellowPlayer, Player purplePlayer) {
 
 		_gamePreferences = Settings.getInstance();
-		
+
 		_problemReported = false;
 		_tracker = tracker;
+
 		_yellowPlayer = yellowPlayer;
 		_purplePlayer = purplePlayer;
 
@@ -54,6 +57,9 @@ public class Game implements I_GameMessages {
 		_gameState = GameState.getInstance();
 
 		_dropTime = getNewDropTime();
+
+		_gameboard = new Gameboard(_gamePreferences.getIntProperty(Settings.GAMEBOARD_WIDTH),
+				_gamePreferences.getIntProperty(Settings.GAMEBOARD_HEIGHT));
 
 	}
 
@@ -131,11 +137,11 @@ public class Game implements I_GameMessages {
 		int random = type.nextInt(2);
 
 		if ((random == 0) && !_gameboard.containsObjectType(GameObjectType.BEEDO)) {
-			// TODO: PREFERENCES
-			//_gameboard.createItem(GameObjectType.BEEDO,_gamePreferences.get)
+			_gameboard.createItem(GameObjectType.BEEDO, _gamePreferences.getIntProperty(Settings.BEEDO_WIDTH),
+					_gamePreferences.getIntProperty(Settings.BEEDO_HEIGHT));
 		} else if ((random == 1) && !_gameboard.containsObjectType(GameObjectType.GOGGLES)) {
-			// TODO: PREFERENCES
-			_gameboard.createItem(GameObjectType.GOGGLES, 0, 0);
+			_gameboard.createItem(GameObjectType.GOGGLES, _gamePreferences.getIntProperty(Settings.GOGGLE_WIDTH),
+					_gamePreferences.getIntProperty(Settings.GOGGLE_HEIGHT));
 		}
 
 	}
@@ -250,7 +256,8 @@ public class Game implements I_GameMessages {
 		case BANANA:
 			player.addPoint();
 			// TODO: PREFERENCES BANANA SIZE
-			_gameboard.createItem(GameObjectType.BANANA, 0, 0);
+			_gameboard.createItem(GameObjectType.BANANA, _gamePreferences.getIntProperty(Settings.BANANA_WIDTH),
+					_gamePreferences.getIntProperty(Settings.BANANA_HEIGHT));
 		case BEEDO:
 			if (player == _yellowPlayer)
 				_purplePlayer.setPlayerState(PlayerState.Blocked);
