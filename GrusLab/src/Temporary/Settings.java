@@ -96,6 +96,11 @@ public class Settings implements SettingConstants{
         _hashmap.put(MINION_HEIGHT, MINION_HEIGHT_DEFAULT);
         _hashmap.put(MINION_OFFSET, MINION_OFFSET_DEFAULT);
 
+        _hashmap.put(YELLOW_MINION_STARTX, YELLOW_MINION_STARTX_DEFAULT);
+        _hashmap.put(YELLOW_MINION_STARTY, YELLOW_MINION_STARTY_DEFAULT);
+        _hashmap.put(PURPLE_MINION_STARTX, PURPLE_MINION_STARTX_DEFAULT);
+        _hashmap.put(PURPLE_MINION_STARTY, PURPLE_MINION_STARTY_DEFAULT);
+
         _hashmap.put(ITEM_MIN_DROPRATE, ITEM_MIN_DROPRATE_DEFAULT);
         _hashmap.put(ITEM_MAX_DROPRATE, ITEM_MAX_DROPRATE_DEFAULT);
 
