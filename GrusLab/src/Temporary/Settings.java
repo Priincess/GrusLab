@@ -91,9 +91,10 @@ public class Settings implements SettingConstants{
         _hashmap.put(GAMEBOARD_WIDTH, GAMEBOARD_WIDTH_DEFAULT);
         _hashmap.put(GAMEBOARD_HEIGHT, GAMEBOARD_HEIGHT_DEFAULT);
         _hashmap.put(GAMEOBJECT_DISTANCE, GAMEOBJECT_DISTANCE_DEFAULT);
+
         _hashmap.put(MINION_WIDTH, MINION_WIDTH_DEFAULT);
         _hashmap.put(MINION_HEIGHT, MINION_HEIGHT_DEFAULT);
-
+        _hashmap.put(MINION_OFFSET, MINION_OFFSET_DEFAULT);
 
         _hashmap.put(ITEM_MIN_DROPRATE, ITEM_MIN_DROPRATE_DEFAULT);
         _hashmap.put(ITEM_MAX_DROPRATE, ITEM_MAX_DROPRATE_DEFAULT);
