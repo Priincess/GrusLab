@@ -60,6 +60,11 @@ public class Game implements I_GameMessages {
 
 		_gameState = GameState.getInstance();
 
+
+	}
+	
+	private void initPreferences(){
+
 		_gameboard = new Gameboard(_gamePreferences.getIntProperty(Settings.GAMEBOARD_WIDTH),
 				_gamePreferences.getIntProperty(Settings.GAMEBOARD_HEIGHT));
 
@@ -73,7 +78,6 @@ public class Game implements I_GameMessages {
 						_gamePreferences.getIntProperty(Settings.YELLOW_MINION_STARTY)),
 				new Point(_gamePreferences.getIntProperty(Settings.PURPLE_MINION_STARTX),
 						_gamePreferences.getIntProperty(Settings.PURPLE_MINION_STARTY)));
-
 	}
 
 	public int getGameTime() {
@@ -124,6 +128,7 @@ public class Game implements I_GameMessages {
 
 	// TODO:call from GUI after countdown
 	public void startGame() {
+		initPreferences();
 		_gameState.setGameState(GameStateValue.PLAY);
 		resetPoints();
 
