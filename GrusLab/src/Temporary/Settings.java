@@ -104,6 +104,9 @@ public class Settings implements SettingConstants{
         _hashmap.put(ITEM_MIN_DROPRATE, ITEM_MIN_DROPRATE_DEFAULT);
         _hashmap.put(ITEM_MAX_DROPRATE, ITEM_MAX_DROPRATE_DEFAULT);
 
+        _hashmap.put(BEEDO_BLOCK_TIME, BEEDO_BLOCK_TIME_DEFAULT);
+        _hashmap.put(GOGGLE_SPEED_TIME, GOGGLE_SPEED_TIME_DEFAULT);
+
         _hashmap.put(BANANA_WIDTH, BANANA_WIDTH_DEFAULT);
         _hashmap.put(BANANA_HEIGHT, BANANA_HEIGHT_DEFAULT);
 
