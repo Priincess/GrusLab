@@ -1,0 +1,47 @@
+package Temporary;
+
+/**
+ * Created by Mark Mauerhofer on 09.12.2016.
+ */
+public interface SettingConstants {
+    String GAME_TIME = "GAME_TIME";
+    String GAME_TIME_DEFAULT = "100";
+
+    String GAMEBOARD_X = "GAMEBOARD_X";
+    String GAMEBOARD_X_DEFAULT = "100";
+    String GAMEBOARD_Y = "GAMEBOARD_Y";
+    String GAMEBOARD_Y_DEFAULT = "100";
+    String GAMEBOARD_WIDTH = "GAMEBOARD_WIDTH";
+    String GAMEBOARD_WIDTH_DEFAULT = "1000";
+    String GAMEBOARD_HEIGHT = "GAMEBOARD_HEIGHT";
+    String GAMEBOARD_HEIGHT_DEFAULT = "500";
+
+    String GAMEOBJECT_DISTANCE = "GAMEOBJECT_DISTANCE";
+    String GAMEOBJECT_DISTANCE_DEFAULT = "100";
+
+    String MINION_WIDTH = "BANANA_WIDTH";
+    String MINION_WIDTH_DEFAULT = "175";
+    String MINION_HEIGHT = "BANANA_HEIGHT";
+    String MINION_HEIGHT_DEFAULT = "175";
+
+    String BANANA_WIDTH = "BANANA_WIDTH";
+    String BANANA_WIDTH_DEFAULT = "175";
+    String BANANA_HEIGHT = "BANANA_HEIGHT";
+    String BANANA_HEIGHT_DEFAULT = "129";
+
+    String BEEDO_WIDTH = "BEEDO_WIDTH";
+    String BEEDO_WIDTH_DEFAULT = "175";
+    String BEEDO_HEIGHT = "BEEDO_HEIGHT";
+    String BEEDO_HEIGHT_DEFAULT = "184";
+
+    String GOGGLE_WIDTH = "GOGGLE_WIDTH";
+    String GOGGLE_WIDTH_DEFAULT = "175";
+    String GOGGLE_HEIGHT = "GOGGLE_HEIGHT";
+    String GOGGLE_HEIGHT_DEFAULT = "81";
+
+    String CAMERA_ID = "CAMERA_ID";
+    String CAMERA_ID_DEFAULT = "0";
+
+    String FONT_SIZE = "FONT_SIZE";
+    String FONT_SIZE_DEFAULT = "24";
+}
