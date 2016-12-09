@@ -45,10 +45,12 @@ public class GameSettingsViewController {
     Rectangle _rect_gameboard;
 
     private GameSettingsController _gameSettingsController;
+    private GuiManager _guiManager;
 
     @FXML
     public void initialize(){
         _gameSettingsController = new GameSettingsController(); // TODO: getInstance from ControllerManager
+        _guiManager = new GuiManager();
 
         initRectGameboard();
         setRectGameboardBindings();
@@ -146,11 +148,11 @@ public class GameSettingsViewController {
                         break;
                     case 1: gameboardKeyEventHandler(event.getCode());
                         break;
-                    case 2: itemKeyEventHandler(event.getCode(), _imageView_banana);
+                    case 2: bananaKeyEventHandler(event.getCode());
                         break;
-                    case 3: itemKeyEventHandler(event.getCode(), _imageView_goggle);
+                    case 3: goggleKeyEventHandler(event.getCode());
                         break;
-                    case 4: itemKeyEventHandler(event.getCode(), _imageView_beedo);
+                    case 4: beedoKeyEventHandler(event.getCode());
                         break;
                     case 5: cameraKeyEventHandler(event.getCode());
                         break;
@@ -178,33 +180,40 @@ public class GameSettingsViewController {
 //        }
     }
 
-    private void itemKeyEventHandler(KeyCode key, ImageView item){
+    private void bananaKeyEventHandler(KeyCode key){
         switch (key){
             case A:
-                if (item.getBoundsInParent().getWidth() > 50) {
-                    item.setScaleX(_imageView_banana.getScaleX() - 0.1);
-                    item.setScaleY(_imageView_banana.getScaleY() - 0.1);
-                    item.setScaleZ(_imageView_banana.getScaleZ() - 0.1);
+                if (_imageView_banana.getBoundsInParent().getWidth() > 50) {
+                    _imageView_banana.setScaleX(_imageView_banana.getScaleX() - 0.1);
+                    _imageView_banana.setScaleY(_imageView_banana.getScaleY() - 0.1);
+                    _imageView_banana.setScaleZ(_imageView_banana.getScaleZ() - 0.1);
                 }
                 break;
             case D:
-                if (item.getBoundsInParent().getWidth() < _rect_gameboard.getWidth()/2) {
-                    item.setScaleX(_imageView_banana.getScaleX() + 0.1);
-                    item.setScaleY(_imageView_banana.getScaleY() + 0.1);
-                    item.setScaleZ(_imageView_banana.getScaleZ() + 0.1);
+                if (_imageView_banana.getBoundsInParent().getWidth() < _rect_gameboard.getWidth()/2) {
+                    _imageView_banana.setScaleX(_imageView_banana.getScaleX() + 0.1);
+                    _imageView_banana.setScaleY(_imageView_banana.getScaleY() + 0.1);
+                    _imageView_banana.setScaleZ(_imageView_banana.getScaleZ() + 0.1);
                 }
                 break;
             case S:
-                if (item.getScaleX() > 1) {
-                    item.setScaleX(1);
-                    item.setScaleY(1);
-                    item.setScaleZ(1);
+                if (_imageView_banana.getScaleX() > 1) {
+                    _imageView_banana.setScaleX(1);
+                    _imageView_banana.setScaleY(1);
+                    _imageView_banana.setScaleZ(1);
                 }
-                //_gameSettingsController.set
                 _gameSettingsController.saveGameObjectSettings();
                 // TODO: show that user saved data
                 break;
         }
+    }
+
+    private void goggleKeyEventHandler(KeyCode key){
+
+    }
+
+    private void beedoKeyEventHandler(KeyCode key){
+
     }
 
     private void cameraKeyEventHandler(KeyCode key){

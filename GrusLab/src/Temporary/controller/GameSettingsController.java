@@ -11,7 +11,6 @@ import java.util.List;
 public class GameSettingsController {
 
     private Settings _settings;
-    private GuiManager _guiManager;
 
     private int _gameTime;
     private int _gameObjectDistance;
@@ -39,7 +38,6 @@ public class GameSettingsController {
 
     public GameSettingsController(){
         _settings = Settings.getInstance();
-        _guiManager = new GuiManager();
 
         //_cameraList = FXCollections.observableArrayList();
         reloadCameras();
@@ -195,10 +193,6 @@ public class GameSettingsController {
         _cameraID = _settings.getIntProperty(Settings.CAMERA_ID, Settings.CAMERA_ID_DEFAULT);
     }
 
-    public void gotoMenuView(){
-        _guiManager.gotoView(GuiManager.GAMEMENU_VIEW);
-    }
-
     public void saveGameSettings(){
         _settings.setIntProperty(Settings.GAME_TIME, _gameTime);
     }
@@ -210,18 +204,21 @@ public class GameSettingsController {
         _settings.setIntProperty(Settings.GAMEBOARD_HEIGHT, _gameboardHeight);
     }
 
-    public void saveGameObjectSettings(){
-        _settings.setIntProperty(Settings.BANANA_WIDTH, _bananaWidth);
-        _settings.setIntProperty(Settings.BANANA_HEIGHT, _bananaHeight);
+    public void saveBananaSettings(){
 
-        _settings.setIntProperty(Settings.GOGGLE_WIDTH, _goggleWidth);
-        _settings.setIntProperty(Settings.GOGGLE_HEIGHT, _goggleHeight);
-
-        _settings.setIntProperty(Settings.BEEDO_WIDTH, _beedoWidth);
-        _settings.setIntProperty(Settings.BEEDO_HEIGHT, _beedoHeight);
-
-        _settings.writeProperties();
     }
+//    public void saveGameObjectSettings(){
+//        _settings.setIntProperty(Settings.BANANA_WIDTH, _bananaWidth);
+//        _settings.setIntProperty(Settings.BANANA_HEIGHT, _bananaHeight);
+//
+//        _settings.setIntProperty(Settings.GOGGLE_WIDTH, _goggleWidth);
+//        _settings.setIntProperty(Settings.GOGGLE_HEIGHT, _goggleHeight);
+//
+//        _settings.setIntProperty(Settings.BEEDO_WIDTH, _beedoWidth);
+//        _settings.setIntProperty(Settings.BEEDO_HEIGHT, _beedoHeight);
+//
+//        _settings.writeProperties();
+//    }
 
     public void saveCameraSettings(){
         if (_cameraID > 0){
