@@ -56,10 +56,13 @@ public class Game implements I_GameMessages {
 
 		_gameState = GameState.getInstance();
 
-		_dropTime = getNewDropTime();
-
 		_gameboard = new Gameboard(_gamePreferences.getIntProperty(Settings.GAMEBOARD_WIDTH),
 				_gamePreferences.getIntProperty(Settings.GAMEBOARD_HEIGHT));
+		
+		_gameMaxTime = _gamePreferences.getIntProperty(Settings.GAME_TIME);
+		_dropTime = getNewDropTime();
+		
+		
 
 	}
 
@@ -155,15 +158,12 @@ public class Game implements I_GameMessages {
 		_gameTime = _gameMaxTime;
 	}
 
-	private void loadGameSettings() {
-		// _gameMaxTime = _gamePreferences.getInt(Settings.GAME_TIME,
-		// Settings.GAME_TIME_DEFAULT);
-	}
+
 
 	private void updateYellowMinionPosition() {
 
 		Point point = _tracker.getYellowPos();
-		// TODO: not VAlid value
+		
 		if (point == null) {
 
 			GameState.problemOccured(this.toString());
@@ -179,7 +179,6 @@ public class Game implements I_GameMessages {
 	}
 
 	private void updateEvilMinionPosition() {
-		// TODO: is minion lost for a while or only once?
 		Point point = _tracker.getEvilPos();
 		if (point == null) {
 			GameState.problemOccured(this.toString());
@@ -211,9 +210,8 @@ public class Game implements I_GameMessages {
 	}
 
 	private int getNewDropTime() {
-		// TODO: PREFERENCES!
-		int maxBound = 0;
-		int minBound = 0;
+		int maxBound = _gamePreferences.getIntProperty(Settings.ITEM_MAX_DROPRATE);
+		int minBound = _gamePreferences.getIntProperty(Settings.ITEM_MIN_DROPRATE);
 
 		Random r = new Random();
 		return r.nextInt((maxBound - minBound) + 1) + minBound;
@@ -255,7 +253,6 @@ public class Game implements I_GameMessages {
 		switch (item) {
 		case BANANA:
 			player.addPoint();
-			// TODO: PREFERENCES BANANA SIZE
 			_gameboard.createItem(GameObjectType.BANANA, _gamePreferences.getIntProperty(Settings.BANANA_WIDTH),
 					_gamePreferences.getIntProperty(Settings.BANANA_HEIGHT));
 		case BEEDO:
