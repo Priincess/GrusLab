@@ -7,12 +7,11 @@ import java.util.TimerTask;
 
 import org.opencv.core.Point;
 
-import game.Settings;
-import game.gameObjects.I_CollisionBox;
-import game.gameObjects.I_GameObject;
 import game.GameState;
 import game.GameStateValue;
+import game.Settings;
 import game.camera.ObjTracker;
+import game.gameObjects.I_GameObject;
 import game.player.GamepadState;
 import game.player.Player;
 import game.player.PlayerState;
