@@ -50,15 +50,22 @@ public class Settings {
     public static final String FONT_SIZE = "FONT_SIZE";
     public static final String FONT_SIZE_DEFAULT = "24";
 
+    private static Settings _instance = new Settings();
 
     private Properties _properties;
     private InputStream _input;
     private OutputStream _output;
 
-    public Settings(){
+
+    private Settings(){
         _properties = new Properties();
         readProperties();
     }
+
+    public static Settings getInstance(){
+        return _instance;
+    }
+
 
     public void writeProperties(){
         try {
