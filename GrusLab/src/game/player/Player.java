@@ -14,6 +14,8 @@ public class Player {
 	private ControllerState _controllerState = ControllerState.None;	
 	private boolean _controllerChanged=false;
 	private Minion _minion;
+    private int _points = 0;
+
 	
 	//**********PUBLIC METHODS**********
 	
@@ -78,6 +80,28 @@ public class Player {
 				_controllerChanged = true;
 			}
 		}
+	}
+	
+
+	/**
+	 * resets the points the player reached
+	 */
+	public void resetPoints(){
+		_points = 0;
+	}
+	
+	/**
+	 * @return the points the player reached
+	 */
+	public void addPoint(){
+		_points++;
+	}
+	
+	/**
+	 * @return the points the player reached
+	 */
+	public int getPoints(){
+		return _points;
 	}
 	
 	/**
