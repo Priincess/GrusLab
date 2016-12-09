@@ -202,7 +202,7 @@ public class GameSettingsViewController {
                     _imageView_banana.setScaleY(1);
                     _imageView_banana.setScaleZ(1);
                 }
-                _gameSettingsController.saveGameObjectSettings();
+                //_gameSettingsController.saveGameObjectSettings();
                 // TODO: show that user saved data
                 break;
         }

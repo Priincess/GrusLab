@@ -160,7 +160,6 @@ public class Gameboard {
 		return _yellowMinion.isColliding(_purpleMinion);
 	}
 
-	// TODO: wieso schreit der do nid? ^^"
 	public void removeItem(Item gObj) {
 		_items.remove(gObj);
 	}

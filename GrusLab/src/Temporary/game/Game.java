@@ -6,6 +6,7 @@ import java.util.TimerTask;
 
 import org.opencv.core.Point;
 
+import Temporary.Settings;
 import game.GameState;
 import game.GameStateValue;
 import game.camera.ObjTracker;
@@ -18,7 +19,9 @@ import game.player.PlayerState;
 public class Game implements I_GameMessages {
 
 	private boolean _problemReported;
-	// private Settings _gamePreferences;
+	
+	private Settings _gamePreferences;
+	
 	private Player _yellowPlayer;
 	private Player _purplePlayer;
 
@@ -37,7 +40,9 @@ public class Game implements I_GameMessages {
 	private TimerTask _gameRunningTimerTask;
 
 	public Game(ObjTracker tracker, Player yellowPlayer, Player purplePlayer) {
-		// _gamePreferences = new Settings();
+
+		_gamePreferences = Settings.getInstance();
+		
 		_problemReported = false;
 		_tracker = tracker;
 		_yellowPlayer = yellowPlayer;
@@ -127,7 +132,7 @@ public class Game implements I_GameMessages {
 
 		if ((random == 0) && !_gameboard.containsObjectType(GameObjectType.BEEDO)) {
 			// TODO: PREFERENCES
-			_gameboard.createItem(GameObjectType.BEEDO, 0, 0);
+			//_gameboard.createItem(GameObjectType.BEEDO,_gamePreferences.get)
 		} else if ((random == 1) && !_gameboard.containsObjectType(GameObjectType.GOGGLES)) {
 			// TODO: PREFERENCES
 			_gameboard.createItem(GameObjectType.GOGGLES, 0, 0);
