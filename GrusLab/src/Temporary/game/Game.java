@@ -13,6 +13,7 @@ import Temporary.gameObjects.I_GameObject;
 import game.GameState;
 import game.GameStateValue;
 import game.camera.ObjTracker;
+import game.player.ControllerState;
 import game.player.Player;
 import game.player.PlayerState;
 
@@ -85,6 +86,14 @@ public class Game implements I_GameMessages {
 
 	public int getPurpleScore() {
 		return _purplePlayer.getPoints();
+	}
+	
+	public ControllerState getPurpleCommand(){
+		return _purplePlayer.getControllerState();
+	}
+	
+	public ControllerState getYellowCommand(){
+		return _yellowPlayer.getControllerState();
 	}
 
 	public List<I_GameObject> getAllItems() {
