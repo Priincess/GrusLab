@@ -81,13 +81,14 @@ public class Settings {
                     _output.close();
                 } catch (IOException e) {
                     e.printStackTrace();
-                }
+                }		
             }
         }
     }
 
     public int getIntProperty(String key, String defaultValue){
-        String property = _properties.getProperty(key, defaultValue);
+    	
+        String property = _properties.getProperty(key);
         return Integer.parseInt(property);
     }
 
