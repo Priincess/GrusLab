@@ -132,7 +132,7 @@ public class Server {
 		for(Communicator c : _communicators){
 			if(!c.isConnected()){
 				//pause game
-				GameState.getInstance().setGameState(GameStateValue.PAUSE);
+				GameState.problemOccured(this.toString());
 				
 				//set idle
 				for(Communicator c1 : _communicators){
@@ -145,7 +145,7 @@ public class Server {
 				
 				//continue game
 				Components.setMinionConnected(c._player.getMinion().getValue(), true);
-				GameState.getInstance().setGameState(GameStateValue.PLAY);
+				GameState.problemSolved(this.toString());
 			}
 		}
 	}

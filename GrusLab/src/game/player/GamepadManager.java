@@ -11,7 +11,7 @@ import game.GameStateValue;
  * @author lilpr
  * This class is responsible for the registered controllers. Among other things it polls the pressed buttons.
  */
-public class ControllerManager {
+public class GamepadManager {
 	
 	private boolean _manage = false;
 	
@@ -102,7 +102,7 @@ public class ControllerManager {
 			}
 		}while(!condition);
 	}
-	
+		
 	/**
 	 * @param players array with players - check controller
 	 */
@@ -111,18 +111,24 @@ public class ControllerManager {
 		
 		//manage the state the controller until stop signal is set
 		while (_manage) {
-			//poll from controllers
-			for(int i = 0; i < players.length; i++){
-				if(!players[i].getController().poll()){
-					GameState.getInstance().setGameState(GameStateValue.PAUSE);
-					Components.setControllerConnected(i, false);
-					players[i].setControllerState(false, false, false, false);
-					initController(players);
+			if(GameState.getGameState() != GameStateValue.PAUSE){
+				//poll from controllers
+				for(int i = 0; i < players.length; i++){
+					if(!players[i].getController().poll()){
+						GameState.problemOccured(this.toString());
+						Components.setControllerConnected(i, false);
+						players[i].setControllerState(false, false, false, false);
+						initController(players);
+						Components.setControllerConnected(i, true);
+					}else{
+						//check state of controllers
+						checkControllerState(players[i]);
+					}
+				}
+			}else {
+				if(GameState.readyToResume()){
 					waitForPlayer(players);
-					Components.setControllerConnected(i, true);
-				}else{
-					//check state of controllers
-					checkControllerState(players[i]);
+					GameState.getInstance().setGameState(GameStateValue.PLAY);
 				}
 			}
 		}
@@ -162,7 +168,7 @@ public class ControllerManager {
 			right = true;
 		}	
 		
-		//set conrtoller state
+		//set controller state
 		player.setControllerState(forward, backward, left, right);
 	}
 }
