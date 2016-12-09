@@ -38,7 +38,6 @@ public class Game implements I_GameMessages {
 
 	public Game(ObjTracker tracker, Player yellowPlayer, Player purplePlayer) {
 		// _gamePreferences = new Settings();
-		_message = "";
 		_problemReported = false;
 		_tracker = tracker;
 		_yellowPlayer = yellowPlayer;

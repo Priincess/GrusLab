@@ -11,11 +11,12 @@
           <Menu mnemonicParsing="false" text="Game">
             <items>
                   <MenuItem mnemonicParsing="false" onAction="#gotoStartView" text="Back to Startscreen" />
-                  <MenuItem mnemonicParsing="false" text="Game-Time">
+                  <MenuItem mnemonicParsing="false" text="Game-Time (sec)">
                      <graphic>
-                        <TextField fx:id="_textField_GameTime" />
+                        <TextField fx:id="_textField_GameTime" prefWidth="100.0" />
                      </graphic>
                   </MenuItem>
+                  <MenuItem mnemonicParsing="false" onAction="#resetAllSettings" text="Reset All Settings" />
               <MenuItem mnemonicParsing="false" onAction="#saveGameSettings" text="Save Game-Settings" />
             </items>
           </Menu>
@@ -79,17 +80,13 @@
               <items>
                   <MenuItem mnemonicParsing="false" text="Camera">
                      <graphic>
-                        <ComboBox fx:id="_comboBox_Camera" prefWidth="150.0" />
+                        <ComboBox fx:id="_comboBox_camera" prefWidth="300.0" />
                      </graphic>
                   </MenuItem>
-                  <MenuItem mnemonicParsing="false" onAction="#saveCameraSettings" text="Save Camera-Settings" />
+                  <MenuItem mnemonicParsing="false" onAction="#reloadCameras" text="Reload" />
+                  <MenuItem mnemonicParsing="false" onAction="#saveCameraSettings" text="Save Camera" />
               </items>
             </Menu>
-          <Menu mnemonicParsing="false" text="Calibration">
-            <items>
-              <MenuItem mnemonicParsing="false" onAction="#saveCalibration" text="Save Calibration" />
-            </items>
-          </Menu>
         </menus>
       </MenuBar>
    </children>
