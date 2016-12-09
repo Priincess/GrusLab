@@ -2,7 +2,7 @@ package game;
 
 import game.camera.ObjTracker;
 import game.gui.GuiManager;
-import game.player.ControllerManager;
+import game.player.GamepadManager;
 import game.player.Minion;
 import game.player.Player;
 import game.server.Server;
@@ -19,7 +19,7 @@ public class CentralControl {
 	//components
 	private GameState _gameState = null;
 	private Server _server = null;
-	private ControllerManager _controllerManager = null;
+	private GamepadManager _controllerManager = null;
 	private Player[] _players;
 	private ObjTracker _tracker = null;
 	private GuiManager _guiManager = null;
@@ -47,7 +47,7 @@ public class CentralControl {
 		_players[0] = new Player(Minion.Purple);
 		_gameState = GameState.getInstance();
 		_server = new Server();
-		_controllerManager = new ControllerManager();
+		_controllerManager = new GamepadManager();
 		_tracker = new ObjTracker();
 		//_game = new Game(_tracker, players[0], players[1]);
 		_guiManager = new GuiManager();
