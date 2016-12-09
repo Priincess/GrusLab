@@ -4,7 +4,6 @@ import Temporary.Settings;
 import Temporary.gui.GuiManager;
 
 import java.util.List;
-import com.github.sarxos.webcam.*;
 
 /**
  * Created by Mark Mauerhofer on 04.12.2016.
