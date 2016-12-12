@@ -9,7 +9,7 @@ import game.GameStateValue;
 
 /**
  * @author lilpr
- * This class is responsible for the registered controllers. Among other things it polls the pressed buttons.
+ * This class is responsible for the registered gamepads. Among other things it polls the pressed buttons.
  */
 public class GamepadManager {
 	
@@ -18,10 +18,10 @@ public class GamepadManager {
 	//**********PUBLIC METHODS**********
 	
 	/**
-	 * This method waits until two controller are registered
+	 * This method waits until two gamepads are registered
 	 * @param players array with players
 	 */
-	public void initController(Player[] players){
+	public void initGamepad(Player[] players){
 		int amountOfPlayer=0;
 		
 		do{
@@ -81,7 +81,7 @@ public class GamepadManager {
 		do{
 			for(int i =0; i<players.length; i++){
 				if(!players[i].getController().poll()){
-					initController(players);
+					initGamepad(players);
 					System.out.println("Wait for Players to press start!");
 				}
 				
@@ -118,7 +118,7 @@ public class GamepadManager {
 						GameState.problemOccured(this.toString());
 						Components.setControllerConnected(i, false);
 						players[i].setControllerState(false, false, false, false);
-						initController(players);
+						initGamepad(players);
 						Components.setControllerConnected(i, true);
 						GameState.problemSolved(this.toString());
 					}else{

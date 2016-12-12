@@ -1,7 +1,5 @@
 package game.camera;
 
-import game.GameState;
-
 import org.opencv.core.Core;
 import org.opencv.core.Mat;
 import org.opencv.core.Point;
@@ -19,17 +17,14 @@ public class ObjTracker {
 	private static final Scalar YELLOW_LOWER = new Scalar(20, 100, 100);
 	private static final Scalar EVIL_UPPER = new Scalar(160, 127, 65);
 	private static final Scalar EVIL_LOWER = new Scalar(120,77,10);
-	
-	
-//	private static final int NUM_OF_SCALEPOINTS = 4;
-	
+		
 	private static final Point NOT_VALID = null;
 
 	private int _camId = 1;
     private VideoCapture _capture;
 	private Mat _actualFrame;
 	
-	private int _cameracount;
+	private boolean _isReady = false;
 	
 	//variables For trackings
 	private HSVTracking _yellowMinion;
@@ -69,8 +64,8 @@ public class ObjTracker {
 		return _evilPos;
 	}
 	
-	public int CameraReadyPercent(){
-		return (_cameracount/SKIP_CAM_FRAMES)*100;
+	public boolean isReady(){
+		return _isReady;
 	}
 	
 	public void startTracking(){
@@ -81,8 +76,8 @@ public class ObjTracker {
 		//so i'll grab the first 1000 frames to make sure to have "clear" picture
 		for(int i = 0; i < SKIP_CAM_FRAMES; i++){
 			_capture.read(_actualFrame);
-			++_cameracount;
 		}
+		_isReady=true;
 		System.out.println("Camera loading: 100%\tCamera is ready!");
 
 		while(_capture.isOpened()){
@@ -108,6 +103,8 @@ public class ObjTracker {
 
 	public boolean stopTracking(){
 		
+		_isReady=false;
+		
 		//close camera if not longer tracking
 		if(_capture.isOpened()){
 			_capture.release();
@@ -116,39 +113,4 @@ public class ObjTracker {
 		return false;
 	}
 
-	// Not needed anymore, use of getYellowPos() & getEvilPos() sufficient
-//	public Point[] getScalePoints(){
-//		Point[] scalePoints = new Point[NUM_OF_SCALEPOINTS];
-//
-//
-//		_capture.open(CAM_ID);
-//
-//		if(_capture.isOpened()){
-//
-//			for(int i = 0; i < 1000; i++){
-//				_capture.read(_actualFrame);
-//			}
-//
-//			Point yellowPoint = _yellowMinion.trackMinion(_actualFrame, Minion.YELLOW);
-//			Point evilPoint = _evilMinion.trackMinion(_actualFrame.clone(), Minion.EVIL);
-//
-//			int corner = 0;
-//
-//			scalePoints[corner] = yellowPoint;
-//			scalePoints[++corner] = new Point(evilPoint.x, yellowPoint.y);
-//			scalePoints[++corner] = evilPoint;
-//			scalePoints[++corner] = new Point(yellowPoint.x, evilPoint.y);
-//
-//			_capture.release();
-//
-//			return scalePoints;
-//		}
-//		return null;
-//	}
-	
-
-	
-	
-	
-	
 }

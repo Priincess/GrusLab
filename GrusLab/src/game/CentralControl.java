@@ -73,22 +73,35 @@ public class CentralControl {
 		_gamepadInit.start();
 		_serverStart.start();
 		
+		//wait until all gamepads are connected
 		while(!_gamepadInit.getState().equals(Thread.State.TERMINATED)){}
 		
+		//start manage of gamepad for preferences
 		_gamepadStart.start();
-
+		
+		//wait until both minions are connected
+		while(!_server.connectionsEstablished() || !_tracker.isReady()){}
+		
+		//all components are loaded
+		GameState.getInstance().setGameState(GameStateValue.LOADED);
+		
+		//play until game exit
 		while(GameState.getGameState() != GameStateValue.EXIT){
 			
+			//wait until game is ready
 			while(GameState.getGameState() != GameStateValue.READY){}
 			
+			//wait for players to press start
 			_gamepadManager.stopManage();
 			_gamepadWaitForStart.start();
 
 			while(!_gamepadWaitForStart.getState().equals(Thread.State.TERMINATED)){}
 
+			//start countdown
 			_gamepadStart.start();
 			_gameState.setGameState(GameStateValue.COUNTDOWN);
 
+			//wait until game is finished
 			while(GameState.getGameState() != GameStateValue.FINISHED){}
 			
 			_gamepadManager.stopManage();
@@ -109,7 +122,7 @@ public class CentralControl {
 		_gamepadInit = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				_gamepadManager.initController(_players);
+				_gamepadManager.initGamepad(_players);
 			}
 		});
 		

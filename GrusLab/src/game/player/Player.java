@@ -11,7 +11,7 @@ public class Player {
 	private Gamepad _gamepad;
 	private Controller _controller=null;	
 	private PlayerState _playerState = PlayerState.Normal;
-	private ControllerState _controllerState = ControllerState.None;	
+	private GamepadState _controllerState = GamepadState.None;	
 	private boolean _controllerChanged=false;
 	private Minion _minion;
     private int _points = 0;
@@ -53,48 +53,48 @@ public class Player {
 		
 		//check which button combination is pressed and set matching state
 		if (forward&&right) {
-			if (_controllerState != ControllerState.ForwardRight) {
-				_controllerState = ControllerState.ForwardRight;
+			if (_controllerState != GamepadState.ForwardRight) {
+				_controllerState = GamepadState.ForwardRight;
 				_controllerChanged = true;
 			}
 		} else if (forward && left) {
-			if (_controllerState != ControllerState.ForwardLeft) {
-				_controllerState = ControllerState.ForwardLeft;
+			if (_controllerState != GamepadState.ForwardLeft) {
+				_controllerState = GamepadState.ForwardLeft;
 				_controllerChanged = true;
 			}
 		} else if (forward) {
-			if (_controllerState != ControllerState.Forward) {
-				_controllerState = ControllerState.Forward;
+			if (_controllerState != GamepadState.Forward) {
+				_controllerState = GamepadState.Forward;
 				_controllerChanged = true;
 			}
 		} else if (backward && right) {
-			if (_controllerState != ControllerState.BackwardRight) {
-				_controllerState = ControllerState.BackwardRight;
+			if (_controllerState != GamepadState.BackwardRight) {
+				_controllerState = GamepadState.BackwardRight;
 				_controllerChanged = true;
 			}
 		} else if (backward && left) {
-			if (_controllerState != ControllerState.BackwardLeft) {
-				_controllerState = ControllerState.BackwardLeft;
+			if (_controllerState != GamepadState.BackwardLeft) {
+				_controllerState = GamepadState.BackwardLeft;
 				_controllerChanged = true;
 			}
 		} else if (backward) {
-			if (_controllerState != ControllerState.Backward) {
-				_controllerState = ControllerState.Backward;
+			if (_controllerState != GamepadState.Backward) {
+				_controllerState = GamepadState.Backward;
 				_controllerChanged = true;
 			}
 		} else if (left) {
-			if (_controllerState != ControllerState.Left) {
-				_controllerState = ControllerState.Left;
+			if (_controllerState != GamepadState.Left) {
+				_controllerState = GamepadState.Left;
 				_controllerChanged = true;
 			}
 		} else if (right) {
-			if (_controllerState != ControllerState.Right) {
-				_controllerState = ControllerState.Right;
+			if (_controllerState != GamepadState.Right) {
+				_controllerState = GamepadState.Right;
 				_controllerChanged = true;
 			}
 		}else {
-			if (_controllerState != ControllerState.None) {
-				_controllerState = ControllerState.None;
+			if (_controllerState != GamepadState.None) {
+				_controllerState = GamepadState.None;
 				_controllerChanged = true;
 			}
 		}
@@ -125,7 +125,7 @@ public class Player {
 	/**
 	 * @return state of the pressed controller buttons
 	 */
-	public ControllerState getControllerState(){
+	public GamepadState getControllerState(){
 		return _controllerState;
 	}
 	
@@ -208,6 +208,6 @@ public class Player {
 	public void reset(){
 		resetControllerChanged();
 		_playerState = PlayerState.Normal;
-		_controllerState = ControllerState.None;
+		_controllerState = GamepadState.None;
 	}
 }
