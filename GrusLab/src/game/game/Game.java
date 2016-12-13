@@ -103,11 +103,21 @@ public class Game implements I_GameMessages {
     }
 
     public GamepadState getPurpleCommand() {
-        return _purplePlayer.getControllerState();
+        if (_purplePlayer.hasControllerChanged()) {
+            GamepadState state = _purplePlayer.getControllerState();
+            _purplePlayer.resetControllerChanged();
+            return state;
+        }
+        return GamepadState.None;
     }
 
     public GamepadState getYellowCommand() {
-        return _yellowPlayer.getControllerState();
+        if (_yellowPlayer.hasControllerChanged()) {
+            GamepadState state = _yellowPlayer.getControllerState();
+            _yellowPlayer.resetControllerChanged();
+            return state;
+        }
+        return GamepadState.None;
     }
 
     public List<I_GameObject> getAllItems() {

@@ -7,6 +7,7 @@ import game.game.Game;
 import game.game.GameObjectType;
 import game.gameObjects.I_GameObject;
 import game.gameObjects.Item;
+import game.player.GamepadState;
 import javafx.animation.FadeTransition;
 import javafx.animation.SequentialTransition;
 import javafx.application.Platform;
@@ -134,7 +135,7 @@ public class GameboardViewController {
                             if (_gameState.getGameState() == PLAY) {
                                 updateGameTime();
                                 updatePlayerPoints();
-                                //updateMinionPositions();
+                                //updateMinionPositions();  // TODO: Remove only for debugging
                                 updateGameObjectsList();
                             }
                         }
@@ -226,7 +227,7 @@ public class GameboardViewController {
                     startGameInfoTextCountdown();
                     break;
                 case PLAY:
-                    showMinions();  // TODO: Remove: Only for Debugging
+                    //showMinions();  // TODO: Remove: Only for Debugging
                     if (_oldGameState == PAUSE) {
                         stopGameInfoTextPause();
                     }
@@ -246,14 +247,28 @@ public class GameboardViewController {
         }
     }
 
-    private void gamepadWatchdog(){
-//        if (_game.calibrate()){
-//            _gameState.setGameState(READY);
-//            //hideMinions();
-//        } else {
-//            _label_InfoText.setText("Calibration failed\nTry Again");
-//        }
+    // Change from Ready -> Countdown is done by Central
+    private void gamepadWatchdog() {
+        if (_gameState.getGameState() != PLAY) {
+            if (_game.getYellowCommand() != GamepadState.None || _game.getPurpleCommand() != GamepadState.None) {
+                if (_gameState.getGameState() == CALIBRATION) {
+                    if (_game.calibrate()){
+                        _gameState.setGameState(READY);
+                        hideMinions();
+                    } else {
+                        _label_InfoText.setText("Calibration failed\nTry Again");
+                    }
+                } else if (_gameState.getGameState() == FINISHED) {
+                    if(_game.getYellowCommand() == GamepadState.Forward || _game.getPurpleCommand() != GamepadState.Forward){
+                        _gameState.setGameState(READY);
+                    } else {
+                        _gameState.setGameState(FINISHED);
+                    }
+                }
+            }
+        }
     }
+
 
     private void playSound(GameObjectType type){
         switch (type){

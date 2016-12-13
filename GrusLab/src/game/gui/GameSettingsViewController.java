@@ -416,22 +416,22 @@ public class GameSettingsViewController {
         SettingSteps step = SettingSteps.getStepFromInt(_pages.getCurrentPageIndex());
         switch (step){
             case Step_MinionSize:
-                resizeMinion(5);
+                resizeMinion(10);
                 break;
             case Step_GameboardPoint:
-                moveGameboard(_rect_gameboard.yProperty(), -5);
+                moveGameboard(_rect_gameboard.yProperty(), -10);
                 break;
             case Step_GameboardSize:
-                resizeGameboard(_rect_gameboard.heightProperty(), -10);
+                resizeGameboard(_rect_gameboard.heightProperty(), -20);
                 break;
             case Step_BananaSize:
-                resizeImage(0.1, _imageView_banana);
+                resizeImage(0.5, _imageView_banana);
                 break;
             case Step_GoggleSize:
-                resizeImage(0.1, _imageView_goggle);
+                resizeImage(0.5, _imageView_goggle);
                 break;
             case Step_BeedoSize:
-                resizeImage(0.1, _imageView_beedo);
+                resizeImage(0.5, _imageView_beedo);
                 break;
             case Step_GameTime:
                 changeValue(_gameTime, 5, 60, 3600);
@@ -456,22 +456,22 @@ public class GameSettingsViewController {
         SettingSteps step = SettingSteps.getStepFromInt(_pages.getCurrentPageIndex());
         switch (step){
             case Step_MinionSize:
-                resizeMinion(-5);
+                resizeMinion(-10);
                 break;
             case Step_GameboardPoint:
-                moveGameboard(_rect_gameboard.yProperty(), 5);
+                moveGameboard(_rect_gameboard.yProperty(), 10);
                 break;
             case Step_GameboardSize:
-                resizeGameboard(_rect_gameboard.heightProperty(), 10);
+                resizeGameboard(_rect_gameboard.heightProperty(), 20);
                 break;
             case Step_BananaSize:
-                resizeImage(-0.1, _imageView_banana);
+                resizeImage(-0.5, _imageView_banana);
                 break;
             case Step_GoggleSize:
-                resizeImage(-0.1, _imageView_goggle);
+                resizeImage(-0.5, _imageView_goggle);
                 break;
             case Step_BeedoSize:
-                resizeImage(-0.1, _imageView_beedo);
+                resizeImage(-0.5, _imageView_beedo);
                 break;
             case Step_GameTime:
                 changeValue(_gameTime, -5, 60, 3600);
@@ -496,10 +496,10 @@ public class GameSettingsViewController {
         SettingSteps step = SettingSteps.getStepFromInt(_pages.getCurrentPageIndex());
         switch (step){
             case Step_GameboardPoint:
-                moveGameboard(_rect_gameboard.xProperty(), -5);
+                moveGameboard(_rect_gameboard.xProperty(), -10);
                 break;
             case Step_GameboardSize:
-                resizeGameboard(_rect_gameboard.widthProperty(), -10);
+                resizeGameboard(_rect_gameboard.widthProperty(), -20);
                 break;
             default:
                 break;
@@ -510,10 +510,10 @@ public class GameSettingsViewController {
         SettingSteps step = SettingSteps.getStepFromInt(_pages.getCurrentPageIndex());
         switch (step){
             case Step_GameboardPoint:
-                moveGameboard(_rect_gameboard.xProperty(), 5);
+                moveGameboard(_rect_gameboard.xProperty(), 10);
                 break;
             case Step_GameboardSize:
-                resizeGameboard(_rect_gameboard.widthProperty(), 10);
+                resizeGameboard(_rect_gameboard.widthProperty(), 20);
                 break;
             default:
                 break;
@@ -769,19 +769,15 @@ public class GameSettingsViewController {
         System.out.println(command);
         switch (command) {
             case Forward:
-                System.out.println("buttonDownPressed");
                 buttonDownPressed();
                 break;
             case Backward:
-                System.out.println("buttonRightPressed");
                 buttonRightPressed();
                 break;
             case Left:
-                System.out.println("padLeftPressed");
                 padLeftPressed();
                 break;
             case Right:
-                System.out.println("padRightPressed");
                 padRightPressed();
                 break;
             default:
