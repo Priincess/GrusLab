@@ -2,9 +2,12 @@ package game.gui;
 
 import game.controller.ControllerManager;
 import game.controller.GameSettingsController;
+import game.player.GamepadState;
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.beans.binding.NumberBinding;
 import javafx.beans.property.*;
+import javafx.concurrent.Task;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Node;
@@ -66,6 +69,8 @@ public class GameSettingsViewController {
 
     private GameSettingsController _gameSettingsController;
     private GuiManager _guiManager;
+    private Task _watchdogTask;
+    private boolean _isWatchdogRunning;
 
     @FXML
     public void initialize(){
@@ -94,6 +99,9 @@ public class GameSettingsViewController {
 
         initAdditionalImages();
         addKeyListener();
+
+        initWatchdogTask();
+        startWatchdogTask();
     }
 
     private void initCenterText(){
@@ -358,8 +366,8 @@ public class GameSettingsViewController {
     }
 
     private void initPagination(){
-        _pages.setMaxPageIndicatorCount(SettingSteps.values().length);
-        _pages.setPageCount(SettingSteps.values().length);
+        _pages.setMaxPageIndicatorCount(SettingSteps.values().length-1);
+        _pages.setPageCount(SettingSteps.values().length-1);
     }
 
     private void addKeyListener(){
@@ -516,6 +524,7 @@ public class GameSettingsViewController {
         SettingSteps step = SettingSteps.getStepFromInt(_pages.getCurrentPageIndex());
         switch (step){
             case Step_MinionSize:
+                _isWatchdogRunning = false;
                 _guiManager.gotoView(GuiManager.GAMEMENU_VIEW);
             default:
                 goStepBack();
@@ -524,13 +533,16 @@ public class GameSettingsViewController {
     }
 
     private void buttonDownPressed(){
+        System.out.println("buttonDownPressedMethode");
         SettingSteps step = SettingSteps.getStepFromInt(_pages.getCurrentPageIndex());
         switch (step){
             case Step_Save:
                 saveSettings();
+                _isWatchdogRunning = false;
                 _guiManager.gotoView(GuiManager.GAMEMENU_VIEW);
                 break;
             default:
+                System.out.println("doForward");
                 goStepForward();
                 break;
         }
@@ -742,4 +754,65 @@ public class GameSettingsViewController {
         _gameSettingsController.updateCamera(_cameraID.intValue());
         _gameSettingsController.saveSettings();
     }
+
+    private void gamepadWatchdog() {
+        GamepadState yellow = _gameSettingsController.getYellowCommand();
+        if (yellow != GamepadState.None ) {
+            gamepadAction(yellow);
+        }
+    }
+
+    private void gamepadAction(GamepadState command){
+        // TODO: Add UP and down
+        //    padUpPressed();
+        //    padDownPressed();
+        System.out.println(command);
+        switch (command) {
+            case Forward:
+                System.out.println("buttonDownPressed");
+                buttonDownPressed();
+                break;
+            case Backward:
+                System.out.println("buttonRightPressed");
+                buttonRightPressed();
+                break;
+            case Left:
+                System.out.println("padLeftPressed");
+                padLeftPressed();
+                break;
+            case Right:
+                System.out.println("padRightPressed");
+                padRightPressed();
+                break;
+            default:
+                break;
+        }
+    }
+
+
+    private void initWatchdogTask(){
+        _watchdogTask = new Task<Void>() {
+            @Override
+            public Void call() throws Exception {
+                while(_isWatchdogRunning) {
+                    Platform.runLater(new Runnable() {
+                        @Override
+                        public void run() {
+                            gamepadWatchdog();
+                        }
+                    });
+                    Thread.sleep(1);
+                }
+                return null;
+            }
+        };
+    }
+
+    private void startWatchdogTask(){
+        _isWatchdogRunning = true;
+        Thread th = new Thread(_watchdogTask);
+        th.setDaemon(true);
+        th.start();
+    }
+
 }

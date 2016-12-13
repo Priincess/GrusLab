@@ -4,6 +4,7 @@ import com.github.sarxos.webcam.Webcam;
 import game.Settings;
 import game.gui.ItemDropRate;
 import game.gui.SettingSteps;
+import game.player.GamepadState;
 import game.player.Player;
 
 import java.util.ArrayList;
@@ -15,6 +16,8 @@ import java.util.List;
 public class GameSettingsController {
 
     private Settings _settings;
+    private Player _yellowPlayer;
+    private Player _purplePlayer;   // TODO: both players necessary
 
     private int _gameTime;
     private ItemDropRate _itemDropRate;
@@ -44,6 +47,8 @@ public class GameSettingsController {
 
     public GameSettingsController(Player yellowPlayer, Player purplePlayer){
         _settings = Settings.getInstance();
+        _yellowPlayer = yellowPlayer;
+        _purplePlayer = purplePlayer;
 
         _cameraList = new ArrayList<String>();
         reloadCameras();
@@ -247,5 +252,14 @@ public class GameSettingsController {
         for (int i = 0; i < webcams.size(); i++) {
             _cameraList.add(webcams.get(i).toString());
         }
+    }
+
+    public GamepadState getYellowCommand() {
+        if (_yellowPlayer.hasControllerChanged()) {
+            GamepadState state = _yellowPlayer.getControllerState();
+            _yellowPlayer.resetControllerChanged();
+            return state;
+        }
+        return GamepadState.None;
     }
 }

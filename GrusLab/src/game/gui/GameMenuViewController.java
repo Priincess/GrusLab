@@ -34,6 +34,7 @@ public class GameMenuViewController {
     private GameState _gameState;
     private GameStateValue _oldGameState;
     private Task _watchdogTask;
+    private boolean _isWatchdogRunning;
 
     @FXML
     Pane _pane_GameMenuView;
@@ -106,10 +107,11 @@ public class GameMenuViewController {
     }
 
     private void initWatchdogTask(){
+
         _watchdogTask = new Task<Void>() {
             @Override
             public Void call() throws Exception {
-                while(true) {
+                while(_isWatchdogRunning) {
                     Platform.runLater(new Runnable() {
                         @Override
                         public void run() {
@@ -119,12 +121,14 @@ public class GameMenuViewController {
                     });
                     Thread.sleep(5);
                 }
+                return null;
             }
         };
     }
 
     private void startWatchdogTask(){
         Thread th = new Thread(_watchdogTask);
+        _isWatchdogRunning = true;
         th.setDaemon(true);
         th.start();
     }
@@ -180,6 +184,7 @@ public class GameMenuViewController {
     }
 
     private void gotoView(){
+        _isWatchdogRunning = false;
         _mediaPlayer.stop();
         if (_buttonStartGame.isSelected()){
             _guiManager.gotoView(GuiManager.GAMEBOARD_VIEW);
