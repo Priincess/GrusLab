@@ -23,7 +23,6 @@ public class CentralControl {
 	private GamepadManager _gamepadManager = null;
 	private Player[] _players;
 	private ObjTracker _tracker = null;
-	private GuiManager _guiManager = null;
 	
 	//threads
 	//controllers

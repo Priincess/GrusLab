@@ -274,22 +274,41 @@ public class GameSettingsViewController {
         _imageView_step_minionSize.xProperty().bind(_pane_GameSettingsView.widthProperty().subtract(387));
         _imageView_step_minionSize.yProperty().bind(_pane_GameSettingsView.heightProperty().subtract(482));
 
+        _imageView_step_bananaSize = new ImageView(getClass().getResource("media/Step_BananaSize.png").toExternalForm());
+        _imageView_step_bananaSize.xProperty().bind(_pane_GameSettingsView.widthProperty().subtract(340));
+        _imageView_step_bananaSize.yProperty().bind(_pane_GameSettingsView.heightProperty().subtract(333));
+
+        _imageView_step_beedoSize = new ImageView(getClass().getResource("media/Step_BeedoSize.png").toExternalForm());
+        _imageView_step_beedoSize.xProperty().bind(_pane_GameSettingsView.widthProperty().subtract(236));
+        _imageView_step_beedoSize.yProperty().bind(_pane_GameSettingsView.heightProperty().subtract(306));
+
+        _imageView_step_goggleSize = new ImageView(getClass().getResource("media/Step_GoggleSize.png").toExternalForm());
+        _imageView_step_goggleSize.xProperty().bind(_pane_GameSettingsView.widthProperty().subtract(236));
+        _imageView_step_goggleSize.yProperty().bind(_pane_GameSettingsView.heightProperty().subtract(236));
+
+        _imageView_step_itemDrop = new ImageView(getClass().getResource("media/Step_ItemDrop.png").toExternalForm());
+        _imageView_step_itemDrop.xProperty().bind(_pane_GameSettingsView.widthProperty().subtract(400));
+        _imageView_step_itemDrop.yProperty().bind(_pane_GameSettingsView.heightProperty().subtract(214));
+
+        _imageView_step_gameTime = new ImageView(getClass().getResource("media/Step_GameTime.png").toExternalForm());
+        _imageView_step_gameTime.xProperty().bind(_pane_GameSettingsView.widthProperty().subtract(400));
+        _imageView_step_gameTime.yProperty().bind(_pane_GameSettingsView.heightProperty().subtract(342));
+
+        _imageView_step_goggleSpeed = new ImageView(getClass().getResource("media/Step_GoggleSpeed.png").toExternalForm());
+        _imageView_step_goggleSpeed.xProperty().bind(_pane_GameSettingsView.widthProperty().subtract(400));
+        _imageView_step_goggleSpeed.yProperty().bind(_pane_GameSettingsView.heightProperty().subtract(281));
+
         _imageView_step_beedoStop = new ImageView(getClass().getResource("media/Step_BeedoStop.png").toExternalForm());
         _imageView_step_beedoStop.xProperty().bind(_pane_GameSettingsView.widthProperty().subtract(338));
         _imageView_step_beedoStop.yProperty().bind(_pane_GameSettingsView.heightProperty().subtract(326));
 
-//        _imageView_step_bananaSize;
-//        _imageView_step_goggleSize;
-//        _imageView_step_beedoSize;
-//        _imageView_step_gameTime;
-//        _imageView_step_itemDrop;
-//        _imageView_step_goggleSpeed;
-//        _imageView_step_beedoStop;
-//        _imageView_step_camera;
-//        _imageView_step_save;
-//        _imageView_step_minionSize = new ImageView(getClass().getResource("media/Step_MinionSize.png").toExternalForm());
-//        _imageView_step_minionSize.xProperty().bind(_pane_GameSettingsView.widthProperty().subtract(387));
-//        _imageView_step_minionSize.yProperty().bind(_pane_GameSettingsView.heightProperty().subtract(482));
+        _imageView_step_camera =  new ImageView(getClass().getResource("media/Step_Camera.png").toExternalForm());
+        _imageView_step_camera.xProperty().bind(_pane_GameSettingsView.widthProperty().subtract(500));
+        _imageView_step_camera.yProperty().bind(_pane_GameSettingsView.heightProperty().subtract(312));
+
+        _imageView_step_save =  new ImageView(getClass().getResource("media/Step_Save.png").toExternalForm());
+        _imageView_step_save.xProperty().bind(_pane_GameSettingsView.widthProperty().subtract(300));
+        _imageView_step_save.yProperty().bind(_pane_GameSettingsView.heightProperty().subtract(299));
     }
 
     private void initCircleMinion(){
@@ -425,13 +444,13 @@ public class GameSettingsViewController {
                 resizeGameboard(_rect_gameboard.heightProperty(), -20);
                 break;
             case Step_BananaSize:
-                resizeImage(0.5, _imageView_banana);
+                resizeImage(0.1, _imageView_banana);
                 break;
             case Step_GoggleSize:
-                resizeImage(0.5, _imageView_goggle);
+                resizeImage(0.1, _imageView_goggle);
                 break;
             case Step_BeedoSize:
-                resizeImage(0.5, _imageView_beedo);
+                resizeImage(0.1, _imageView_beedo);
                 break;
             case Step_GameTime:
                 changeValue(_gameTime, 5, 60, 3600);
@@ -465,13 +484,13 @@ public class GameSettingsViewController {
                 resizeGameboard(_rect_gameboard.heightProperty(), 20);
                 break;
             case Step_BananaSize:
-                resizeImage(-0.5, _imageView_banana);
+                resizeImage(-0.1, _imageView_banana);
                 break;
             case Step_GoggleSize:
-                resizeImage(-0.5, _imageView_goggle);
+                resizeImage(-0.1, _imageView_goggle);
                 break;
             case Step_BeedoSize:
-                resizeImage(-0.5, _imageView_beedo);
+                resizeImage(-0.1, _imageView_beedo);
                 break;
             case Step_GameTime:
                 changeValue(_gameTime, -5, 60, 3600);
@@ -533,7 +552,6 @@ public class GameSettingsViewController {
     }
 
     private void buttonDownPressed(){
-        System.out.println("buttonDownPressedMethode");
         SettingSteps step = SettingSteps.getStepFromInt(_pages.getCurrentPageIndex());
         switch (step){
             case Step_Save:
@@ -542,7 +560,6 @@ public class GameSettingsViewController {
                 _guiManager.gotoView(GuiManager.GAMEMENU_VIEW);
                 break;
             default:
-                System.out.println("doForward");
                 goStepForward();
                 break;
         }
@@ -577,6 +594,7 @@ public class GameSettingsViewController {
         Pane pane = new Pane();
         _label_stepInfoText.setText("Set Banana Size");
         pane.getChildren().add(_imageView_banana);
+        pane.getChildren().add(_imageView_step_bananaSize);
         pane.getChildren().add(_label_stepInfoText);
         return pane;
     }
@@ -586,6 +604,7 @@ public class GameSettingsViewController {
         _label_stepInfoText.setText("Set Game Time");
         pane.getChildren().add(_label_stepInfoText);
         pane.getChildren().add(_label_centerText);
+        pane.getChildren().add(_imageView_step_gameTime);
         _label_centerText.textProperty().bind(Bindings.concat("Game-Time: ").concat(_gameTime).concat(" seconds"));
         return pane;
     }
@@ -595,6 +614,7 @@ public class GameSettingsViewController {
         _label_stepInfoText.setText("Set Goggle Size");
         pane.getChildren().add(_imageView_goggle);
         pane.getChildren().add(_label_stepInfoText);
+        pane.getChildren().add(_imageView_step_goggleSize);
         return pane;
     }
 
@@ -603,6 +623,7 @@ public class GameSettingsViewController {
         _label_stepInfoText.setText("Set Beedo Size");
         pane.getChildren().add(_imageView_beedo);
         pane.getChildren().add(_label_stepInfoText);
+        pane.getChildren().add(_imageView_step_beedoSize);
         return pane;
     }
 
@@ -613,6 +634,7 @@ public class GameSettingsViewController {
         pane.getChildren().add(_itemDropHigh);
         pane.getChildren().add(_itemDropNormal);
         pane.getChildren().add(_itemDropLow);
+        pane.getChildren().add(_imageView_step_itemDrop);
         return pane;
     }
 
@@ -621,6 +643,7 @@ public class GameSettingsViewController {
         _label_stepInfoText.setText("Set Goggle Speed-Up Time");
         pane.getChildren().add(_label_stepInfoText);
         pane.getChildren().add(_label_centerText);
+        pane.getChildren().add(_imageView_step_goggleSpeed);
         _label_centerText.textProperty().bind(Bindings.concat("Goggle Speed-Up Time ").concat(_goggleSpeedTime).concat(" seconds"));
         return pane;
     }
@@ -640,6 +663,7 @@ public class GameSettingsViewController {
         _label_stepInfoText.setText("Set Camera");
         pane.getChildren().add(_label_stepInfoText);
         pane.getChildren().add(_label_centerText);
+        pane.getChildren().add(_imageView_step_camera);
         _label_centerText.textProperty().bind(Bindings.concat("Camera: ").concat(_cameraText));
         _gameSettingsController.reloadCameras();
         selectCamera(0);
@@ -653,6 +677,7 @@ public class GameSettingsViewController {
         _label_centerText.setText("Save And Return ( 'X' Or 'A' )\n Go Back ( 'Circle' Or 'B' )");
         pane.getChildren().add(_label_stepInfoText);
         pane.getChildren().add(_label_centerText);
+        pane.getChildren().add(_imageView_step_save);
         return pane;
     }
 
@@ -766,7 +791,6 @@ public class GameSettingsViewController {
         // TODO: Add UP and down
         //    padUpPressed();
         //    padDownPressed();
-        System.out.println(command);
         switch (command) {
             case Forward:
                 buttonDownPressed();
@@ -797,7 +821,7 @@ public class GameSettingsViewController {
                             gamepadWatchdog();
                         }
                     });
-                    Thread.sleep(1);
+                    Thread.sleep(5);
                 }
                 return null;
             }
