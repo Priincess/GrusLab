@@ -129,10 +129,27 @@ public class GameMenuViewController {
         th.start();
     }
 
-    private void gamepadWatchdog(){
-//        if (_gameMenuController.getYellowCommand() == GamepadState.Forward){
-//            System.out.println("Works");
-//        }
+    private void gamepadWatchdog() {
+        GamepadState yellow = _gameMenuController.getYellowCommand();
+        if (yellow != GamepadState.None ) {
+            gamepadAction(yellow);
+        }
+    }
+
+    private void gamepadAction(GamepadState command){
+        switch (command) {
+            case Forward:
+                gotoView();
+                break;
+            case Right:
+                changeSelectedButton();
+                break;
+            case Left:
+                changeSelectedButton();
+                break;
+            default:
+                break;
+        }
     }
 
     private void gamestateWatchdog(){

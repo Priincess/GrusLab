@@ -20,10 +20,6 @@ public class GuiManager extends Application{
 
     private static Stage _stage;
 
-    public void launchGUI(){
-        launch(null);
-    }
-
     @Override
     public void start(Stage primaryStage) throws Exception {
         _stage = primaryStage;

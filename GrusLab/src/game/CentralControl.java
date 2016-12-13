@@ -155,7 +155,7 @@ public class CentralControl {
 		_guiRuntime = new Thread(new Runnable() {
 			@Override
 			public void run() {
-				_guiManager.launchGUI();
+				javafx.application.Application.launch(GuiManager.class);
 			}
 		});
 
