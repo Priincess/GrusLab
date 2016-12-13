@@ -27,19 +27,21 @@ public interface SettingConstants {
     String MINION_OFFSET_DEFAULT = "100";
 
     String YELLOW_MINION_STARTX = "YELLOW_MINION_STARTX";
-    String YELLOW_MINION_STARTX_DEFAULT = "0";  // TODO: use corners of gameboard
+    String YELLOW_MINION_STARTX_DEFAULT = "0";  // TODO: use corners of gameboard + radius
     String YELLOW_MINION_STARTY = "YELLOW_MINION_STARTY";
-    String YELLOW_MINION_STARTY_DEFAULT = "0";  // TODO: use corners of gameboard
+    String YELLOW_MINION_STARTY_DEFAULT = "0";  // TODO: use corners of gameboard + radius
 
     String PURPLE_MINION_STARTX = "PURPLE_MINION_STARTX";
-    String PURPLE_MINION_STARTX_DEFAULT = "0";  // TODO: use corners of gameboard
+    String PURPLE_MINION_STARTX_DEFAULT = "0";  // TODO: use corners of gameboard - radius
     String PURPLE_MINION_STARTY = "PURPLE_MINION_STARTY";
-    String PURPLE_MINION_STARTY_DEFAULT = "0";  // TODO: use corners of gameboard
+    String PURPLE_MINION_STARTY_DEFAULT = "0";  // TODO: use corners of gameboard - radius
 
     String ITEM_MIN_DROPRATE = "ITEM_MIN_DROPRATE";
     String ITEM_MIN_DROPRATE_DEFAULT = "10";
     String ITEM_MAX_DROPRATE = "ITEM_MAX_DROPRATE";
     String ITEM_MAX_DROPRATE_DEFAULT = "20";
+    String ITEM_DROPRATE = "ITEM_DROPRATE";
+    String ITEM_DROPRATE_DEFAULT = "1";
 
     String BEEDO_BLOCK_TIME = "BEEDO_BLOCK_TIME";
     String BEEDO_BLOCK_TIME_DEFAULT = "10";

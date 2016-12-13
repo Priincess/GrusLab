@@ -37,7 +37,7 @@ public class GuiManager extends Application{
                 System.exit(0);
             }
         });
-        gotoView(GAMESETTING_VIEW);
+        gotoView(GAMEMENU_VIEW);
     }
 
     public void gotoView(String viewName){

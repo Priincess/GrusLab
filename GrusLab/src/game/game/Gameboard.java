@@ -15,7 +15,7 @@ import game.gameObjects.Minion;
 /**
  * Created by Mark Mauerhofer on 03.12.2016.
  */
-public class Gameboard {
+public class 	Gameboard {
 
 	private Point _startPoint;
 	private int _width;
@@ -26,8 +26,9 @@ public class Gameboard {
 
 	private List<Item> _items;
 
-	public Gameboard(int width, int height) {
+	public Gameboard(Point startPoint, int width, int height) {
 
+		_startPoint = startPoint;
 		_width = width;
 		_height = height;
 		_items = new ArrayList<Item>();
@@ -37,12 +38,9 @@ public class Gameboard {
 		//
 	}
 
-	public List<I_GameObject> getGameObjects() {
+	public List<I_GameObject> getAllItems() {
 		List<I_GameObject> objects = new ArrayList<>();
-
 		objects.addAll(_items);
-		objects.add(_yellowMinion);
-		objects.add(_purpleMinion);
 
 		return objects;
 	}
@@ -113,9 +111,7 @@ public class Gameboard {
 
 	// half of the minion is outside
 	public boolean isOutsideOfGameboard() {
-
 		if (yellowMinionOutOfBoard() || purpleMinionOutOfBoard()) {
-
 			return true;
 		}
 		return false;
@@ -189,9 +185,9 @@ public class Gameboard {
 				&& (_yellowMinion.getBox().getCenter().x < (_startPoint.x + _width))
 				&& (_yellowMinion.getBox().getCenter().y > _startPoint.y)
 				&& (_yellowMinion.getBox().getCenter().y < (_startPoint.y + _height))) {
-			return true;
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	private boolean purpleMinionOutOfBoard() {
@@ -199,9 +195,9 @@ public class Gameboard {
 				&& (_purpleMinion.getBox().getCenter().x < (_startPoint.x + _width))
 				&& (_purpleMinion.getBox().getCenter().y > _startPoint.y)
 				&& (_purpleMinion.getBox().getCenter().y < (_startPoint.y + _height))) {
-			return true;
+			return false;
 		}
-		return false;
+		return true;
 	}
 
 	private Point generateRandomPoint(int height, int width){
@@ -213,4 +209,17 @@ public class Gameboard {
 						
 		return new Point(x,y);
 	}
+
+
+
+	// TODO: Remove: Only for Debugging
+	public Point getYellowMinionPosition(){
+		return _yellowMinion.getBox().getCenter();
+	}
+
+	// TODO: Remove: Only for Debugging
+	public Point getPurpleMinionPosition(){
+		return _purpleMinion.getBox().getCenter();
+	}
+
 }

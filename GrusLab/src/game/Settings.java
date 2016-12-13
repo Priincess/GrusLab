@@ -103,6 +103,7 @@ public class Settings implements SettingConstants{
 
         _hashmap.put(ITEM_MIN_DROPRATE, ITEM_MIN_DROPRATE_DEFAULT);
         _hashmap.put(ITEM_MAX_DROPRATE, ITEM_MAX_DROPRATE_DEFAULT);
+        _hashmap.put(ITEM_DROPRATE, ITEM_DROPRATE_DEFAULT);
 
         _hashmap.put(BEEDO_BLOCK_TIME, BEEDO_BLOCK_TIME_DEFAULT);
         _hashmap.put(GOGGLE_SPEED_TIME, GOGGLE_SPEED_TIME_DEFAULT);
@@ -115,9 +116,6 @@ public class Settings implements SettingConstants{
 
         _hashmap.put(GOGGLE_WIDTH, GOGGLE_WIDTH_DEFAULT);
         _hashmap.put(GOGGLE_HEIGHT, GOGGLE_HEIGHT_DEFAULT);
-
-        _hashmap.put(GAMEBOARD_X, GAMEBOARD_X_DEFAULT);
-        _hashmap.put(GAMEBOARD_Y,GAMEBOARD_Y_DEFAULT);
 
         _hashmap.put(CAMERA_ID, CAMERA_ID_DEFAULT);
 
