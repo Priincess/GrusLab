@@ -1,24 +1,23 @@
 package game.controller;
 
-
-import game.gui.GuiManager;
+import game.player.GamepadState;
+import game.player.Player;
 
 public class GameMenuController {
+    private Player _yellowPlayer;
+    private Player _purplePlayer;
 
-    GuiManager _guiManager = new GuiManager();
-
-    public GameMenuController(){
-        _guiManager = new GuiManager();
+    public GameMenuController(Player yellowPlayer, Player purplePlayer){
+        _yellowPlayer = yellowPlayer;
+        _purplePlayer = purplePlayer;
     }
 
-    public void gotoSettingsView(){
-        _guiManager.gotoView(GuiManager.GAMESETTING_VIEW);
+    public GamepadState getYellowCommand() {
+        return _yellowPlayer.getControllerState();
     }
 
-    public void gotoGameboardView(){
-        _guiManager.gotoView(GuiManager.GAMEBOARD_VIEW);
+    public GamepadState getPurpleCommand() {
+        return _purplePlayer.getControllerState();
     }
-
-
 
 }

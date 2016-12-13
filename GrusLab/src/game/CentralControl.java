@@ -1,6 +1,7 @@
 package game;
 
 import game.camera.ObjTracker;
+import game.controller.ControllerManager;
 import game.gui.GuiManager;
 import game.player.GamepadManager;
 import game.player.Minion;
@@ -45,9 +46,8 @@ public class CentralControl {
 		_server = new Server();
 		_gamepadManager = new GamepadManager();
 		_tracker = new ObjTracker();
-//		_game = new Game(_tracker, _players[0], _players[1]);
-		_guiManager = new GuiManager();
-		//_guiManager.setGame(_game);
+
+		ControllerManager.createController(_tracker, _players[0], _players[1]);
 	}
 	
 	//**********PUBLIC METHODS**********
@@ -72,7 +72,8 @@ public class CentralControl {
 		_objectTracker.start();
 		_gamepadInit.start();
 		_serverStart.start();
-		
+
+
 		//wait until all gamepads are connected
 		while(!_gamepadInit.getState().equals(Thread.State.TERMINATED)){}
 		

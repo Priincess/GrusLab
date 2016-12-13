@@ -1,45 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.text.*?>
 <?import javafx.scene.control.*?>
-<?import java.lang.*?>
 <?import javafx.scene.layout.*?>
 
-<AnchorPane fx:id="_pane_GameSettingsView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="Temporary.gui.GameSettingsViewController">
+<AnchorPane fx:id="_pane_GameSettingsView" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="1280.0" xmlns="http://javafx.com/javafx/8" xmlns:fx="http://javafx.com/fxml/1" fx:controller="game.gui.GameSettingsViewController">
    <children>
-      <TabPane fx:id="_tabs" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" prefHeight="720.0" prefWidth="1280.0" tabClosingPolicy="UNAVAILABLE" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
-        <tabs>
-            <Tab fx:id="_tab_game" text="Game">
-               <content>
-                  <AnchorPane fx:id="_paneOfTab_game" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" />
-               </content>
-            </Tab>
-          <Tab fx:id="_tab_gameboard" text="Gameboard">
-            <content>
-              <AnchorPane fx:id="_paneOfTab_gameboard" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" />
-            </content>
-          </Tab>
-          <Tab fx:id="_tab_banana" text="Banana">
-            <content>
-              <AnchorPane fx:id="_paneOfTab_banana" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" />
-            </content>
-          </Tab>
-            <Tab fx:id="_tab_goggle" text="Goggle">
-               <content>
-                  <AnchorPane fx:id="_paneOfTab_goggle" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" />
-               </content>
-            </Tab>
-            <Tab fx:id="_tab_beedo" text="Beedo">
-               <content>
-                  <AnchorPane fx:id="_paneOfTab_beedo" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" />
-               </content>
-            </Tab>
-            <Tab fx:id="_tab_camera" text="Camera">
-               <content>
-                  <AnchorPane fx:id="_paneOfTab_camera" maxHeight="1.7976931348623157E308" maxWidth="1.7976931348623157E308" minHeight="0.0" minWidth="0.0" />
-               </content>
-            </Tab>
-        </tabs>
-      </TabPane>
+      <Pagination fx:id="_pages" prefHeight="720.0" prefWidth="1280.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0" />
    </children>
 </AnchorPane>
